@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.appointmentReg.mapper.FinishedSignMapper">
+    <select id="findPersonByWherePage" resultType="com.healt.cloud.checkup.appointmentReg.vo.finishedSign.FinishedSignPerson">
+        SELECT *
+        FROM (
+            SELECT TMP.*, ROWNUM ROW_ID
+            FROM (
+                select '0' selectflag,
+                    a.person_id personId,
+                    a.person_visit_id personVisitId,
+                    a.person_charge personCharge,
+                    nvl(a.before_sign, '0') beforeSign,
+                    a.before_date beforeDate,
+                    nvl(a.FINISHED_SIGN,'0') finishedSign,
+                    a.finished_date finishedDate,
+                    a.age,
+                    a.exam_class examClass,
+                    a.job,
+                    b.name,
+                    b.sex,
+                    C.UNIT_NAME unitName
+                from hc_person_visit_info a, hc_person_info b, HC_UNIT_INFO C
+                where a.person_id = b.person_id
+                and a.hospital_id = b.hospital_id
+                AND A.UNIT_ID = C.UNIT_ID
+                AND A.HOSPITAL_ID = C.HOSPITAL_ID
+                <if test="strWhere != null">
+                    ${strWhere}
+                </if>
+            ) TMP
+            WHERE ROWNUM &lt;= ${pageNum*pageSize})
+        WHERE ROW_ID &gt; ${(pageNum-1)*pageSize}
+    </select>
+    
+    <select id="selectPersonByWhereTotal" resultType="Long">
+        select count(*)
+            from hc_person_visit_info a, hc_person_info b, HC_UNIT_INFO C
+        where a.person_id = b.person_id
+            and a.hospital_id = b.hospital_id
+            AND A.UNIT_ID = C.UNIT_ID
+            AND A.HOSPITAL_ID = C.HOSPITAL_ID
+            <if test="strWhere != null">
+                ${strWhere}
+            </if>
+    </select>
+
+    <update id="updateHcPersonVistInfoFinished">
+        update hc_person_visit_info
+        set ${values}
+        where person_id = #{personId} and person_visit_id = #{personVisitId}
+        and hospital_id = #{hospitalId}
+    </update>
+</mapper>

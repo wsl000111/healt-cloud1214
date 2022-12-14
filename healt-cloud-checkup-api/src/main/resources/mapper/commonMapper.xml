@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.mapper.CommonMapper">
+    <resultMap id="DtTableVoResult" type="com.healt.cloud.checkup.vo.sys.common.DtTableVoResult">
+        <result column="TABLE_NAME" property="TABLE_NAME" jdbcType="VARCHAR"/>
+        <result column="COMMENTS" property="COMMENTS" jdbcType="VARCHAR"/>
+        <result column="ICON_STYLE" property="ICON_STYLE" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="findDtTable" parameterType="com.healt.cloud.checkup.vo.sys.common.DtTableVo" resultMap="DtTableVoResult">
+        select a.TABLE_NAME, b.COMMENTS, '1' as ICON_STYLE
+        from all_tables a, all_tab_comments b
+        where a.OWNER = b.OWNER
+          and a.TABLE_NAME = b.TABLE_NAME
+          and b.COMMENTS like '%字典'
+          and a.owner = #{dictUser, jdbcType=VARCHAR}
+    </select>
+    <resultMap id="DictColumnsVoResult" type="com.healt.cloud.checkup.vo.sys.common.DictColumnsVoResult">
+        <result column="TABLE_NAME" property="TABLE_NAME" jdbcType="VARCHAR"/>
+        <result column="COLUMN_NAME" property="COLUMN_NAME" jdbcType="VARCHAR"/>
+        <result column="COMMENTS" property="COMMENTS" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="findDictColumns" parameterType="com.healt.cloud.checkup.vo.sys.common.DictColumnsVo" resultMap="DictColumnsVoResult">
+        select A.TABLE_NAME, A.COLUMN_NAME, B.COMMENTS
+        from all_tab_columns a, ALL_COL_COMMENTS b
+        where A.OWNER = B.OWNER
+          AND A.TABLE_NAME = B.TABLE_NAME
+          and a.COLUMN_NAME = b.COLUMN_NAME
+          AND a.OWNER = #{dictUser, jdbcType=VARCHAR}
+          and a.TABLE_NAME = #{tableName, jdbcType=VARCHAR}
+    </select>
+    <resultMap id="IndexColumnsVo" type="com.healt.cloud.checkup.vo.sys.common.IndexColumnsVo">
+        <result column="COLUMN_NAME" property="indexColumnName" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="findDtHisDepart" parameterType="com.healt.cloud.checkup.vo.HospitalVo" resultType="com.healt.cloud.checkup.vo.sys.depart.VHisDeptDictVo">
+        SELECT SERIAL_NO   AS serialNo,
+        DEPT_CODE   AS deptCode,
+        DEPT_NAME   AS deptName,
+        DEPT_CODE   AS code,
+        DEPT_NAME   AS name,
+        HOSPITAL_ID AS hospitalId,
+        INPUT_CODE  AS inputCode,
+        CLINIC_ATTR AS clinicAttr,
+        OUTP_OR_INP AS outpOrInp,
+        POSITION
+        FROM  HEALTHCHECKUP.V_HIS_DEPT_DICT
+        <if test="hospitalCode != null and hospitalCode != ''">
+            where HOSPITAL_ID = #{hospitalCode, jdbcType=VARCHAR}
+        </if>
+        order by SERIAL_NO
+    </select>
+    <select id="findIndexColumns" parameterType="string" resultMap="IndexColumnsVo">
+        select v.COLUMN_NAME from all_ind_columns v where v.table_name = #{tableName} and v.TABLE_OWNER = 'HEALTHCHECKUP'
+    </select>
+</mapper>

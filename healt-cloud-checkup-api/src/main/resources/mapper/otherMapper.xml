@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.other.mapper.OtherMapper">
+
+    <select id="findPersonUnitInfo" parameterType="com.healt.cloud.checkup.other.vo.PersonUnitInfoDictVo" resultType="com.healt.cloud.checkup.other.vo.PersonUnitInfoVo">
+        select b.unit_id unitId,b.unit_visit_id unitVisitId,c.unit_name unitName,a.person_id personId,a.person_visit_id personVisitId,hpi.name,sum(a.costs) ysje
+        from hc_person_appreg_items a,hc_person_visit_info b ,hc_unit_info c ,hc_person_info hpi
+        where a.person_id = b.person_id  and a.person_visit_id = b.person_visit_id and b.unit_id = c.unit_id
+        and b.person_id = hpi.person_id
+        and  a.finished_sign ='完成'
+        and a.bill_indicator =0
+        and a.finished_date >= to_date(#{beginDate, jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss')
+        and a.finished_date &lt; to_date(#{endDate, jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss')
+        and  b.Unit_Id !='0000'
+        <if test="unitId != null and unitId != '****'">
+            and b.unit_id = #{unitId, jdbcType=VARCHAR}
+        </if>
+        <if test="unitVisitId != null and unitVisitId != '****'">
+            and b.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+        </if>
+        group by b.unit_id,b.unit_visit_id,c.unit_name,a.person_id,a.person_visit_id,hpi.name
+
+    </select>
+
+    <select id="findTjtj" resultType="com.healt.cloud.checkup.other.vo.TjShouRuTongJi">
+        select  unit_name,tcmc,sex,sum(rs) rs ,sum(tjcosts) tjcosts,sum(tjcharges) tjcharges,flag,'单位' as sxtype from (
+        select aa.unit_name,aa.tcmc,aa.sex,0 rs, sum(costs) tjcosts,sum(tcje) tjcharges,'未收费' flag from
+        ( select   trunc(a.before_date) rq, d.person_id,d.person_visit_id ,a.unit_id,a.unit_name ,b.name,b.sex, decode(d.set_code,null,'非套餐',(SELECT SET_NAME
+        FROM  hc_pack_set_dict WHERE SET_CODE =d.SET_CODE)) tcmc , sum(d.costs) costs,
+        0  tcje ,'未收费' flag
+
+        from hc_person_visit_info a, hc_person_info b, HC_UNIT_INFO C ,hc_person_appreg_items d
+        where a.person_id = b.person_id
+        and a.hospital_id = b.hospital_id
+        AND A.UNIT_ID = C.UNIT_ID
+        AND A.HOSPITAL_ID = C.HOSPITAL_ID
+        and a.person_id = d.person_id
+        and a.person_visit_id = d.person_visit_id
+        and d.bill_indicator &lt;> '1'
+        and a.before_date >= to_date(#{tbegindate},'yyyy-mm-dd hh24:mi:ss')
+        and a.before_date &lt;= to_date(#{tenddate},'yyyy-mm-dd hh24:mi:ss')
+        and a.unit_id &lt;&gt;'0000'
+        group by trunc(a.before_date), d.person_id,d.person_visit_id ,a.unit_id,a.unit_name ,b.name,b.sex,d.SET_CODE) aa
+        group by aa.unit_name,aa.tcmc,aa.sex
+
+        union all
+        select aa.unit_name,aa.tcmc,aa.sex,count(*) rs, 0 tjcosts,sum(tcje) tjcharges,'未收费' flag from
+        ( select distinct  trunc(a.before_date) rq, d.person_id,d.person_visit_id ,a.unit_id,a.unit_name ,b.name,b.sex, decode(d.set_code,null,'非套餐',(SELECT SET_NAME
+        FROM  hc_pack_set_dict WHERE SET_CODE =d.SET_CODE)) tcmc , 0 costs,
+        decode(d.set_code,null,d.charges,(SELECT SET_amount
+        FROM  hc_pack_set_dict WHERE SET_CODE =d.SET_CODE))  tcje ,'未收费' flag
+
+        from hc_person_visit_info a, hc_person_info b, HC_UNIT_INFO C ,hc_person_appreg_items d
+        where a.person_id = b.person_id
+        and a.hospital_id = b.hospital_id
+        AND A.UNIT_ID = C.UNIT_ID
+        AND A.HOSPITAL_ID = C.HOSPITAL_ID
+        and a.person_id = d.person_id
+        and a.person_visit_id = d.person_visit_id
+        and d.bill_indicator &lt;&gt; '1'
+        and a.before_date &gt;= to_date(#{tbegindate},'yyyy-mm-dd hh24:mi:ss')
+        and a.before_date &lt;= to_date(#{tenddate},'yyyy-mm-dd hh24:mi:ss')
+        and a.unit_id &lt;&gt;'0000') aa
+        group by aa.unit_name,aa.tcmc,aa.sex
+        union all
+        select aa.unit_name,aa.tcmc,aa.sex,count(*) rs, sum(costs) tjcosts,sum(charges) tjcharges,'已收费' flag from
+        ( select   trunc(a.before_date) rq, d.person_id,d.person_visit_id ,a.unit_id,a.unit_name ,b.name,b.sex, decode(d.set_code,null,'非套餐',(SELECT SET_NAME
+        FROM  hc_pack_set_dict WHERE SET_CODE =d.SET_CODE)) tcmc , sum(costs) costs,
+        sum(d.charges) as charges ,'已收费' flag
+
+        from hc_person_visit_info a, hc_person_info b, HC_UNIT_INFO C ,hc_person_appreg_items d
+        where a.person_id = b.person_id
+        and a.hospital_id = b.hospital_id
+        AND A.UNIT_ID = C.UNIT_ID
+        AND A.HOSPITAL_ID = C.HOSPITAL_ID
+        and a.person_id = d.person_id
+        and a.person_visit_id = d.person_visit_id
+        and d.bill_indicator = '1'
+        and a.before_date &gt;= to_date(#{tbegindate},'yyyy-mm-dd hh24:mi:ss')
+        and a.before_date &lt;= to_date(#{tenddate},'yyyy-mm-dd hh24:mi:ss')
+        and a.unit_id &lt;&gt;'0000'
+        group by trunc(a.before_date), d.person_id,d.person_visit_id ,a.unit_id,a.unit_name ,b.name,b.sex,d.SET_CODE) aa
+        group by aa.unit_name,aa.tcmc,aa.sex) aaa
+        group by aaa.unit_name,aaa.tcmc,aaa.sex ,aaa.flag
+
+        union all
+        select aa.name,aa.tcmc,aa.sex,count(*) rs, sum(costs) tjcosts,sum(charges) tjcharges,'已收费' flag ,'个人' as sxtype from
+        ( select   trunc(a.before_date) rq, d.person_id,d.person_visit_id ,a.unit_id,a.unit_name ,b.name,b.sex, decode(d.set_code,null,'非套餐',(SELECT SET_NAME
+        FROM  hc_pack_set_dict WHERE SET_CODE =d.SET_CODE)) tcmc , sum(costs) costs,
+        sum(d.charges) as charges ,'已收费' flag
+
+        from hc_person_visit_info a, hc_person_info b, HC_UNIT_INFO C ,hc_person_appreg_items d
+        where a.person_id = b.person_id
+        and a.hospital_id = b.hospital_id
+        AND A.UNIT_ID = C.UNIT_ID
+        AND A.HOSPITAL_ID = C.HOSPITAL_ID
+        and a.person_id = d.person_id
+        and a.person_visit_id = d.person_visit_id
+        and d.bill_indicator = '1'
+        and a.before_date &gt;= to_date(#{tbegindate},'yyyy-mm-dd hh24:mi:ss')
+        and a.before_date &lt;= to_date(#{tenddate},'yyyy-mm-dd hh24:mi:ss')
+        and a.unit_id ='0000'
+        group by trunc(a.before_date), d.person_id,d.person_visit_id ,a.unit_id,a.unit_name ,b.name,b.sex,d.SET_CODE) aa
+        group by aa.name,aa.tcmc,aa.sex
+    </select>
+
+    <select id="findTjtjDept" resultType="com.healt.cloud.checkup.other.vo.TjtjDept">
+        select  item_pack_name,item_pack_code,dept_id,dept_name,flag,sum(grs) grs ,sum(grcosts) grcosts ,sum(grcharges) grcharges ,sum(tjrs) tjrs ,sum(tjcosts) tjcosts,sum(tjcharges) tjcharges from
+        (select  item_pack_name,item_pack_code,dept_id,dept_name,0 grs,0 grcosts,0 grcharges ,sum(tjrs) tjrs ,sum(tjcosts) tjcosts,sum(tjcharges) tjcharges,flag from (
+        select aa.item_pack_name,aa.item_pack_code,aa.dept_id,aa.dept_name,count(*) tjrs, sum(costs) tjcosts,sum(charges) tjcharges,'未收费' flag from
+        ( select   trunc(a.before_date) rq, d.person_id,d.person_visit_id ,d.item_pack_name,d.item_pack_code ,d.dept_id,d.dept_name,b.name, decode(d.set_code,null,'非套餐',(SELECT SET_NAME
+        FROM  hc_pack_set_dict WHERE SET_CODE =d.SET_CODE)) tcmc , sum(costs) costs, sum(charges) charges
+        ,'未收费' flag
+        from hc_person_visit_info a, hc_person_info b, HC_UNIT_INFO C ,hc_person_appreg_items d
+        where a.person_id = b.person_id
+        and a.hospital_id = b.hospital_id
+        AND A.UNIT_ID = C.UNIT_ID
+        AND A.HOSPITAL_ID = C.HOSPITAL_ID
+        and a.person_id = d.person_id
+        and a.person_visit_id = d.person_visit_id
+        and d.bill_indicator &lt;&gt; '1'
+        and a.before_date &gt;= to_date(#{tbegindate},'yyyy-mm-dd hh24:mi:ss')
+        and a.before_date &lt;= to_date(#{tenddate},'yyyy-mm-dd hh24:mi:ss')
+        and a.unit_id &lt;&gt; '0000'
+        group by trunc(a.before_date),d.person_id,d.person_visit_id ,d.item_pack_name,d.item_pack_code ,d.dept_id,d.dept_name,b.name,d.SET_CODE ) aa
+        group by aa.item_pack_name,aa.item_pack_code,aa.dept_id,aa.dept_name
+        union all
+        select aa.item_pack_name,aa.item_pack_code,aa.dept_id,aa.dept_name,count(*) tjrs, sum(costs) tjcosts,sum(charges) tjcharges,'已收费' flag from
+        ( select   trunc(a.before_date) rq, d.person_id,d.person_visit_id ,d.item_pack_name,d.item_pack_code,d.dept_id,d.dept_name ,b.name, decode(d.set_code,null,'非套餐',(SELECT SET_NAME
+        FROM  hc_pack_set_dict WHERE SET_CODE =d.SET_CODE)) tcmc , sum(costs) costs,
+        sum(d.charges) as charges ,'已收费' flag
+
+        from hc_person_visit_info a, hc_person_info b, HC_UNIT_INFO C ,hc_person_appreg_items d
+        where a.person_id = b.person_id
+        and a.hospital_id = b.hospital_id
+        AND A.UNIT_ID = C.UNIT_ID
+        AND A.HOSPITAL_ID = C.HOSPITAL_ID
+        and a.person_id = d.person_id
+        and a.person_visit_id = d.person_visit_id
+        and d.bill_indicator = '1'
+          and a.before_date &gt;= to_date(#{tbegindate},'yyyy-mm-dd hh24:mi:ss')
+          and a.before_date &lt;= to_date(#{tenddate},'yyyy-mm-dd hh24:mi:ss')
+        and a.unit_id &lt;&gt;'0000'
+        group by trunc(a.before_date), d.person_id,d.person_visit_id ,d.item_pack_name,d.item_pack_code,d.dept_id,d.dept_name ,b.name,d.SET_CODE) aa
+        group by aa.item_pack_name,aa.item_pack_code,aa.dept_id,aa.dept_name) aaa
+        group by aaa.item_pack_name,aaa.item_pack_code,aaa.dept_id,aaa.dept_name ,aaa.flag
+
+        union all
+        select aa.item_pack_name,aa.item_pack_code,aa.dept_id,aa.dept_name,count(*) grs, sum(costs) grcosts,sum(charges) grcharges,0 tjrs,0 tjcosts, 0 tjcharges,'已收费' flag  from
+        ( select   trunc(a.before_date) rq, d.person_id,d.person_visit_id ,d.item_pack_name,d.item_pack_code,d.dept_id,d.dept_name,b.name, decode(d.set_code,null,'非套餐',(SELECT SET_NAME
+        FROM  hc_pack_set_dict WHERE SET_CODE =d.SET_CODE)) tcmc , sum(costs) costs,
+        sum(d.charges) as charges ,'已收费' flag
+
+        from hc_person_visit_info a, hc_person_info b, HC_UNIT_INFO C ,hc_person_appreg_items d
+        where a.person_id = b.person_id
+        and a.hospital_id = b.hospital_id
+        AND A.UNIT_ID = C.UNIT_ID
+        AND A.HOSPITAL_ID = C.HOSPITAL_ID
+        and a.person_id = d.person_id
+        and a.person_visit_id = d.person_visit_id
+        and d.bill_indicator = '1'
+          and a.before_date &gt;= to_date(#{tbegindate},'yyyy-mm-dd hh24:mi:ss')
+          and a.before_date &lt;= to_date(#{tenddate},'yyyy-mm-dd hh24:mi:ss')
+        and a.unit_id ='0000'
+        group by trunc(a.before_date), d.person_id,d.person_visit_id ,d.item_pack_name,d.item_pack_code,d.dept_id,d.dept_name,b.name,d.SET_CODE) aa
+        group by aa.item_pack_name,aa.item_pack_code,aa.dept_id,aa.dept_name) bbb
+
+        group by bbb.item_pack_name,bbb.item_pack_code,bbb.dept_id,bbb.dept_name,bbb.flag
+    </select>
+
+</mapper>

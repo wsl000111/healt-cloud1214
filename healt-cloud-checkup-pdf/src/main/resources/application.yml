@@ -1,0 +1,16 @@
+server:
+  port: 8085
+spring:
+  application:
+    name: checkuppdf # 服务名称
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss #返回json的全局时间格式
+    time-zone: GMT+8
+  profiles:
+    active: prod
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #开启控制sql语句输入方便调试程序
+    mybatis-plus:
+      configuration:
+        log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #开启控制sql语句输入方便调试程序

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.appointmentReg.mapper.UnitPersonAppointRegMapper">
+    <resultMap id="dtUnitGroupItemsVo" type="com.healt.cloud.checkup.vo.appointmentReg.unitPersonAppointReg.DtUnitGroupItemsVo">
+        <result column="GROUP_NAME" property="groupName" jdbcType="VARCHAR"/>
+        <result column="group_code" property="groupCode" jdbcType="VARCHAR"/>
+        <result column="item_pack_code" property="itemPackCode" jdbcType="VARCHAR"/>
+        <result column="item_pack_name" property="itemPackName" jdbcType="VARCHAR"/>
+        <result column="source_name" property="sourceName" jdbcType="VARCHAR"/>
+        <result column="hc_dept_code" property="hcDeptCode" jdbcType="VARCHAR"/>
+        <result column="cost_class_code" property="costClassCode" jdbcType="VARCHAR"/>
+        <result column="Guidegroup_Code" property="guidegroupCode" jdbcType="VARCHAR"/>
+        <result column="item_pack_price" property="itemPackPrice" jdbcType="VARCHAR"/>
+        <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR"/>
+        <result column="dept_id" property="deptId" jdbcType="VARCHAR"/>
+        <result column="dept_name" property="deptName" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="findDtUnitGroupItems" resultMap="dtUnitGroupItemsVo">
+        select A.GROUP_NAME,
+               a.group_code,
+               a.item_pack_code,
+               a.item_pack_name,
+               a.source_name,
+               b.hc_dept_code,
+               b.cost_class_code,
+               b.Guidegroup_Code,
+               b.item_pack_price,
+               a.ITEM_NO,
+               c.dept_id,
+               c.dept_name
+        from hc_unit_group_items a, hc_item_pack_dict b, depart_dict c
+        where a.item_pack_code = b.item_pack_code
+          and a.hospital_id = b.hospital_id
+          and b.hospital_id = c.hospital_id
+          and b.hc_dept_code = c.dept_id
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.unit_id = #{unitId, jdbcType=VARCHAR}
+          and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+          <choose>
+              <when test="groupCode == null">
+                  and nvl(a.group_code,'FF9') &lt;&gt; 'FF9'
+              </when>
+              <otherwise>
+                  and a.group_code = #{groupCode, jdbcType=VARCHAR}
+              </otherwise>
+          </choose>
+    </select>
+
+    <select id="findDtUnitPersons" resultType="com.healt.cloud.checkup.vo.appointmentReg.unitPersonAppointReg.HcPersonInfoVo">
+        select t.hospital_id hospitalId,
+               t.person_id personId,
+               t.name,
+               t.unit_id unitId,
+               t.sex,
+               t.unit_name unitName,
+               t.id_no idNo,
+               t.barthday,
+               t.marital_status maritalStatus,
+               t.country,
+               t.area,
+               t.nation,
+               t.phone_number phoneNumber,
+               t.source,
+               t.job,
+               t.exam_class examClass,
+               t.person_level personLevel,
+               t.department,
+               t.charge_type chargeType,
+               t.person_charge personCharge,
+               '' resultStatus,
+               '' groupId,
+               to_char(floor(months_between(sysdate, t.barthday)/12)) as age,
+               t.patient_id patientId
+        from HEALTHCHECKUP.HC_PERSON_INFO t
+        where t.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and t.unit_id = #{unitId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findMaxPersonVisitId" resultType="Integer">
+        select nvl(max(a.person_visit_id), 0)
+        from hc_person_visit_info a
+        where a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.person_id = #{personId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findDtUnitPersonsVisit" resultType="com.healt.cloud.checkup.vo.appointmentReg.unitPersonAppointReg.DtUnitPersonsVisitVo">
+        select a.unit_id unitId,
+               a.hospital_id hospitalId,
+               a.unit_visit_id unitVisitId,
+               a.person_id personId,
+               a.person_visit_id personVisitId,
+               a.group_id groupId,
+               decode(a.result_status, null, '未预约', '9', '已完成', '未完成') resultStatus,
+               b.group_name groupName,
+               a.patient_id patientId
+        from hc_person_visit_info a, hc_unit_group b
+        where a.unit_id = b.unit_id(+)
+          and a.unit_visit_id = b.unit_visit_id(+)
+          and a.hospital_id = b.hospital_id(+)
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.unit_id = #{unitId, jdbcType=VARCHAR}
+          and a.unit_visit_id = #{visitId, jdbcType=VARCHAR}
+    </select>
+
+    <resultMap id="batchUnitPersonsDeleteItemsVo" type="com.healt.cloud.checkup.vo.appointmentReg.unitPersonAppointReg.BatchUnitPersonsDeleteItemsVo">
+        <result column="TCOUNT" property="tcount" jdbcType="VARCHAR"/>
+        <result column="MAX_ITEM_NO" property="maxItemNo" jdbcType="VARCHAR"/>
+<!--        <result column="PERSON_ID" property="personId" jdbcType="VARCHAR"/>-->
+<!--        <result column="PERSON_VISIT_ID" property="personVisitId" jdbcType="VARCHAR"/>-->
+<!--        <result column="ITEM_PACK_CODE" property="itemPackCode" jdbcType="VARCHAR"/>-->
+    </resultMap>
+    <select id="selectBatchDelItems" parameterType="com.healt.cloud.checkup.vo.appointmentReg.unitPersonAppointReg.SelectBatchDelItemsVo" resultMap="batchUnitPersonsDeleteItemsVo">
+        select count(*) TCOUNT,
+               max(item_no) MAX_ITEM_NO
+        from hc_person_appreg_items a
+        where a.person_id = #{personId, jdbcType=VARCHAR}
+          and a.person_visit_id = #{personVisitId, jdbcType=VARCHAR}
+          and a.item_pack_code = #{itemPackCode, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findPersonsInfo" resultType="com.healt.cloud.checkup.vo.settlement.PersonsInfoVo">
+        select distinct t.hospital_id hospitalId,t.person_id personId,t.name,t.unit_id unitId,t.sex,t.unit_name unitName,t.id_no idNo,
+                        t.barthday,t.marital_status maritalStatus,t.country,t.area,t.nation,t.phone_number phoneNumber,t.source,t.job,t.exam_class examClass,
+                        t.person_level personLevel,t.department,t.charge_type chargeType,t.person_charge personCharge,'' resultStatus,'' groupId,
+                        a.before_date beforeDate, a.patient_id patientId
+        from HEALTHCHECKUP.Hc_Person_Visit_Info a , HEALTHCHECKUP.HC_PERSON_INFO t ,hc_person_appreg_items c
+        where a.hospital_id = t.hospital_id
+          and a.person_id = t.person_id
+          and a.person_id = c.person_id
+          and a.person_visit_id = c.person_visit_id
+          and a.hospital_id= #{hospitalId, jdbcType=VARCHAR} and a.unit_id= #{unitId, jdbcType=VARCHAR}
+          and c.bill_indicator = 0
+    </select>
+
+    <select id="findPersonsInfoByTime" parameterType="com.healt.cloud.checkup.vo.settlement.PersonsInfoDictVo" resultType="com.healt.cloud.checkup.vo.settlement.PersonsInfoVo">
+        select distinct t.hospital_id hospitalId,t.person_id personId,t.name,t.unit_id unitId,t.sex,t.unit_name unitName,t.id_no idNo,
+                        t.barthday,t.marital_status maritalStatus,t.country,t.area,t.nation,t.phone_number phoneNumber,t.source,t.job,t.exam_class examClass,
+                        t.person_level personLevel,t.department,t.charge_type chargeType,t.person_charge personCharge,'' resultStatus,'' groupId,
+                        a.before_date beforeDate, a.patient_id patientId
+        from HEALTHCHECKUP.Hc_Person_Visit_Info a , HEALTHCHECKUP.HC_PERSON_INFO t ,hc_person_appreg_items c
+        where a.hospital_id = t.hospital_id
+          and a.person_id = t.person_id
+          and a.person_id = c.person_id
+          and a.person_visit_id = c.person_visit_id
+          and a.hospital_id= #{hospitalId, jdbcType=VARCHAR} and a.unit_id= #{unitId, jdbcType=VARCHAR}
+          and c.bill_indicator = 0
+        <if test="beginDate != '' and beginDate != null">
+            and a.before_date &gt;= to_date(#{beginDate},'yyyy-mm-dd hh24:mi:ss')
+        </if>
+        <if test="endDate != '' and endDate != null">
+            and a.before_date &lt;= to_date(#{endDate},'yyyy-mm-dd hh24:mi:ss')
+        </if>
+    </select>
+</mapper>

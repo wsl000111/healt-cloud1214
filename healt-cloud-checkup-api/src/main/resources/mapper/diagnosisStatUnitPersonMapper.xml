@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.mapper.appointmentReg.DiagnosisStatUnitPersonMapper">
+
+    <select id="findAbnormalResults1" parameterType="com.healt.cloud.checkup.queryReport.vo.AbnormalResultsPersonDictVo" resultType="com.healt.cloud.checkup.queryReport.vo.AbnormalResults1Vo">
+        select rownum xh,
+               c.rec_content recContent,
+               b.sex,
+               a.person_id personId,
+               b.name,
+               a.age,
+               a.person_visit_id personVisitId,
+               b.MOBILE MOBILE
+        from hc_person_visit_info a, hc_person_info b, HC_DIAGNOSIS_RECORD c
+        where a.hospital_id = b.hospital_id
+          and a.person_id = b.person_id
+          and a.hospital_id = c.hospital_id
+          and a.person_id = c.person_id
+          and a.person_visit_id = c.person_visit_id
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.unit_id = #{unitId, jdbcType=VARCHAR}
+          and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+        <if test='recClass == "1" or recClass == "2"'>
+            and c.REC_CLASS = #{recClass, jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <select id="findAbnormalResults2" parameterType="com.healt.cloud.checkup.queryReport.vo.AbnormalResultsPersonDictVo" resultType="com.healt.cloud.checkup.queryReport.vo.AbnormalResults2Vo">
+        select rownum xh,
+               sex,
+               person_id personId,
+               name,
+               age,
+               person_visit_id personVisitId,
+               MOBILE phoneNumber,
+               content
+        from (select distinct b.sex,
+                     a.person_id,
+                     b.name,
+                     a.age,
+                     a.person_visit_id,
+                     b.MOBILE,
+                     '' content
+        from hc_person_visit_info a,
+        hc_person_info       b,
+        HC_DIAGNOSIS_RECORD  c
+        where a.hospital_id = b.hospital_id
+        and a.person_id = b.person_id
+        and a.hospital_id = c.hospital_id
+        and a.person_id = c.person_id
+        and a.person_visit_id = c.person_visit_id
+        and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+        <if test='recClass != null'>
+            and c.REC_CLASS = #{recClass, jdbcType=VARCHAR}
+        </if>
+        ) aa
+    </select>
+
+    <select id="findAbnormalResults1ByTime" parameterType="com.healt.cloud.checkup.queryReport.vo.AbnormalResultsPersonDictVo" resultType="com.healt.cloud.checkup.queryReport.vo.AbnormalResults1Vo">
+        select rownum xh,
+        c.rec_content recContent,
+        b.sex,
+        a.person_id personId,
+        b.name,
+        a.age,
+        a.person_visit_id personVisitId,
+        b.MOBILE MOBILE
+        from hc_person_visit_info a, hc_person_info b, HC_DIAGNOSIS_RECORD c
+        where a.hospital_id = b.hospital_id
+        and a.person_id = b.person_id
+        and a.hospital_id = c.hospital_id
+        and a.person_id = c.person_id
+        and a.person_visit_id = c.person_visit_id
+        and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+        <if test='recClass == "1" or recClass == "2"'>
+            and c.REC_CLASS = #{recClass, jdbcType=VARCHAR}
+        </if>
+        <if test="beginDate != '' and beginDate != null">
+            and a.final_date &gt;= to_date(#{beginDate},'yyyy-mm-dd hh24:mi:ss')
+        </if>
+        <if test="endDate != '' and endDate != null">
+            and a.final_date &lt;= to_date(#{endDate},'yyyy-mm-dd hh24:mi:ss')
+        </if>
+    </select>
+
+    <select id="findAbnormalResults2ByTime" parameterType="com.healt.cloud.checkup.queryReport.vo.AbnormalResultsPersonDictVo" resultType="com.healt.cloud.checkup.queryReport.vo.AbnormalResults2Vo">
+        select rownum xh,
+        sex,
+        person_id personId,
+        name,
+        age,
+        person_visit_id personVisitId,
+        MOBILE phoneNumber,
+        content
+        from (select distinct b.sex,
+        a.person_id,
+        b.name,
+        a.age,
+        a.person_visit_id,
+        b.MOBILE,
+        '' content
+        from hc_person_visit_info a,
+        hc_person_info       b,
+        HC_DIAGNOSIS_RECORD  c
+        where a.hospital_id = b.hospital_id
+        and a.person_id = b.person_id
+        and a.hospital_id = c.hospital_id
+        and a.person_id = c.person_id
+        and a.person_visit_id = c.person_visit_id
+        and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+        <if test='recClass != null'>
+            and c.REC_CLASS = #{recClass, jdbcType=VARCHAR}
+        </if>
+        <if test="beginDate != '' and beginDate != null">
+            and a.final_date &gt;= to_date(#{beginDate},'yyyy-mm-dd hh24:mi:ss')
+        </if>
+        <if test="endDate != '' and endDate != null">
+            and a.final_date &lt;= to_date(#{endDate},'yyyy-mm-dd hh24:mi:ss')
+        </if>
+        ) aa
+    </select>
+
+</mapper>

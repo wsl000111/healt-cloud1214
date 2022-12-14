@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.appointmentReg.mapper.PersonSettleReturnMapper">
+
+    <select id="findSettleReturnItemList" resultType="com.healt.cloud.checkup.vo.settlement.SettleReturnItemListVo">
+        select '0' returnFlag,a.hospital_id hospitalId,a.person_id personId,a.person_visit_id personVisitId,a.unit_id unitId,a.unit_visit_id unitVisitId,
+               a.item_pack_code itemPackCode,a.item_pack_name itemPackName,a.num,a.add_item addItem,a.set_code setCode,a.costs,a.payments,a.discount_rate discountRate,
+               d.item_no itemNo,b.INPUT_CODE inputCode,b.IS_DISCOUNT isDiscount,b.PACK_CLASS packClass,c.CLASS_NAME className,d.finished_sign finishedSign
+        from hc_settle_detail a,v_hc_item_pack_dict b,hc_person_appreg_items d,v_item_pack_class_dict c
+        where a.hospital_id = b.HOSPITAL_ID and a.item_pack_code = b.ITEM_PACK_CODE
+          and b.hospital_id = c.hospital_id and b.PACK_CLASS = c.CLASS_CODE
+          and a.person_id = d.person_id and a.person_visit_id = d.person_visit_id
+          and a.hospital_id = d.hospital_id and a.item_pack_code = d.item_pack_code
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR} and a.rcpt_no = #{rcptNo, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findSettleReturnPayList" resultType="com.healt.cloud.checkup.vo.settlement.SettleReturnPayListVo">
+        select '0' returnFlag, hospital_id hospitalId, rcpt_no rcptNo, item_no itemNo, payment_money paymentMoney, card_no cardNo, payment_type paymentType
+        from healthcheckup.hc_rcpt_pay
+        where rcpt_no = #{rcptNo, jdbcType=VARCHAR} and hospital_id= #{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findHcSettleMaster" resultType="com.healt.cloud.checkup.entity.HcSettleMaster">
+        select HOSPITAL_ID hospitalId,UNIT_ID unitId,UNIT_VISIT_ID unitVisitId,RCPT_NO rcptNo,
+        PERSON_ID personId,PERSON_VISIT_ID personVisitId,SETTLING_DATE settlingDate,SETTLE_TYPE settleType,
+        JION_FLAG jionFlag,costs,payments,WIPING_ZERO wipingZero,DISCOUNT_RATE discountRate,
+        DISCOUNT_MONEY discountMoney,USER_ID userId,USER_NAME userName,INVOICE_NO invoiceNo,
+        RETURN_REPT_NO returnReptNo,ACCT_NO acctNo,FINISH_FLAG finishFlag,FINISH_DATE finishDate,
+        FINISH_USER_CODE finishUserCode
+        from hc_settle_master
+        where rcpt_no = #{rcptNo, jdbcType=VARCHAR} and hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findSettleReturnPersonInfo" resultType="com.healt.cloud.checkup.vo.settlement.SettleReturnPersonInfoVo">
+        select a.HOSPITAL_ID hospitalId,a.PERSON_ID personId,a.PERSON_VISIT_ID personVisitId,a.UNIT_ID unitId,a.UNIT_VISIT_ID unitVisitId,
+               a.UNIT_NAME unitName,a.APPOINTS_DATE appointsDate,a.APPOINTS_END_DATE appointsEndDate,a.FINISHED_SIGN finishedSign,
+               a.FINISHED_DATE finishedDate,a.FINISHED_ID finishedId,a.FINISHED_NAME finishedName,a.GROUP_ID groupId,a.department,
+               a.PERSON_CHARGE personCharge,a.age,a.job,a.source,a.EXAM_CLASS examClass,a.PERSON_LEVEL personLevel,a.RESULT_STATUS resultStatus,
+               a.discount,a.BUILD_DATE buildDate,a.USER_ID userId,a.USER_NAME userName,a.BEFORE_SIGN beforeSign,a.BEFORE_DATE beforeDate,
+               a.BEFORE_ID beforeId,a.BEFORE_NAME beforeName,a.BLOOD_SIGN bloodSign,a.BLOOD_DATE bloodDate,a.BLOOD_ID bloodId,
+               a.BLOOD_NAME bloodName,a.PRINT_SIGN printSign,a.PRINT_DATE printDate,a.PRINT_ID printId,a.PRINT_NAME printName,
+               a.PRINT_TYPE printType,a.RETRIEVE_SIGN retrieveSign,a.RETRIEVE_DATE retrieveDate,a.RETRIEVE_ID retrieveId,a.RETRIEVE_NAME retrieveName,
+               a.FINAL_DOCOTER finalDocoter,a.FINAL_DATE finalDate,a.FINAL_NAME finalName,a.FIRST_DOCOTER firstDocoter,a.FIRST_DATE firstDate,
+               a.FIRST_NAME firstName,a.IMAGE_PATH imagePath,a.CARD_NO cardNo,a.BEFORE_PRINT_NO beforePrintNo,a.FIRST_FLAG firstFlag,
+               a.REPAIR_EXAM_FLAG repairExamFlag,a.REPAIR_EXAM_DATE repairExamDate,a.REPAIR_EXAM_USER repairExamUser,a.GET_REPORT_TYPE getReportType,
+               a.MAILING_ADDRESS mailingAddress,
+               b.name,b.sex,b.id_no idNo,b.input_code inputCode,b.marital_status maritalStatus,b.country,b.nation,
+               b.area,b.address,b.pwd,b.mobile,b.email,to_char(b.barthday,'yyyy-mm-dd') barthday,b.identity
+        from hc_person_visit_info a,hc_person_info b
+        where a.person_id = b.person_id and a.hospital_id = b.hospital_id
+          and a.person_id = #{personId, jdbcType=VARCHAR} and a.person_visit_id = #{personVisitId, jdbcType=VARCHAR}
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+    <update id="updateHcSettleMaster">
+        update healthcheckup.hc_settle_master set return_rept_no = #{returnReptNo, jdbcType=VARCHAR},settle_type = '退费'
+        where hospital_id = #{hospitalId, jdbcType=VARCHAR} and rcpt_no = #{rcptNo, jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateHcSettleDetail">
+        update healthcheckup.hc_settle_detail set return_rept_no = #{returnReptNo, jdbcType=VARCHAR}
+        where hospital_id = #{hospitalId, jdbcType=VARCHAR} and rcpt_no = #{rcptNo, jdbcType=VARCHAR}
+    </update>
+
+    <update id="updatePersonAppregItems">
+        update healthcheckup.hc_person_appreg_items set bill_indicator = '0'
+        where hospital_id = #{hospitalId, jdbcType=VARCHAR} and person_id = #{personId, jdbcType=VARCHAR} and person_visit_id = #{personVisitId, jdbcType=INTEGER}
+        and ITEM_PACK_CODE= #{itemPackCode, jdbcType=VARCHAR}
+        and item_no= #{itemNo, jdbcType=INTEGER}
+    </update>
+
+    <update id="updateNextChargeNoTwo">
+        update healthcheckup.hospital_dict set next_charge_no = nvl(next_charge_no,0) + 2
+        where hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </update>
+
+    <select id="findSettleReturnItemListNew" resultType="com.healt.cloud.checkup.vo.settlement.SettleReturnItemListVo">
+        select '0' returnFlag,d.hospital_id hospitalId,d.person_id personId,d.person_visit_id personVisitId,d.unit_id unitId,d.unit_visit_id unitVisitId,
+               d.item_pack_code itemPackCode,d.item_pack_name itemPackName,d.num,d.add_item addItem,d.set_code setCode,d.costs,d.order_id orderId,
+               (select sum(cd.CHARGES) from COST_DETAIL_BILLING cd
+               where cd.HOSPITAL_ID = a.hospital_id
+                 and cd.PERSON_ID = a.person_id
+                 and cd.PERSON_VISIT_ID = a.person_visit_id
+                 and cd.REKID = a.rekid and cd.item_pack_code = d.item_pack_code ) as  payments,
+               1 discountRate,d.item_no itemNo,b.INPUT_CODE inputCode,b.IS_DISCOUNT isDiscount,b.PACK_CLASS packClass,c.CLASS_NAME className,d.finished_sign finishedSign
+        from COST_CHARGE_STATE_MASTER a,v_hc_item_pack_dict b,hc_person_appreg_items d,v_item_pack_class_dict c
+        where a.hospital_id = d.hospital_id
+          and a.person_id = d.person_id
+          and a.person_visit_id = d.person_visit_id
+          and b.hospital_id = c.hospital_id
+          and b.PACK_CLASS = c.CLASS_CODE
+          and b.ITEM_PACK_CODE = d.item_pack_code
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR} and a.rekid = #{rcptNo, jdbcType=VARCHAR}
+    </select>
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.triage.mapper.CounselRequestInfoMapper">
+
+    <select id="findCounselRequestInfo" parameterType="com.healt.cloud.checkup.triage.vo.CounselRequestInfoDictVo" resultType="com.healt.cloud.checkup.entity.HcCounselRequestInfo">
+        select SERIAL_NO serialNo,COUNSEL_NO counselNo,REQUEST_TYPE requestType,REQUEST_BODY requestBody,REQUEST_TIME requestTime,DOCTOR_NO doctorNo,
+               MESSAGE_DIRECTION messageDirection,QUEUE_SEQ queueSeq,PERSON_ID personId,name,PERSON_VISIT_ID personVisitId,QUEUE_DATE queueDate,QUEUE_NO queueNo,
+               ROOM_NAME roomName,ROOM_CODE roomCode,HOSPITAL_ID hospitalId
+        from HEALTHCHECKUP.HC_COUNSEL_REQUEST_INFO
+        where hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        <if test="counselNo != '' and counselNo != null">
+            and counsel_no = #{counselNo, jdbcType=VARCHAR}
+        </if>
+        <if test="queueDate != '' and queueDate != null">
+            and queue_date &gt;= to_date(concat(#{queueDate, jdbcType=VARCHAR},' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+        </if>
+    </select>
+
+    <update id="updateQueueNo">
+        update HC_QUEUE_NO a
+        set a.HC_QUEUE_CODE = #{hcQueueCode, jdbcType=VARCHAR}
+        where a.HOSPITAL_ID = #{hospitalId, jdbcType=VARCHAR}
+          and a.QUEUE_NO = #{queueNo, jdbcType=VARCHAR}
+          and a.ROOM_CODE = #{roomCode, jdbcType=VARCHAR}
+          and a.QUEUE_DATE = to_date(#{queueDate}, 'yyyy-mm-dd hh24:mi:ss')
+    </update>
+
+    <update id="updateRoomDict">
+        update HC_ROOM_DICT a
+        set a.SPPID = #{sppid, jdbcType=VARCHAR},
+            a.SPPIDXH = #{sppidxh, jdbcType=VARCHAR}
+        where a.HOSPITAL_ID = #{hospitalId, jdbcType=VARCHAR}
+          and a.ROOM_CODE = #{roomCode, jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateIntervalRecord">
+        update HC_INTERVAL_RECORD a
+        set a.QUEUE_INDICATOR = #{queueIndicator, jdbcType=VARCHAR},
+            a.END_TIME = to_date(#{endTime}, 'yyyy-mm-dd hh24:mi:ss')
+        where a.HOSPITAL_ID = #{hospitalId, jdbcType=VARCHAR}
+          and a.QUEUE_NO = #{queueNo, jdbcType=VARCHAR}
+          and a.ROOM_CODE = #{roomCode, jdbcType=VARCHAR}
+          and a.PERSON_ID = #{personId, jdbcType=VARCHAR}
+          and a.PERSON_VISIT_ID = #{personVisitId, jdbcType=VARCHAR}
+    </update>
+</mapper>

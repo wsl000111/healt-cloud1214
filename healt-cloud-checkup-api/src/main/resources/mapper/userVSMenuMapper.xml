@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.mapper.appointmentReg.UserVSMenuMapper">
+
+    <select id="findAlreadyMenuList" resultType="com.healt.cloud.checkup.sysDict.vo.MenuListVo">
+        select b.menu_code menuCode, b.display_text displayText, b.parent_menu_code parentMenuCode
+        from healthcheckup.user_right_models a, main_menu b
+        where b.isvisible = 1
+          and a.menu_code = b.menu_code
+          and a.hospital_id = b.hospital_id
+          AND a.user_id = #{userId, jdbcType=VARCHAR}
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        order by b.serial_no
+    </select>
+
+    <select id="findUnallocatedMenuList" resultType="com.healt.cloud.checkup.sysDict.vo.MenuListVo">
+        select menu_code menuCode, display_text displayText, parent_menu_code parentMenuCode
+        from (select menu_code, display_text, parent_menu_code, serial_no
+              from main_menu
+              where isvisible = 1
+                and hospital_id = #{hospitalId, jdbcType=VARCHAR}
+                  minus
+              select b.menu_code, b.display_text, b.parent_menu_code, b.serial_no
+              from healthcheckup.user_right_models a, main_menu b
+              where b.isvisible = 1
+                and a.menu_code = b.menu_code
+                and a.hospital_id = b.hospital_id
+                AND a.user_id = #{userId, jdbcType=VARCHAR}
+                and a.hospital_id = #{hospitalId, jdbcType=VARCHAR})
+        order by serial_no
+    </select>
+
+</mapper>

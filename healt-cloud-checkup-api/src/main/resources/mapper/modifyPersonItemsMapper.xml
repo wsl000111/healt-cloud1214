@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.appointmentReg.mapper.ModifyPersonItemsMapper">
+
+    <select id="findModifySelectedItems" resultType="com.healt.cloud.checkup.vo.appointmentReg.modifyPersonItems.ModifySelectedItemsVo">
+        select hospital_id hospitalId, person_id personId, person_visit_id personVisitId, unit_id unitId, unit_visit_id unitVisitId,
+        item_pack_code itemPackCode, item_pack_name itemPackName, register_date registerDate, register, register_name registerName,
+        add_item addItem, chart_code chartCode, apply_no applyNo, submit_apply submitApply, apply_no_print applyNoPrint, costs, charges,
+        bill_indicator billIndicator, finished_sign finishedSign, num, set_code setCode,'3' IMG,
+        '' specimanName, '0' drawBlood,'' testTubeCode,'' applyClass,dept_id deptId,dept_name deptName, item_no itemNo
+        from healthcheckup.hc_person_appreg_items
+        where hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        and person_id= #{personId, jdbcType=VARCHAR}
+        and person_visit_id = #{personVisitId, jdbcType=INTEGER}
+    </select>
+
+    <select id="findSelectedPackSetVo" resultType="com.healt.cloud.checkup.vo.appointmentReg.modifyPersonItems.SelectedPackSetVo">
+        select a.set_code setCode, set_name setName, sex,
+        to_number(decode(sex, '男', 1, '女', 0, 2)) img,
+        a.input_code inputCode
+        from healthcheckup.hc_pack_set_dict a,
+        ( select set_code,hospital_id
+        from hc_person_appreg_items
+        where person_id = #{personId, jdbcType=VARCHAR}
+        and person_visit_id = #{personVisitId, jdbcType=INTEGER}
+        and hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        group by set_code,hospital_id) b
+        where a.hospital_id = b.hospital_id and a.set_code = b.set_code
+        and effective_flag = '1' and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        order by item_no
+    </select>
+
+    <select id="findPublicDict" resultType="com.healt.cloud.checkup.vo.appointmentReg.modifyPersonItems.PublicDictVo">
+        select name,input_code inputCode from common_dict
+        where dict_type = #{dictType, jdbcType=VARCHAR} and use_flag = '1'
+        order by sort_no
+    </select>
+
+    <select id="findUnitPersons" resultType="com.healt.cloud.checkup.vo.appointmentReg.modifyPersonItems.UnitPersonsVo">
+        select a.person_id personId,a.name,a.sex,a.barthday,b.person_level personLevel,
+        b.marital_status maritalStatus,b.person_visit_id personVisitId,b.unit_id unitId,b.unit_visit_id unitVisitId,
+        b.unit_name unitName,b.appoints_date appointsDate,b.result_status resultStatus,b.person_charge personCharge,
+        a.input_code inputCode,b.EXAM_CLASS examClass
+        from hc_person_info a,hc_person_visit_info b
+        where a.person_id = b.person_id and a.hospital_id = b.hospital_id
+        and b.result_status != 'F'
+        and b.unit_id = #{unitId, jdbcType=VARCHAR}
+        and b.unit_visit_id = #{unitVisitId, jdbcType=INTEGER}
+        and b.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findModifyPersonVisitInfoVo" resultType="com.healt.cloud.checkup.vo.appointmentReg.modifyPersonItems.ModifyPersonVisitInfoVo">
+        select person_id personId,person_visit_id personVisitId,nvl(a.finished_sign,'0') finishedSign,result_status resultStatus,before_sign beforeSign from hc_person_visit_info a
+        where person_id =#{personId, jdbcType=VARCHAR} and hospital_id = #{hospitalId, jdbcType=VARCHAR} and
+        person_visit_id = (select max(person_visit_id) from hc_person_visit_info where person_id = #{personId, jdbcType=VARCHAR} and hospital_id=#{hospitalId, jdbcType=VARCHAR})
+    </select>
+
+    <select id="findModifyPersonVisitInfoVoTwo" resultType="com.healt.cloud.checkup.vo.appointmentReg.modifyPersonItems.ModifyPersonVisitInfoVo">
+        select person_id personId,person_visit_id personVisitId,nvl(a.finished_sign,'0') finishedSign,result_status resultStatus,before_sign beforeSign from hc_person_visit_info a
+        where person_id =#{personId, jdbcType=VARCHAR} and hospital_id = #{hospitalId, jdbcType=VARCHAR} and person_visit_id = #{personVisitId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findItemClass" resultType="java.lang.String">
+        select c.class_name
+        from v_hc_item_pack_dict a,depart_dict b, depart_class c
+        where a.hospital_id = b.hospital_id and a.hc_dept_code = b.dept_id
+        and b.hospital_id = c.hospital_id and b.class_id = c.class_id
+        and a.item_pack_code = #{itemPackCode, jdbcType=VARCHAR}
+        and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findApplySendto" parameterType="java.lang.String" resultType="java.lang.String">
+      select a.APPLY_SENDTO applySendto
+      from v_hc_item_pack_dict a
+      where a.item_pack_code = #{itemPackCode, jdbcType=VARCHAR}
+    </select>
+
+</mapper>

@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.mapper.appointmentReg.LabResultBrowseMapper">
+
+    <select id="findHisConnStr" resultType="com.healt.cloud.checkup.entity.InterfaceSource">
+        select SOURCE_ID sourceId,HOSPITAL_ID hospitalId,SOURCE_NAME sourceName,SERVICE_NAME serviceName,
+               USER_NAME userName,password,note,ORDER_DEPT orderDept
+        from healthcheckup.interface_source
+        where hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findPersonListTotal" resultType="com.healt.cloud.checkup.physicalExa.vo.PersonListVo">
+        select a.hospital_id hospitalId,a.person_id personId,a.name,a.unit_id unitId,a.sex,b.unit_name unitName,a.PHONE_NUMBER phoneNumber,b.PERSON_VISIT_ID personVisitId,
+               a.id_no idNo,a.barthday,b.appoints_date appointsDate,b.finished_sign finishedSign,b.finished_date finishedDate,b.finished_id finishedId,b.finished_name finishedName,
+               b.group_id groupId,b.department,b.person_charge personCharge,b.age,b.exam_class examClass,b.result_status resultStatus,b.discount,
+               b.build_date buildDate,b.unit_id userId,b.user_name userName,b.before_sign beforeSign,b.before_date beforeDate,b.before_id beforeId,b.before_name beforeName,b.blood_date bloodDate,b.blood_id bloodId,b.blood_name bloodName,b.blood_sign bloodSign,
+               b.print_sign printSign,b.print_date printDate,b.print_id printId,b.print_name printName,b.print_type printType,b.retrieve_sign retrieveSign,b.retrieve_date retrieveDate,b.retrieve_id retrieveId,b.retrieve_name retrieveName,b.final_docoter finalDocoter,b.final_name finalName,b.FINAL_DATE finalDate,
+               b.first_docoter firstDocoter,b.first_date firstDate,b.first_name firstName
+        from hc_person_info a , hc_person_visit_info b
+        where a.hospital_id = b.hospital_id and a.person_id = b.person_id
+          and b.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        <if test="unitId != '' and unitId != null">
+            and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        </if>
+        <if test="unitVisitId != '' and unitVisitId != null">
+            and b.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+        </if>
+        <if test="personId != '' and personId != null">
+            and b.person_id = #{personId, jdbcType=VARCHAR}
+        </if>
+        <if test="personVisitId != '' and personVisitId != null">
+            and b.person_visit_id = #{personVisitId, jdbcType=VARCHAR}
+        </if>
+        <if test="name != '' and name != null">
+            and a.name = #{name, jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <select id="findPersonList" resultType="com.healt.cloud.checkup.physicalExa.vo.PersonListVo">
+        SELECT *
+        FROM (
+        SELECT TMP.*, ROWNUM ROW_ID
+        FROM (
+        select a.hospital_id hospitalId,a.person_id personId,a.name,a.unit_id unitId,a.sex,b.unit_name unitName,a.PHONE_NUMBER phoneNumber,b.PERSON_VISIT_ID personVisitId,
+        a.id_no idNo,a.barthday,b.appoints_date appointsDate,b.finished_sign finishedSign,b.finished_date finishedDate,b.finished_id finishedId,b.finished_name finishedName,
+        b.group_id groupId,b.department,b.person_charge personCharge,b.age,b.exam_class examClass,b.result_status resultStatus,b.discount,
+        b.build_date buildDate,b.unit_id userId,b.user_name userName,b.before_sign beforeSign,b.before_date beforeDate,b.before_id beforeId,b.before_name beforeName,b.blood_date bloodDate,b.blood_id bloodId,b.blood_name bloodName,b.blood_sign bloodSign,
+        b.print_sign printSign,b.print_date printDate,b.print_id printId,b.print_name printName,b.print_type printType,b.retrieve_sign retrieveSign,b.retrieve_date retrieveDate,b.retrieve_id retrieveId,b.retrieve_name retrieveName,b.final_docoter finalDocoter,b.final_name finalName,b.FINAL_DATE finalDate,
+        b.first_docoter firstDocoter,b.first_date firstDate,b.first_name firstName
+        from hc_person_info a , hc_person_visit_info b
+        where a.hospital_id = b.hospital_id and a.person_id = b.person_id
+        and b.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        <if test="unitId != '' and unitId != null">
+            and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        </if>
+        <if test="unitVisitId != '' and unitVisitId != null">
+            and b.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+        </if>
+        <if test="personId != '' and personId != null">
+            and a.person_id = #{personId, jdbcType=VARCHAR}
+        </if>
+        <if test="personVisitId != '' and personVisitId != null">
+            and b.person_visit_id = #{personVisitId, jdbcType=VARCHAR}
+        </if>
+        <if test="name != '' and name != null">
+            and a.name = #{name, jdbcType=VARCHAR}
+        </if>
+        ) TMP
+        WHERE ROWNUM &lt;= ${pageNum*pageSize})
+        WHERE ROW_ID &gt; ${(pageNum-1)*pageSize}
+    </select>
+
+    <select id="findLabTestMaster" resultType="com.healt.cloud.checkup.physicalExa.vo.LabTestMasterVo">
+        select (select WMSYS.WM_CONCAT(d.item_name)
+                from HEALTHCHECKUP.v_lab_test_items d
+                where d.test_no = a.test_no) as itemName,
+               a.specimen,
+               a.REQUESTED_DATE_TIME requestedDateTime,
+               a.ORDERING_PROVIDER orderingProvider,
+               a.RESULT_STATUS resultStatus,
+               a.RESULTS_RPT_DATE_TIME resultsRptDateTime,
+               a.transcriptionist,
+               a.TEST_NO testNo,
+               a.name name,
+               a.verified_by verifiedBy
+        from HEALTHCHECKUP.V_LAB_TEST_MASTER a
+        where a.test_no in
+              (select distinct apply_no
+               from hc_person_appreg_items b, HC_ITEM_PACK_DICT c
+               where b.item_pack_code = c.item_pack_code
+                 and c.test_tube_code is not null
+                 and b.apply_no is not null
+                 and b.PERSON_ID || '_' || b.person_visit_id in (${txzbl}))
+    </select>
+
+    <select id="findResultHandle" resultType="java.lang.String">
+        select RESULT_HANDLE resultHandle
+        from healthcheckup.v_hc_item_pack_dict
+        where hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and item_pack_code = #{itemPackCode, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findUnitVisit" resultType="com.healt.cloud.checkup.physicalExa.vo.UnitVisitVo">
+        select unit_id unitId, unit_visit_id unitVisitId
+        from hc_person_visit_info
+        where hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and person_id = #{personId, jdbcType=VARCHAR}
+          and person_visit_id = #{personVisitId, jdbcType=INTEGER}
+    </select>
+
+    <select id="findDoctorNote" resultType="com.healt.cloud.checkup.physicalExa.vo.DoctorNoteVo">
+        Select VERIFIED_BY verifiedBy,NOTES_FOR_SPCM notesForSpcm
+        from HEALTHCHECKUP.v_Lab_Test_Master
+        where test_no = #{testNo, jdbcType=VARCHAR}
+    </select>
+
+    <update id="updateHcPersonVisitInfo">
+        Update hc_person_visit_info
+        Set result_status =
+                (Select case count(*)
+                            when 0 then
+                                '2'
+                            else
+                                '1'
+                            end
+                 From hc_person_appreg_items
+                 where person_id = #{personId, jdbcType=VARCHAR}
+                   And person_visit_id = #{personVisitId, jdbcType=INTEGER}
+                   And finished_sign = '未完成'
+                   and not exists (select v_hc_item_pack_dict.ITEM_PACK_CODE
+                                   from v_hc_item_pack_dict
+                                   where v_hc_item_pack_dict.ITEM_PACK_CODE =
+                                         hc_person_appreg_items.item_pack_code
+                                     and auto_finished = '1'))
+        where person_id = #{personId, jdbcType=VARCHAR}
+          And person_visit_id = #{personVisitId, jdbcType=INTEGER}
+    </update>
+
+    <select id="findLabResult" resultType="com.healt.cloud.checkup.physicalExa.vo.LabResultVo">
+        SELECT LAB_RESULT.REPORT_ITEM_NAME reportItemName,
+               LAB_RESULT.REPORT_ITEM_CODE reportItemCode,
+               LAB_RESULT.RESULT,
+               LAB_RESULT.UNITS,
+               LAB_RESULT.ABNORMAL_INDICATOR abnormalIndicator,
+               LAB_RESULT.INSTRUMENT_ID instrumentId,
+               LAB_RESULT.RESULT_DATE_TIME resultDateTime,
+               LAB_RESULT.PRINT_CONTEXT printContext,
+               LAB_RESULT.TEST_NO testNo
+        FROM HCLAB_RESULT LAB_RESULT,
+             hclab_test_master LAB_TEST_MASTER
+        WHERE
+            LAB_RESULT.TEST_NO = LAB_TEST_MASTER.TEST_NO  and
+            LAB_RESULT.TEST_NO in ( #{testNo, jdbcType=VARCHAR} )  AND LAB_TEST_MASTER.RESULT_STATUS = '4'
+    </select>
+
+    <select id="findPackVsItems" resultType="com.healt.cloud.checkup.vo.member.PackVsItemsVo">
+        SELECT hc_pack_vs_item_dict.item_pack_code itemPackCode,
+               hc_pack_vs_item_dict.item_code itemCode,
+               hc_pack_vs_item_dict.item_no itemNo,
+               v_hc_item_dict.item_name itemName,
+               v_hc_item_dict.hc_dept_code hcDeptCode,
+               v_hc_item_dict.input_type inputType,
+               v_hc_item_dict.result_type resultType,
+               v_hc_item_dict.unit,
+               v_hc_item_dict.top_limit topLimit,
+               v_hc_item_dict.bottom_limit bottomLimit,
+               v_hc_item_dict.sex,
+               v_hc_item_dict.fmtop_limit fmtopLimit,
+               v_hc_item_dict.fmbottom_limit fmbottomLimit,
+               v_hc_item_dict.normal_value normalValue
+        FROM hc_pack_vs_item_dict, v_hc_item_dict
+        WHERE hc_pack_vs_item_dict.hospital_id = v_hc_item_dict.hospital_id
+          and hc_pack_vs_item_dict.item_code = v_hc_item_dict.item_code
+          and hc_pack_vs_item_dict.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and hc_pack_vs_item_dict.item_pack_code = #{itemPackCode, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findItemVsExternal" resultType="com.healt.cloud.checkup.physicalExa.vo.ItemVsExternalVo">
+        select hc_item_vs_external.hc_item_code hcItemCode,
+               hc_item_vs_external.item_no itemNo,
+               hc_item_vs_external.ext_code extCode
+        from hc_item_vs_external
+        where hc_item_vs_external.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and hc_item_vs_external.hc_item_code = #{hcItemCode, jdbcType=VARCHAR}
+        order by hc_item_vs_external.item_no asc
+    </select>
+
+    <select id="findLabResult1" resultType="com.healt.cloud.checkup.physicalExa.vo.LabResult1Vo">
+        SELECT HEALTHCHECKUP.V_LAB_RESULT.REPORT_ITEM_NAME reportItemName,
+               HEALTHCHECKUP.V_LAB_RESULT.REPORT_ITEM_CODE reportItemCode,
+               HEALTHCHECKUP.V_LAB_RESULT.RESULT,
+               HEALTHCHECKUP.V_LAB_RESULT.UNITS,
+               HEALTHCHECKUP.V_LAB_RESULT.ABNORMAL_INDICATOR abnormalIndicator,
+               HEALTHCHECKUP.V_LAB_RESULT.INSTRUMENT_ID instrumentId,
+               HEALTHCHECKUP.V_LAB_RESULT.RESULT_DATE_TIME resultDateTime,
+               HEALTHCHECKUP.V_LAB_RESULT.PRINT_CONTEXT printContext,
+               HEALTHCHECKUP.V_LAB_RESULT.TEST_NO testNo
+        FROM HEALTHCHECKUP.V_LAB_RESULT,
+             HEALTHCHECKUP.V_LAB_TEST_MASTER
+        WHERE
+                HEALTHCHECKUP.V_LAB_RESULT.TEST_NO = HEALTHCHECKUP.V_LAB_TEST_MASTER.TEST_NO  and
+            HEALTHCHECKUP.V_LAB_RESULT.TEST_NO in ( #{testNo, jdbcType=VARCHAR} )  AND
+            HEALTHCHECKUP.V_LAB_TEST_MASTER.RESULT_STATUS = '4'
+    </select>
+
+    <select id="findHcResult" resultType="com.healt.cloud.checkup.physicalExa.vo.HcResultVo">
+        SELECT HC_RESULT_DICT.PERSON_ID personId,
+               HC_RESULT_DICT.PERSON_VISIT_ID personVisitId,
+               HC_RESULT_DICT.UNIT_ID unitId,
+               HC_RESULT_DICT.UNIT_VISIT_ID unitVisitId,
+               HC_RESULT_DICT.DEPT_ID deptId,
+               HC_RESULT_DICT.DEPT_NAME deptName,
+               HC_RESULT_DICT.ITEM_ASSEM_CODE itemAssemCode,
+               HC_RESULT_DICT.ITEM_ASSEM_NAME itemAssemName,
+               HC_RESULT_DICT.HC_ITEM_CODE hcItemCode,
+               HC_RESULT_DICT.HC_ITEM_NAME hcItemName,
+               HC_RESULT_DICT.ASSEM_SORT_NO assemSortNo,
+               HC_RESULT_DICT.ITEM_ORDER_NO itemOrderNo,
+               HC_RESULT_DICT.SHOW_TYPE showType,
+               HC_RESULT_DICT.RESULT_TYPE resultType,
+               HC_RESULT_DICT.KEY_NAME keyName,
+               HC_RESULT_DICT.HC_RESULT hcResult,
+               HC_RESULT_DICT.RESULT_DECIMAL resultDecimal,
+               HC_RESULT_DICT.RESULT_DATE resultDate,
+               HC_RESULT_DICT.UNIT,
+               HC_RESULT_DICT.PRINT_CONTEXT printContext,
+               HC_RESULT_DICT.ABNORMAL_INDICATOR abnormalIndicator,
+               HC_RESULT_DICT.HC_RESULT_DATE hcResultDate
+        FROM HC_RESULT_DICT
+        WHERE
+        <if test="hcDeptCode != '' and hcDeptCode != null">
+            exists ( select a.ITEM_PACK_CODE from HEALTHCHECKUP.V_HC_ITEM_PACK_DICT a
+                where a.HOSPITAL_ID=HC_RESULT_DICT.hospital_id
+                and a.ITEM_PACK_CODE=HC_RESULT_DICT.Item_Assem_Code
+                and a.ITEM_PACK_NAME=HC_RESULT_DICT.ITEM_ASSEM_NAME
+                and a.HC_DEPT_CODE= #{hcDeptCode, jdbcType=VARCHAR} )
+                and HC_RESULT_DICT.hospital_id= #{hospitalId, jdbcType=VARCHAR}
+                and ( HC_RESULT_DICT.Person_Id = #{personId, jdbcType=VARCHAR} )
+                and ( HC_RESULT_DICT.Person_Visit_Id = #{personVisitId, jdbcType=VARCHAR} )
+        </if>
+        <if test="hcDeptCode == '' or hcDeptCode == null">
+            HC_RESULT_DICT.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+                and ( HC_RESULT_DICT.Person_Id = #{personId, jdbcType=VARCHAR} )
+                and ( HC_RESULT_DICT.Person_Visit_Id = #{personVisitId, jdbcType=VARCHAR} )
+        </if>
+        <if test="itemAssemCode != '' and itemAssemCode != null">
+            and ( HC_RESULT_DICT.Item_Assem_Code = #{itemAssemCode, jdbcType=VARCHAR} )
+        </if>
+    </select>
+
+    <select id="findHcDeptResultItems" resultType="com.healt.cloud.checkup.physicalExa.vo.HcDeptResultItemsVo">
+        SELECT HC_DEPT_RESULT_ITEMS.PERSON_ID personId,
+               HC_DEPT_RESULT_ITEMS.PERSON_VISIT_ID personVisitId,
+               HC_DEPT_RESULT_ITEMS.DEPT_ID deptId,
+               HC_DEPT_RESULT_ITEMS.DEPT_NAME deptName,
+               HC_DEPT_RESULT_ITEMS.CONTENT_CLASS contentClass,
+               HC_DEPT_RESULT_ITEMS.CONTENT,
+               HC_DEPT_RESULT_ITEMS.GUIDE_CONTENT guideContent,
+               HC_DEPT_RESULT_ITEMS.SORT_NO sortNo,
+               HC_DEPT_RESULT_ITEMS.ITEM_ASSEM_CODE itemAssemCode,
+               HC_DEPT_RESULT_ITEMS.IN_DEPT_REPORT inDeptReport,
+               HC_DEPT_RESULT_ITEMS.IN_CHIEF_REPORT inChiefReport
+        FROM HC_DEPT_RESULT_ITEMS
+        WHERE HC_DEPT_RESULT_ITEMS.HOSPITAL_ID= #{hospitalId, jdbcType=VARCHAR}
+          and ( HC_DEPT_RESULT_ITEMS.PERSON_ID = #{personId, jdbcType=VARCHAR} )
+          and ( HC_DEPT_RESULT_ITEMS.PERSON_VISIT_ID = #{personVisitId, jdbcType=INTEGER} )
+          and ( HC_DEPT_RESULT_ITEMS.DEPT_ID = #{deptId, jdbcType=VARCHAR} )
+          and ( HC_DEPT_RESULT_ITEMS.ITEM_ASSEM_CODE = #{packCode, jdbcType=VARCHAR} )
+    </select>
+
+    <select id="findHcAppregItems" resultType="com.healt.cloud.checkup.physicalExa.vo.HcAppregItemsVo">
+        SELECT hc_person_visit_info.person_id personId,
+               hc_person_visit_info.person_visit_id personVisitId,
+               hc_person_visit_info.unit_id unitId,
+               hc_person_visit_info.unit_visit_id unitVisitId,
+               hc_person_visit_info.appoints_date appointsDate,
+               hc_person_appreg_items.item_pack_code itemPackCode,
+               hc_person_appreg_items.item_pack_name itemPackName,
+               hc_person_appreg_items.apply_no applyNo,
+               hc_person_appreg_items.finished_sign finishedSign,
+               hc_person_appreg_items.finished_date finishedDate,
+               hc_person_appreg_items.dept_name deptName,
+               hc_person_appreg_items.doctor_id doctorId,
+               hc_person_appreg_items.doctor_name doctorName,
+               hc_person_appreg_items.ITEM_NO itemNo,
+               v_hc_item_pack_dict.dept_name         as hisDepartName,
+               v_hc_item_pack_dict.RESULT_HANDLE resultHandle,
+               v_hc_item_pack_dict.his_depart_code hisDepartCode,
+               v_hc_item_pack_dict.APPLY_SENDTO applySendto,
+               v_hc_item_pack_dict.RESULT_RECIEVED resultRecieved,
+               hc_person_appreg_items.dept_id        as hcDeptCode,
+               v_hc_item_pack_dict.HC_DEPT_CODE      as hcDeptCode1,
+               v_depart_dict.DEPT_NAME deptName1,
+               v_depart_dict.class_name className
+        FROM hc_person_visit_info,
+             hc_person_appreg_items,
+             v_hc_item_pack_dict,
+             v_depart_dict
+        WHERE hc_person_visit_info.hospital_id =
+              hc_person_appreg_items.hospital_id
+          and hc_person_visit_info.person_id = hc_person_appreg_items.person_id
+          and hc_person_visit_info.person_visit_id =
+              hc_person_appreg_items.person_visit_id
+          and hc_person_visit_info.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and hc_person_visit_info.person_id = #{personId, jdbcType=VARCHAR}
+          AND hc_person_visit_info.person_visit_id = #{personVisitId, jdbcType=INTEGER}
+          AND v_hc_item_pack_dict.hc_dept_code = v_depart_dict.dept_id
+          and hc_person_appreg_items.hospital_id = v_hc_item_pack_dict.hospital_id
+          and hc_person_appreg_items.item_pack_code =
+              v_hc_item_pack_dict.item_pack_code
+          and v_Depart_Dict.CLASS_NAME = #{className, jdbcType=VARCHAR}
+          and hc_person_appreg_items.FINISHED_SIGN = '未完成'
+          and (hc_person_appreg_items.person_id = #{personId, jdbcType=VARCHAR})
+          AND (hc_person_appreg_items.person_visit_id = #{personVisitId, jdbcType=INTEGER})
+    </select>
+
+    <select id="findHcAppregItems1" resultType="com.healt.cloud.checkup.physicalExa.vo.HcAppregItems1Vo">
+        SELECT hc_person_appreg_items.person_id personId,
+               hc_person_appreg_items.person_visit_id personVisitId,
+               hc_person_appreg_items.unit_id unitId,
+               hc_person_appreg_items.UNIT_VISIT_ID unitVisitId,
+               hc_person_appreg_items.item_pack_code itemPackCode,
+               hc_person_appreg_items.item_pack_name itemPackName,
+               hc_person_appreg_items.ITEM_NO itemNo,
+               hc_person_visit_info.person_charge personCharge,
+               hc_person_visit_info.FINISHED_SIGN finishedSign,
+               hc_person_appreg_items.DEPT_ID deptCode,
+               (SELECT V_DEPART_DICT.dept_name FROM V_DEPART_DICT WHERE V_DEPART_DICT.hospital_id=hc_person_appreg_items.hospital_id AND V_DEPART_DICT.dept_id=hc_person_appreg_items.DEPT_ID) deptName,
+               hc_person_appreg_items.CHART_CODE chartCode,
+               hc_person_appreg_items.APPLY_NO applyNo,
+               hc_person_appreg_items.COSTS,
+               hc_person_appreg_items.CHARGES,
+               hc_person_appreg_items.SUBMIT_APPLY submitApply,
+               hc_person_appreg_items.set_code setCode,
+               hc_person_visit_info.finished_date finishedDate,
+               hc_person_visit_info.user_id userId,
+               hc_person_visit_info.user_name userName,
+               hc_person_visit_info.final_docoter finalDocoter,
+               hc_person_visit_info.finished_name finishedName
+        FROM hc_person_appreg_items,hc_person_visit_info
+        WHERE (hc_person_visit_info.hospital_id=hc_person_appreg_items.hospital_id and hc_person_visit_info.person_id=hc_person_appreg_items.person_id and hc_person_visit_info.person_visit_id=hc_person_appreg_items.person_visit_id) and
+            ( hc_person_appreg_items.hospital_id = #{hospitalId, jdbcType=VARCHAR} ) AND
+            ( hc_person_appreg_items.person_id = #{personId, jdbcType=VARCHAR} ) AND
+            ( hc_person_appreg_items.person_visit_id = #{personVisitId, jdbcType=INTEGER} ) AND
+            ( hc_person_appreg_items.item_pack_code = #{itemPackCode, jdbcType=VARCHAR} )
+    </select>
+
+    <select id="findDeptResultItems" resultType="com.healt.cloud.checkup.physicalExa.vo.DeptResultItemsVo">
+        SELECT HC_DEPT_RESULT_ITEMS.PERSON_ID personId,
+               HC_DEPT_RESULT_ITEMS.PERSON_VISIT_ID personVisitId,
+               HC_DEPT_RESULT_ITEMS.DEPT_ID deptId,
+               HC_DEPT_RESULT_ITEMS.DEPT_NAME deptName,
+               HC_DEPT_RESULT_ITEMS.CONTENT_CLASS contentClass,
+               HC_DEPT_RESULT_ITEMS.CONTENT,
+               HC_DEPT_RESULT_ITEMS.GUIDE_CONTENT guideContent,
+               HC_DEPT_RESULT_ITEMS.SORT_NO sortNo,
+               HC_DEPT_RESULT_ITEMS.ITEM_ASSEM_CODE itemAssemCode,
+               HC_DEPT_RESULT_ITEMS.IN_DEPT_REPORT inDeptReport,
+               HC_DEPT_RESULT_ITEMS.IN_CHIEF_REPORT inChiefReport,
+               HC_DEPT_RESULT_ITEMS.HC_ITEM_CODE hcItemCode,
+               HC_DEPT_RESULT_ITEMS.HOSPITAL_ID hospitalId
+        FROM HC_DEPT_RESULT_ITEMS
+        WHERE HC_DEPT_RESULT_ITEMS.HOSPITAL_ID= #{hospitalId, jdbcType=VARCHAR}
+          and ( HC_DEPT_RESULT_ITEMS.PERSON_ID = #{personId, jdbcType=VARCHAR} )
+          and ( HC_DEPT_RESULT_ITEMS.PERSON_VISIT_ID = #{personVisitId, jdbcType=INTEGER} )
+          and ( HC_DEPT_RESULT_ITEMS.DEPT_ID = #{deptId, jdbcType=VARCHAR} )
+    </select>
+
+    <select id="findVLabResult" resultType="com.healt.cloud.checkup.physicalExa.vo.VLabResultVo">
+        SELECT  a.REPORT_ITEM_NAME reportItemName,  a.RESULT ,  a.ABNORMAL_INDICATOR abnormalIndicator,a.RESULT_DATE_TIME resultDateTime,
+                a.UNITS ,  a.REPORT_ITEM_CODE reportItemCode,  a.INSTRUMENT_ID instrumentId,   a.PRINT_CONTEXT printContext
+        FROM HEALTHCHECKUP.V_LAB_RESULT a
+        WHERE    a.TEST_NO = #{testNo, jdbcType=VARCHAR}
+    </select>
+</mapper>

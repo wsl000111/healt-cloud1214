@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.appointmentReg.mapper.PersonSettleMapper">
+    <select id="findSettleItemList" resultType="com.healt.cloud.checkup.vo.settlement.SettleItemListVo">
+        select a.item_no itemNo, a.hospital_id hospitalId,a.person_id personId,a.person_visit_id personVisitId,a.unit_id unitId,a.unit_visit_id unitVisitId,
+               a.item_pack_code itemPackCode,a.item_pack_name itemPackName,a.num,a.add_item addItem,a.set_code setCode,a.costs,
+               a.charges,b.INPUT_CODE inputCode,b.IS_DISCOUNT isDiscount,b.PACK_CLASS packClass,c.CLASS_NAME className,
+               (SELECT ITEM_CODE FROM HC_PACK_VS_CLINIC PVC
+                WHERE PVC.ITEM_PACK_CODE = a.ITEM_PACK_CODE AND PVC.HOSPITAL_ID = a.HOSPITAL_ID AND ROWNUM=1 ) zlItemCode,
+               (SELECT ITEM_NAME FROM HC_PACK_VS_CLINIC PVC
+                WHERE PVC.ITEM_PACK_CODE = a.ITEM_PACK_CODE AND PVC.HOSPITAL_ID = a.HOSPITAL_ID AND ROWNUM=1 ) zlItemName
+        from hc_person_appreg_items a,v_hc_item_pack_dict b,v_item_pack_class_dict c
+        where a.hospital_id = b.HOSPITAL_ID and
+            a.item_pack_code = b.ITEM_PACK_CODE and
+            b.hospital_id = c.hospital_id and
+            b.PACK_CLASS = c.CLASS_CODE and
+            a.hospital_id = #{hospitalId, jdbcType=VARCHAR} and
+            a.person_id = #{personId, jdbcType=VARCHAR} and
+            a.person_visit_id = #{personVisitId, jdbcType=VARCHAR} and
+            a.bill_indicator ='0' and
+            a.UPLOAD_FLAG is null
+    </select>
+
+    <select id="findSettlePayList" resultType="java.lang.String">
+        select hospital_id hospitalId, rcpt_no rcptNo, item_no itemNo, payment_money paymentMoney, card_no cardNo, payment_type paymentType
+        from healthcheckup.hc_rcpt_pay
+        where rcpt_no = ''
+    </select>
+
+    <select id="findPersonVisitAndInfo" resultType="com.healt.cloud.checkup.vo.settlement.PersonVisitAndInfoVo">
+        select a.unit_id unitId,a.unit_visit_id unitVisitId,a.person_id personId, a.person_visit_id personVisitId, nvl(a.finished_sign, '0') finishedSign,
+        a.exam_class examClass,a.person_charge personCharge,a.age,b.sex,b.name, b.patient_id patientId
+        from hc_person_visit_info a,hc_person_info b
+        where a.person_id = b.person_id and a.hospital_id = b.hospital_id
+        and a.person_id = #{personId, jdbcType=VARCHAR}
+        and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        and person_visit_id = (select max(person_visit_id)
+        from hc_person_visit_info
+        where person_id = #{personId, jdbcType=VARCHAR}
+        and hospital_id = #{hospitalId, jdbcType=VARCHAR})
+    </select>
+
+    <select id="findMoneyInCard" parameterType="java.lang.String" resultType="java.lang.String">
+        select nvl(d.money,0) money from healthcheckup.hc_member_info d
+        where d.hospital_id = #{hospitalId, jdbcType=VARCHAR} and d.card_no = #{cardNo, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findHospitalDict" resultType="com.healt.cloud.checkup.vo.settlement.HospitalDictVo">
+        select a.HOSPITAL_ID hospitalId,
+        a.HOSPITAL_NAME hospitalName,
+        a.INPUT_CODE inputCode,
+        a.POST_CODE postCode,
+        a.email,a.tel,a.greeting,a.tips,a.footer,
+        a.INITIAL_CHARGE initialCharge,
+        a.INITIAL_RETURNS initialReturns,
+        a.NEXT_CHARGE_NO nextChargeNo,
+        a.NEXT_RETURNS_NO nextReturnsNo,
+        a.INITIAL_LAB initialLab,
+        a.INITIAL_EXAM initialExam,
+        a.IS_CHECK_CHARGE isCheckCharge,
+        a.OPEN_INSURANCE openInsurance,
+        a.note,
+        to_char(sysdate,'yyyymmdd') rq
+        from healthcheckup.hospital_dict a
+        where a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+    <update id="updateMoneyInCard">
+        update healthcheckup.hc_member_info set money = money - #{paymentMoney, jdbcType=DECIMAL}
+        where hospital_id = #{hospitalId, jdbcType=VARCHAR} and card_no = #{cardNo, jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateNextChargeNo">
+        update healthcheckup.hospital_dict set next_charge_no = nvl(next_charge_no,0) + 1
+        where hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateBillIndicator">
+        update healthcheckup.hc_person_appreg_items set bill_indicator = '1'
+        where hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        and person_id = #{personId, jdbcType=VARCHAR}
+        and person_visit_id = #{personVisitId, jdbcType=INTEGER}
+    </update>
+
+    <select id="getMemberTransNo" parameterType="java.lang.String" resultType="java.lang.String">
+        select healthcheckup.getMemberTransNO(#{hospitalId, jdbcType=VARCHAR}) from dual
+    </select>
+
+    <insert id="saveHcMemberTrans">
+        insert into healthcheckup.hc_member_trans
+            (hospital_id, card_no, trans_no, trans_type,pay, money, trans_date, user_id, note)
+        values(#{hospitalId, jdbcType=VARCHAR},#{cardNo, jdbcType=VARCHAR},#{transNo, jdbcType=VARCHAR},
+               #{transType, jdbcType=VARCHAR},#{pay, jdbcType=VARCHAR},#{money, jdbcType=DECIMAL},
+               sysdate,#{userId, jdbcType=VARCHAR},#{note, jdbcType=VARCHAR})
+    </insert>
+
+    <select id="findSbYy" resultType="com.healt.cloud.checkup.vo.settlement.SbYyVo">
+        select a.person_id personId,a.person_visit_id personVisitId,a.unit_id unitId,a.unit_name unitName,b.item_pack_code itemPackCode,
+               p.name,p.sex,dsd.discount_class discountClass,dsd.discount_ratio discountRatio,dsd.discount_price discountPrice,
+               b.item_pack_name itemPackName,d.cost_class_name costClassName,b.num,b.item_no itemNo,b.costs,b.charges,b.bill_indicator billIndicator,
+               b.finished_sign finishedSign,B.ADD_ITEM addItem
+        from HC_PERSON_VISIT_INFO a, hc_person_appreg_items b,HC_ITEM_PACK_DICT c,
+             COST_CLASSIFICATION_DICT d,Hc_Person_info p,HC_DISCOUNT_SCHEME_DETAIL dsd
+        where a.hospital_id= b.hospital_id and a.person_id = p.person_id and a.hospital_id = p.hospital_id
+          and a.person_id = b.person_id
+          and a.person_visit_id = b.person_visit_id
+          and b.hospital_id = c.hospital_id
+          and b.item_pack_code = c.item_pack_code
+          and c.cost_class_code = d.cost_class_code
+          and b.item_pack_code = dsd.item_assem_code
+          and c.hospital_id = dsd.hospital_id
+          and c.hospital_id = d.hospital_id
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.person_id = #{unitId, jdbcType=VARCHAR}
+          and a.person_visit_id =  #{unitVisitId, jdbcType=INTEGER}
+          and b.bill_indicator ='0'
+          and dsd.scheme_code = #{schemeCode, jdbcType=VARCHAR}
+        order by a.person_id,b.item_pack_code asc
+    </select>
+</mapper>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.appointmentReg.mapper.ChangeVSItemMapper">
+
+    <select id="findDtChangeVSItem" resultType="com.healt.cloud.checkup.entity.HcChangeVsItem">
+        select HOSPITAL_ID hospitalId,ITEM_CODE itemCode,ITEM_NAME itemName,INPUT_CODE inputCode,
+               ITEM_NO itemNo,ITEM_PRICE itemPrice,CHANGE_ITEM_CODE changeItemCode,CHANGE_ITEM_NAME changeItemName,
+               CHANGE_INPUT_CODE changeInputCode,CHANGE_ITEM_PRICE changeItemPrice
+        from HC_CHANGE_VS_ITEM
+        where HOSPITAL_ID = #{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+</mapper>

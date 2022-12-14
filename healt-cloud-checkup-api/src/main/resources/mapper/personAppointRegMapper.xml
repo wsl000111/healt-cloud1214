@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.appointmentReg.mapper.PersonAppointRegMapper">
+    <select id="findPackSetDict" parameterType="com.healt.cloud.checkup.vo.appointmentReg.personAppointReg.PackSetDictVo" resultType="com.healt.cloud.checkup.vo.appointmentReg.personAppointReg.PackSetDictVo">
+        select set_code setCode,set_name setName,sex,to_number(decode(sex,'男',1,'女',0,2)) img, input_code inputCode
+        from healthcheckup.hc_pack_set_dict a
+        where effective_flag = '1' and hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        order by item_no
+    </select>
+
+    <select id="findPackItemDict" parameterType="com.healt.cloud.checkup.vo.appointmentReg.personAppointReg.PackItemDictVo" resultType="com.healt.cloud.checkup.vo.appointmentReg.personAppointReg.PackItemDictVo">
+        select '' set_code,
+        a.SORT_NO sortNo,
+        a.ITEM_PACK_CODE itemPackCode,
+        a.ITEM_PACK_NAME itemPackName,
+        a.INPUT_CODE inputCode,
+        a.HOSPITAL_ID hospitalId,
+        a.HC_DEPT_CODE hcDeptCode,
+        a.sex,
+        a.PACK_CLASS packClass,
+        a.CLINICAL_SIGNIFICANCE clinicalSignificance,
+        a.GUIDEGROUP_CODE guidegroupCode,
+        a.GUIDE_TIP guideTip,
+        a.APPLY_SENDTO applySendto,
+        a.RESULT_RECIEVED resultRecieved,
+        a.HIS_DEPART_CODE hisDepartCode,
+        a.HIS_DEPART_NAME hisDepartName,
+        a.DRAW_BLOOD drawBlood,
+        a.TEST_TUBE_CODE testTubeCode,
+        a.SPECIMAN_NAME specimanName,
+        a.EXAM_CLASS examClass,
+        a.EXAM_SUB_CLASS examSubClass,
+        a.COST_CLASS_CODE costClassCode,
+        a.IS_DISCOUNT isDiscount,
+        a.ITEM_PACK_PRICE itemPackPrice,
+        a.ITEM_PACK_DISCOUNT_PRICE itemPackDiscountPrice,
+        a.AUTO_FINISHED autoFinished,
+        a.REPORT_FLAG reportFlag,
+        a.RESULT_HANDLE resultHandle,
+        a.EFFECTIVE_FLAG effectiveFlag,
+        a.DEPT_NAME deptName,
+        a.DEPT_ID deptId,
+        b.class_name className,
+        decode(a.sex,'男','1','女','0','2') img
+        from healthcheckup.v_hc_item_pack_dict a,healthcheckup.item_pack_class_dict b
+        where a.PACK_CLASS = b.class_code and a.HOSPITAL_ID = b.hospital_id and
+        a.effective_flag = '1' and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        order by b.sort_no
+    </select>
+
+    <select id="findSetItemList" parameterType="com.healt.cloud.checkup.vo.appointmentReg.personAppointReg.SetItemListVo" resultType="com.healt.cloud.checkup.vo.appointmentReg.personAppointReg.SetItemListVo">
+        select a.SET_CODE setCode,
+        c.SORT_NO sortNo,
+        c.ITEM_PACK_CODE itemPackCode,
+        c.ITEM_PACK_NAME itemPackName,
+        c.INPUT_CODE inputCode,
+        c.HOSPITAL_ID hospitalId,
+        c.HC_DEPT_CODE hcDeptCode,
+        c.sex,
+        c.PACK_CLASS packClass,
+        c.CLINICAL_SIGNIFICANCE clinicalSignificance,
+        c.GUIDEGROUP_CODE guidegroupCode,
+        c.GUIDE_TIP guideTip,
+        c.APPLY_SENDTO applySendto,
+        c.RESULT_RECIEVED resultRecieved,
+        c.HIS_DEPART_CODE hisDepartCode,
+        c.HIS_DEPART_NAME hisDepartName,
+        c.DRAW_BLOOD drawBlood,
+        c.TEST_TUBE_CODE testTubeCode,
+        c.SPECIMAN_NAME specimanName,
+        c.EXAM_CLASS examClass,
+        c.EXAM_SUB_CLASS examSubClass,
+        c.COST_CLASS_CODE costClassCode,
+        c.IS_DISCOUNT isDiscount,
+        c.ITEM_PACK_PRICE itemPackPrice,
+        c.ITEM_PACK_DISCOUNT_PRICE itemPackDiscountPrice,
+        c.AUTO_FINISHED autoFinished,
+        c.REPORT_FLAG reportFlag,
+        c.RESULT_HANDLE resultHandle,
+        c.EFFECTIVE_FLAG effectiveFlag,
+        c.DEPT_ID deptId,
+        c.DEPT_NAME deptName,
+        d.class_name className,
+        decode(a.sex,'男','1','女','0','2') img
+        from healthcheckup.hc_pack_set_dict a,
+        healthcheckup.hc_set_vs_pack_dict b,
+        healthcheckup.v_hc_item_pack_dict c,
+        healthcheckup.item_pack_class_dict d
+        where a.set_code = b.set_code and
+        b.item_pack_code = c.item_pack_code and
+        a.hospital_id = b.hospital_id and
+        b.hospital_id = c.HOSPITAL_ID and
+        c.PACK_CLASS = d.class_code and
+        c.HOSPITAL_ID = d.hospital_id and
+        a.hospital_id = #{hospitalId, jdbcType=VARCHAR} and
+        a.set_code in(#{setCode, jdbcType=VARCHAR})
+        order by d.sort_no
+    </select>
+
+    <select id="findSelectedItems" parameterType="com.healt.cloud.checkup.vo.appointmentReg.personAppointReg.SelectedItemsVo" resultType="com.healt.cloud.checkup.vo.appointmentReg.personAppointReg.SelectedItemsVo">
+        select hospital_id hospitalId, person_id personId, person_visit_id personVisitId, unit_id unitId, unit_visit_id unitVisitId,
+        item_pack_code itemPackCode, item_pack_name itemPackName, register_date registerDate, register, register_name registerName,
+        add_item addItem, chart_code chartCode, apply_no applyNo, submit_apply submitApply, apply_no_print applyNoPrint, costs, charges,
+        bill_indicator billIndicator, finished_sign finishedSign, num, set_code setCode,'3' IMG,dept_id deptId,dept_name deptName
+        from healthcheckup.hc_person_appreg_items
+        where hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        and person_id= #{personId, jdbcType=VARCHAR}
+        and person_visit_id = #{personVisitId, jdbcType=INTEGER}
+    </select>
+
+    <select id="findUnitList" parameterType="com.healt.cloud.checkup.vo.appointmentReg.personAppointReg.UnitListVo" resultType="com.healt.cloud.checkup.vo.appointmentReg.personAppointReg.UnitListVo">
+        select a.unit_id unitId,a.unit_name unitName,a.input_code inputCode
+        from hc_unit_info a
+        where a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findUnitVisitInfo" parameterType="com.healt.cloud.checkup.vo.appointmentReg.personAppointReg.UnitVisitInfoVo" resultType="com.healt.cloud.checkup.vo.appointmentReg.personAppointReg.UnitVisitInfoVo">
+        select unit_id unitId,unit_visit_id unitVisitId,nvl(a.finished_sign,'0') finishedSign
+        from hc_unit_visit_info a
+        where unit_id = #{unitId, jdbcType=VARCHAR} and hospital_id = #{hospitalId, jdbcType=VARCHAR} and
+        unit_visit_id = (select max(unit_visit_id) from hc_unit_visit_info where unit_id = #{unitId, jdbcType=VARCHAR} and hospital_id= #{hospitalId, jdbcType=VARCHAR})
+    </select>
+
+    <select id="findUnitGroup" parameterType="com.healt.cloud.checkup.vo.appointmentReg.personAppointReg.UnitGroupVo" resultType="com.healt.cloud.checkup.vo.appointmentReg.personAppointReg.UnitGroupVo">
+        select b.group_code groupCode,b.group_name groupName,b.input_code inputCode
+        from hc_unit_group b
+        where b.unit_id = #{unitId, jdbcType=VARCHAR} and b.unit_visit_id = #{unitVisitId, jdbcType=INTEGER}
+        and b.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findPersonVisitInfo" parameterType="com.healt.cloud.checkup.vo.appointmentReg.personAppointReg.PersonVisitInfoVo" resultType="com.healt.cloud.checkup.vo.appointmentReg.personAppointReg.PersonVisitInfoVo">
+        select person_id personId,person_visit_id personVisitId,nvl(a.finished_sign,'0') finishedSign from hc_person_visit_info a
+        where person_id =#{personId, jdbcType=VARCHAR} and hospital_id = #{hospitalId, jdbcType=VARCHAR} and
+        person_visit_id = (select max(person_visit_id) from hc_person_visit_info where person_id = #{personId, jdbcType=VARCHAR} and hospital_id=#{hospitalId, jdbcType=VARCHAR})
+    </select>
+
+    <select id="findPersonInfo" parameterType="com.healt.cloud.checkup.vo.appointmentReg.personAppointReg.PersonInfoVo" resultType="com.healt.cloud.checkup.vo.appointmentReg.personAppointReg.PersonInfoVo">
+        select a.HOSPITAL_ID hospitalId,
+        a.PERSON_ID personId,
+        a.name,
+        a.UNIT_ID unitId,
+        a.sex,
+        a.UNIT_NAME unitName,
+        a.ID_NO idNo,
+        a.barthday,
+        a.INPUT_CODE inputCode,
+        a.MARITAL_STATUS maritalStatus,
+        a.country,
+        a.area,
+        a.pwd,
+        a.nation,
+        a.address,
+        a.postcode,
+        a.PHONE_NUMBER phoneNumber,
+        a.mobile,
+        a.email,
+        a.source,
+        a.job,
+        a.EXAM_CLASS examClass,
+        a.PERSON_LEVEL personLevel,
+        a.department,
+        a.CHARGE_TYPE chargeType,
+        a.PERSON_CHARGE personCharge,
+        a.identity,
+        a.BUILD_DATE buildDate,
+        a.USER_ID userId,
+        a.USER_NAME userName,
+        a.note,
+        a.salt,
+        trunc(months_between(sysdate,barthday) / 12) age,
+        '' personVisitId,
+        '' finishedSign
+        from healthcheckup.hc_person_info a
+        where person_id = #{personId, jdbcType=VARCHAR} and hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+    <update id="updateFinishedSign">
+        update hc_person_visit_info set finished_sign = '1'
+        where person_id = #{personId, jdbcType=VARCHAR} and hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        and person_visit_id = #{personVisitId, jdbcType=INTEGER}
+    </update>
+
+    <select id="findUnitGroupList" parameterType="com.healt.cloud.checkup.vo.appointmentReg.personAppointReg.UnitGroupListVo" resultType="com.healt.cloud.checkup.vo.appointmentReg.personAppointReg.UnitGroupListVo">
+        select a.group_code groupCode, a.group_name groupName,a.hospital_id hospitalId, a.unit_id unitId, a.unit_visit_id unitVisitId,
+        a.discount_flag discountFlag, a.price, a.insurance_price insurancePrice, a.num,
+        b.SORT_NO sortNo,b.ITEM_PACK_CODE itemPackCode,b.ITEM_PACK_NAME itemPackName,
+        b.INPUT_CODE inputCode,b.HC_DEPT_CODE hcDeptCode,b.sex,b.PACK_CLASS packClass,
+        b.CLINICAL_SIGNIFICANCE clinicalSignificance,b.GUIDEGROUP_CODE guidegroupCode,
+        b.GUIDE_TIP guideTip,b.APPLY_SENDTO applySendto,b.RESULT_RECIEVED resultRecieved,
+        b.HIS_DEPART_CODE hisDepartCode,b.HIS_DEPART_NAME hisDepartName,b.DRAW_BLOOD drawBlood,
+        b.TEST_TUBE_CODE testTubeCode,b.SPECIMAN_NAME specimanName,b.EXAM_CLASS examClass,
+        b.EXAM_SUB_CLASS examSubClass,b.COST_CLASS_CODE costClassCode,b.IS_DISCOUNT isDiscount,
+        b.ITEM_PACK_PRICE itemPackPrice,b.ITEM_PACK_DISCOUNT_PRICE itemPackDiscountPrice,
+        b.AUTO_FINISHED autoFinished,b.REPORT_FLAG reportFlag,b.RESULT_HANDLE resultHandle,
+        b.EFFECTIVE_FLAG effectiveFlag,b.DEPT_NAME deptName
+        from healthcheckup.hc_unit_group_items a,healthcheckup.v_hc_item_pack_dict b
+        where a.item_pack_code = b.ITEM_PACK_CODE and a.hospital_id = b.HOSPITAL_ID and
+        unit_id = #{unitId, jdbcType=VARCHAR} and unit_visit_id = #{unitVisitId, jdbcType=INTEGER}
+        and a.hospital_id = #{hospitalId, jdbcType=VARCHAR} and group_code = #{groupCode, jdbcType=VARCHAR}
+    </select>
+
+    <update id="updateApplyNoPrint">
+        update hc_person_appreg_items set apply_no_print = '1'
+        where hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and apply_no = #{applyNo, jdbcType=INTEGER}
+    </update>
+
+    <select id="selectOrderId" resultType="Integer" flushCache="true">
+        select sq_order_id.nextval from dual
+    </select>
+</mapper>

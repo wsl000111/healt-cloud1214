@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.mapper.appointmentReg.PersonResultSearchMapper">
+
+    <select id="findPersonVisitCount" resultType="java.lang.String">
+        select max(a.person_visit_id)
+        from hc_person_visit_info a
+        where a.person_id = #{personId, jdbcType=VARCHAR}
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findPersonInfo" resultType="com.healt.cloud.checkup.queryReport.vo.PersonInfoVo">
+        select a.person_id personId,
+               a.person_visit_id personVisitId,
+               a.unit_id unitId,
+               a.unit_name unitName,
+               b.name,
+               b.nation,
+               b.sex,
+               b.id_no idNo,
+               b.barthday,
+               b.marital_status maritalStatus,
+               a.group_id groupId,
+               a.age,
+               a.person_level personLevel,
+               b.phone_number phoneNumber,
+               b.address,
+               b.CHARGE_TYPE chargeType,
+               b.IDENTITY,
+               a.FINISHED_SIGN finishedSign,
+               a.APPOINTS_DATE appointsDate,
+               a.BEFORE_DATE beforeDate,
+               b.DEPARTMENT
+        from hc_person_visit_info a, hc_person_info b
+        where a.hospital_id = b.hospital_id
+          and a.person_id = b.person_id
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.person_id = #{personId, jdbcType=VARCHAR}
+          and a.person_visit_id = #{personVisitId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findLabHcResultDict" resultType="com.healt.cloud.checkup.queryReport.vo.ResultDictVo">
+        select a.dept_id deptId,
+               a.dept_name deptName,
+               a.item_assem_code itemAssemCode,
+               a.item_assem_name itemAssemName,
+               a.hc_item_code hcItemCode,
+               a.hc_item_name hcItemName,
+               a.item_order_no itemOrderNo,
+               a.show_type showType,
+               a.result_type resultType,
+               a.key_name keyName,
+               a.hc_result hcResult,
+               a.result_decimal resultDecimal,
+               a.result_date resultDate,
+               a.unit,
+               a.print_context printContext,
+               a.abnormal_indicator abnormalIndicator,
+               a.unit_id unitId,
+               a.unit_visit_id unitVisitId,
+               a.hc_result_date hcResultDate,
+               b.DOCTOR_NAME doctorName
+        from HC_RESULT_DICT a, hc_dept_result_dict b
+        where  a.person_id = b.person_id
+          and a.person_visit_id = b.person_visit_id
+          and a.dept_id = b.dept_id
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.person_id = #{personId, jdbcType=VARCHAR}
+          and a.person_visit_id = #{personVisitId, jdbcType=VARCHAR}
+          and a.show_type = '检验'
+        order by a.item_assem_code asc, a.item_order_no asc
+    </select>
+
+    <select id="findReportHcResultDict" resultType="com.healt.cloud.checkup.queryReport.vo.ResultDictVo">
+        select a.dept_id deptId,
+               a.dept_name deptName,
+               hrd.doctor_name doctorName,
+               a.item_assem_code itemAssemCode,
+               a.item_assem_name itemAssemName,
+               a.hc_item_code hcItemCode,
+               a.hc_item_name hcItemName,
+               a.item_order_no itemOrderNo,
+               a.show_type showType,
+               a.result_type resultType,
+               a.key_name keyName,
+               a.hc_result hcResult,
+               a.result_decimal resultDecimal,
+               a.result_date resultDate,
+               a.unit,
+               a.print_context printContext,
+               a.abnormal_indicator abnormalIndicator,
+               a.unit_id unitId,
+               a.unit_visit_id unitVisitId,
+               a.hc_result_date hcResultDate
+        from HC_RESULT_DICT a, hc_dept_result_dict hrd
+        where a.dept_id = hrd.dept_id
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.person_id = #{personId, jdbcType=VARCHAR}
+          and a.person_visit_id = #{personVisitId, jdbcType=VARCHAR}
+          and a.show_type in ('报告','文字')
+          and a.person_id = hrd.person_id
+          and a.person_visit_id = hrd.person_visit_id
+        order by a.item_assem_code asc, a.item_order_no asc
+    </select>
+
+    <select id="findPersonItems" resultType="com.healt.cloud.checkup.queryReport.vo.PersonItemsVo">
+        select a.hospital_id hospitalId,
+               person_id personId,
+               person_visit_id personVisitId,
+               unit_id unitId,
+               unit_visit_id unitVisitId,
+               b.item_pack_code itemPackCode,
+               b.item_pack_name itemPackName,
+               register_date registerDate,
+               register,
+               register_name registerName,
+               add_item addItem,
+               chart_code chartCode,
+               apply_no applyNo,
+               submit_apply submitApply,
+               apply_no_print applyNoPrint,
+               costs,
+               charges,
+               bill_indicator billIndicator,
+               finished_sign finishedSign,
+               num,
+               set_code setCode,
+               item_no itemNo,
+               '3' IMG,
+               b.SPECIMAN_NAME specimanName,
+               nvl(b.DRAW_BLOOD, 0) drawBlood,
+               b.TEST_TUBE_CODE testTubeCode,
+               d.class_name applyClass,
+               c.dept_name deptName
+        from healthcheckup.hc_person_appreg_items a,
+             v_hc_item_pack_dict                  b,
+             depart_dict                          c,
+             depart_class                         d
+        where a.hospital_id = b.HOSPITAL_ID
+          and a.item_pack_code = b.ITEM_PACK_CODE
+          and b.HC_DEPT_CODE = c.dept_id
+          and b.HOSPITAL_ID = c.hospital_id
+          and d.class_id = c.class_id
+          and d.hospital_id = d.hospital_id
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.person_id = #{personId, jdbcType=VARCHAR}
+          and a.person_visit_id = #{personVisitId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findPersonItemsCost" resultType="com.healt.cloud.checkup.queryReport.vo.PersonItemsCostVo">
+        select a.item_no itemNo,
+               a.settling_date settlingDate,
+               a.item_pack_code itemPackCode,
+               a.item_pack_name itemPackName,
+               a.costs,
+               a.payments,
+               a.set_code setCode,
+               a.discount_rate discountRate,
+               c.CLASS_NAME className
+        from hc_settle_detail a, v_hc_item_pack_dict b, v_item_pack_class_dict c
+        where a.hospital_id = b.hospital_id
+          and a.item_pack_code = b.ITEM_PACK_CODE
+          and b.HOSPITAL_ID = c.hospital_id
+          and b.PACK_CLASS = c.CLASS_CODE
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.person_id = #{personId, jdbcType=VARCHAR}
+          and a.person_visit_id = #{personVisitId, jdbcType=VARCHAR}
+    </select>
+</mapper>

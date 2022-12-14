@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.printReport.mapper.UnitReportMapper">
+
+    <select id="findUnitQueryReport" parameterType="com.healt.cloud.checkup.printReport.vo.UnitQueryReportDictVo" resultType="com.healt.cloud.checkup.printReport.vo.UnitQueryReportVo">
+        select a.unit_id unitId,a.unit_name unitName,a.unit_alias unitAlias,a.contacts,a.phone,a.address ,b.unit_visit_id unitVisitId,
+        b.appoints_date appointsDate,b.appoints_end_date appointsEndDate,b.finished_sign finishedSign,b.finished_date finishedDate,b.finished_persons finishedPersons,
+        a.source,a.unit_type unitType,a.class_type classType,a.charge_type chargeType
+        from hc_unit_info a,hc_unit_visit_info b
+        where a.hospital_id = b.hospital_id and a.unit_id = b.unit_id
+        <if test="unitId != '' and unitId != null">
+            and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        </if>
+        <if test="classTypeValue != '' and classTypeValue != null">
+            and a.class_type like '%${classTypeValue}%'
+        </if>
+        <if test="addressValue != '' and addressValue != null">
+            and a.address like '%${addressValue}%'
+        </if>
+    </select>
+
+    <select id="findUnitInfo" resultType="com.healt.cloud.checkup.printReport.vo.UnitQueryReportVo">
+        select a.unit_id unitId,a.unit_name unitName,a.unit_alias unitAlias,a.contacts,a.phone,a.address ,b.unit_visit_id unitVisitId,
+        b.appoints_date appointsDate,b.appoints_end_date appointsEndDate,b.finished_sign finishedSign,b.finished_date finishedDate,b.finished_persons finishedPersons,
+        a.source,a.unit_type unitType,a.class_type classType,a.charge_type chargeType
+        from hc_unit_info a,hc_unit_visit_info b
+        where a.hospital_id = b.hospital_id and a.unit_id = b.unit_id
+            and a.unit_id = #{unitId, jdbcType=VARCHAR}
+            and b.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findCountByAge" resultType="java.lang.String">
+        select count(*)
+        from hc_person_visit_info a, hc_person_info b
+        where a.hospital_id = b.hospital_id
+        and a.person_id = b.person_id
+        and b.sex = #{sex, jdbcType=VARCHAR}
+        and a.before_sign = '1'
+        <if test="age1 != '' and age1 != null">
+            and a.age &gt;= #{age1, jdbcType=VARCHAR}
+        </if>
+        <if test="age2 != '' and age2 != null">
+            and a.age &lt; #{age2, jdbcType=VARCHAR}
+        </if>
+        and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findCountByAge1" resultType="java.lang.String">
+        select count(*)
+        from hc_person_visit_info a, hc_person_info b
+        where a.hospital_id = b.hospital_id
+        and a.person_id = b.person_id
+        and b.sex = #{sex, jdbcType=VARCHAR}
+        and a.before_sign = '1'
+        <if test="age1 != '' and age1 != null">
+            and a.age &gt;= #{age1, jdbcType=VARCHAR}
+        </if>
+        <if test="age2 != '' and age2 != null">
+            and a.age &lt; #{age2, jdbcType=VARCHAR}
+        </if>
+        and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+        <if test="department != null">
+            and a.department = #{department}
+        </if>
+        <if test="personLeve != null">
+            and a.person_level = #{personLeve}
+        </if>
+    </select>
+
+    <select id="findCountByAgeTotal" resultType="java.lang.String">
+        select count(*)
+        from hc_person_visit_info a
+        where a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+        and a.before_sign = '1'
+        <if test="age1 != '' and age1 != null">
+            and a.age &gt;= #{age1, jdbcType=VARCHAR}
+        </if>
+        <if test="age2 != '' and age2 != null">
+            and a.age &lt; #{age2, jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <select id="findCountByAgeTotal1" resultType="java.lang.String">
+        select count(*)
+        from hc_person_visit_info a
+        where a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+        and a.before_sign = '1'
+        <if test="age1 != '' and age1 != null">
+            and a.age &gt;= #{age1, jdbcType=VARCHAR}
+        </if>
+        <if test="age2 != '' and age2 != null">
+            and a.age &lt; #{age2, jdbcType=VARCHAR}
+        </if>
+        <if test="department != null">
+            and a.department = #{department}
+        </if>
+        <if test="personLeve != null">
+            and a.person_level = #{personLeve}
+        </if>
+    </select>
+
+    <select id="findAbnormalResults1" resultType="com.healt.cloud.checkup.queryReport.vo.AbnormalResultsVo">
+        SELECT rownum,
+        rec_content recContent,
+        mansl1,
+        womansl1,
+        zsl1,
+        cjmanrs,
+        cjwomanrs,
+        cjzrs,
+        manbfb,
+        womanbfb,
+        pjbfb,
+        rownum || '.' || RECCONTENT_SL as reccontentSl,
+        guide_suggest guideSuggest
+        FROM (select rownum,
+        rec_content,
+        mansl1,
+        womansl1,
+        zsl1,
+        cjmanrs,
+        cjwomanrs,
+        cjzrs,
+        manbfb,
+        womanbfb,
+        pjbfb,
+        RECCONTENT_SL,
+        ddd.guide_suggest
+        from (select trim(aaa.rec_content) as rec_content,
+        sum(mansl) mansl1,
+        sum(womansl) womansl1,
+        sum(mansl + womansl) zsl1,
+        bbb.cjmanrs,
+        bbb.cjwomanrs,
+        bbb.cjzrs,
+        round(sum(mansl) / nvl(cjmanrs, 0), 4) manbfb,
+        round(sum(womansl) / nvl(cjwomanrs, 0), 4) womanbfb,
+        round(sum(mansl + womansl) / nvl(cjzrs, 0), 4) pjbfb,
+        trim(aaa.rec_content) || '(' || sum(mansl + womansl) || '人)' as RECCONTENT_SL
+        from (select trim(replace(replace(rec_content, chr(13), ''),
+        chr(10),
+        '')) as rec_content,
+        sum(mansl) as mansl,
+        sum(womansl) as womansl
+        from (select trim(aa.rec_content) as rec_content,
+        nvl(sum(aa.sl), 0) mansl,
+        0 womansl
+        from (select trim(c.rec_content) as rec_content,
+        b.sex,
+        count(a.person_id) sl
+        from hc_person_visit_info a,
+        hc_person_info       b,
+        HC_DIAGNOSIS_RECORD  c
+        where a.hospital_id = b.hospital_id
+        and a.person_id = b.person_id
+        and a.hospital_id = c.hospital_id
+        and a.person_id = c.person_id
+        and a.person_visit_id =
+        c.person_visit_id
+        and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+        and a.before_sign = '1'
+        group by trim(c.rec_content), b.sex) aa
+        where aa.sex = '男'
+        group by trim(aa.rec_content)
+        union all
+        select trim(aa.rec_content) as rec_content,
+        0 mansl,
+        nvl(sum(aa.sl), 0) womansl
+        from (select trim(c.rec_content) as rec_content,
+        b.sex,
+        count(a.person_id) sl
+        from hc_person_visit_info a,
+        hc_person_info       b,
+        HC_DIAGNOSIS_RECORD  c
+        where a.hospital_id = b.hospital_id
+        and a.person_id = b.person_id
+        and a.hospital_id = c.hospital_id
+        and a.person_id = c.person_id
+        and a.person_visit_id =
+        c.person_visit_id
+        and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+        and a.before_sign = '1'
+        group by trim(c.rec_content), b.sex) aa
+        where aa.sex = '女'
+        group by trim(aa.rec_content)) abc
+        group by trim(replace(replace(rec_content,
+        chr(13),
+        ''),
+        chr(10),
+        ''))
+
+        ) aaa,
+        (select sum(cjmanrs) cjmanrs,
+        sum(cjwomanrs) cjwomanrs,
+        sum(cjzrs) cjzrs
+        from (select count(*) cjmanrs, 0 cjwomanrs, 0 cjzrs
+        from hc_person_visit_info a, hc_person_info b
+        where a.hospital_id = b.hospital_id
+        and a.person_id = b.person_id
+        and b.sex = '男'
+        and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+        and a.before_sign = '1'
+        union all
+        select 0 cjmanrs, count(*) cjwomanrs, 0 cjzrs
+        from hc_person_visit_info a, hc_person_info b
+        where a.hospital_id = b.hospital_id
+        and a.person_id = b.person_id
+        and b.sex = '女'
+        and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+        and a.before_sign = '1'
+        union all
+        select 0 cjmanrs, 0 cjwomanrs, count(*) cjzrs
+        from hc_person_visit_info a, hc_person_info b
+        where a.hospital_id = b.hospital_id
+        and a.person_id = b.person_id
+        and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+        and a.before_sign = '1') bb) bbb
+        group by trim(aaa.rec_content),
+        bbb.cjmanrs,
+        bbb.cjwomanrs,
+        bbb.cjzrs
+        order by sum(mansl + womansl) desc) ccc
+        left outer join (select guide_suggest, count(*)
+        from hc_knowledge_dict
+        where hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        and disease_code is not null
+        and positive_indicator != '正'
+        group by guide_suggest
+        HAVING COUNT(guide_suggest) &lt; 2) ddd
+        on ccc.rec_content = ddd.guide_suggest
+        ORDER BY zsl1 DESC) EEE
+    </select>
+
+    <select id="findAbnormalResults11" resultType="com.healt.cloud.checkup.queryReport.vo.AbnormalResultsVo">
+        SELECT rownum,
+               rec_content recContent,
+               mansl1,
+               womansl1,
+               zsl1,
+               cjmanrs,
+               cjwomanrs,
+               cjzrs,
+               manbfb,
+               womanbfb,
+               pjbfb,
+               rownum || '.' || RECCONTENT_SL as reccontentSl,
+               guide_suggest guideSuggest
+        FROM (select rownum,
+                     rec_content,
+                     mansl1,
+                     womansl1,
+                     zsl1,
+                     cjmanrs,
+                     cjwomanrs,
+                     cjzrs,
+                     manbfb,
+                     womanbfb,
+                     pjbfb,
+                     RECCONTENT_SL,
+                     ddd.guide_suggest
+              from (select trim(aaa.rec_content) as rec_content,
+                           sum(mansl) mansl1,
+                           sum(womansl) womansl1,
+                           sum(mansl + womansl) zsl1,
+                           bbb.cjmanrs,
+                           bbb.cjwomanrs,
+                           bbb.cjzrs,
+                           round(sum(mansl) / nvl(cjmanrs, 0), 4) manbfb,
+                           round(sum(womansl) / nvl(cjwomanrs, 0), 4) womanbfb,
+                           round(sum(mansl + womansl) / nvl(cjzrs, 0), 4) pjbfb,
+                           trim(aaa.rec_content) || '(' || sum(mansl + womansl) || '人)' as RECCONTENT_SL
+                    from (select trim(replace(replace(rec_content, chr(13), ''),
+                                              chr(10),
+                                              '')) as rec_content,
+                                 sum(mansl) as mansl,
+                                 sum(womansl) as womansl
+                          from (select trim(aa.rec_content) as rec_content,
+                                       nvl(sum(aa.sl), 0) mansl,
+                                       0 womansl
+                                from (select trim(c.rec_content) as rec_content,
+                                             b.sex,
+                                             count(a.person_id) sl
+                                      from hc_person_visit_info a,
+                                           hc_person_info       b,
+                                           HC_DIAGNOSIS_RECORD  c
+                                      where a.hospital_id = b.hospital_id
+                                        and a.person_id = b.person_id
+                                        and a.hospital_id = c.hospital_id
+                                        and a.person_id = c.person_id
+                                        and a.person_visit_id =
+                                            c.person_visit_id
+                                        and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+                                        and a.unit_id = #{unitId, jdbcType=VARCHAR}
+                                        and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+                                        and a.before_sign = '1'
+                                        <if test="department != null">
+                                            and a.department = #{department}
+                                        </if>
+                                        <if test="personLeve != null">
+                                            and a.person_level = #{personLeve}
+                                        </if>
+                                      group by trim(c.rec_content), b.sex) aa
+                                where aa.sex = '男'
+                                group by trim(aa.rec_content)
+                                union all
+                                select trim(aa.rec_content) as rec_content,
+                                       0 mansl,
+                                       nvl(sum(aa.sl), 0) womansl
+                                from (select trim(c.rec_content) as rec_content,
+                                             b.sex,
+                                             count(a.person_id) sl
+                                      from hc_person_visit_info a,
+                                           hc_person_info       b,
+                                           HC_DIAGNOSIS_RECORD  c
+                                      where a.hospital_id = b.hospital_id
+                                        and a.person_id = b.person_id
+                                        and a.hospital_id = c.hospital_id
+                                        and a.person_id = c.person_id
+                                        and a.person_visit_id =
+                                            c.person_visit_id
+                                        and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+                                        and a.unit_id = #{unitId, jdbcType=VARCHAR}
+                                        and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+                                        and a.before_sign = '1'
+                                        <if test="department != null">
+                                            and a.department = #{department}
+                                        </if>
+                                        <if test="personLeve != null">
+                                            and a.person_level = #{personLeve}
+                                        </if>
+                                      group by trim(c.rec_content), b.sex) aa
+                                where aa.sex = '女'
+                                group by trim(aa.rec_content)) abc
+                          group by trim(replace(replace(rec_content,
+                                                        chr(13),
+                                                        ''),
+                                                chr(10),
+                                                ''))
+
+                         ) aaa,
+                         (select sum(cjmanrs) cjmanrs,
+                                 sum(cjwomanrs) cjwomanrs,
+                                 sum(cjzrs) cjzrs
+                          from (select count(*) cjmanrs, 0 cjwomanrs, 0 cjzrs
+                                from hc_person_visit_info a, hc_person_info b
+                                where a.hospital_id = b.hospital_id
+                                  and a.person_id = b.person_id
+                                  and b.sex = '男'
+                                  and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+                                  and a.unit_id = #{unitId, jdbcType=VARCHAR}
+                                  and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+                                  and a.before_sign = '1'
+                                    <if test="department != null">
+                                        and a.department = #{department}
+                                    </if>
+                                    <if test="personLeve != null">
+                                        and a.person_level = #{personLeve}
+                                    </if>
+                                union all
+                                select 0 cjmanrs, count(*) cjwomanrs, 0 cjzrs
+                                from hc_person_visit_info a, hc_person_info b
+                                where a.hospital_id = b.hospital_id
+                                  and a.person_id = b.person_id
+                                  and b.sex = '女'
+                                  and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+                                  and a.unit_id = #{unitId, jdbcType=VARCHAR}
+                                  and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+                                  and a.before_sign = '1'
+                                    <if test="department != null">
+                                        and a.department = #{department}
+                                    </if>
+                                    <if test="personLeve != null">
+                                        and a.person_level = #{personLeve}
+                                    </if>
+                                union all
+                                select 0 cjmanrs, 0 cjwomanrs, count(*) cjzrs
+                                from hc_person_visit_info a, hc_person_info b
+                                where a.hospital_id = b.hospital_id
+                                  and a.person_id = b.person_id
+                                  and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+                                  and a.unit_id = #{unitId, jdbcType=VARCHAR}
+                                  and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+                                  and a.before_sign = '1'
+                                    <if test="department != null">
+                                        and a.department = #{department}
+                                    </if>
+                                    <if test="personLeve != null">
+                                        and a.person_level = #{personLeve}
+                                    </if>) bb) bbb
+                    group by trim(aaa.rec_content),
+                             bbb.cjmanrs,
+                             bbb.cjwomanrs,
+                             bbb.cjzrs
+                    order by sum(mansl + womansl) desc) ccc
+                       left outer join (select guide_suggest, count(*)
+                                        from hc_knowledge_dict
+                                        where hospital_id = #{hospitalId, jdbcType=VARCHAR}
+                                          and disease_code is not null
+                                          and positive_indicator != '正'
+                                        group by guide_suggest
+                                        HAVING COUNT(guide_suggest) &lt; 2) ddd
+                                       on ccc.rec_content = ddd.guide_suggest
+              ORDER BY zsl1 DESC) EEE
+    </select>
+
+    <select id="findAbnormalResults2" resultType="com.healt.cloud.checkup.printReport.vo.AbnormalResultsTwoVo">
+        select trim(replace(replace(rec_content,chr(13),''),chr(10),'')) as recContent, b.sex, a.person_id personId,b.name,a.age
+        from hc_person_visit_info a,
+             hc_person_info       b,
+             HC_DIAGNOSIS_RECORD  c
+        where a.hospital_id = b.hospital_id
+          and a.person_id = b.person_id
+          and a.hospital_id = c.hospital_id
+          and a.person_id = c.person_id
+          and a.person_visit_id = c.person_visit_id
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.unit_id = #{unitId, jdbcType=VARCHAR}
+          and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+          and a.before_sign = '1'
+    </select>
+
+    <select id="findAbnormalResults21" resultType="com.healt.cloud.checkup.printReport.vo.AbnormalResultsTwoVo">
+        select trim(replace(replace(rec_content,chr(13),''),chr(10),'')) as recContent, b.sex, a.person_id personId,b.name,a.age
+        from hc_person_visit_info a,
+             hc_person_info       b,
+             HC_DIAGNOSIS_RECORD  c
+        where a.hospital_id = b.hospital_id
+          and a.person_id = b.person_id
+          and a.hospital_id = c.hospital_id
+          and a.person_id = c.person_id
+          and a.person_visit_id = c.person_visit_id
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.unit_id = #{unitId, jdbcType=VARCHAR}
+          and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+          and a.before_sign = '1'
+        <if test="department != null">
+            and a.department = #{department}
+        </if>
+        <if test="personLeve != null">
+            and a.person_level = #{personLeve}
+        </if>
+    </select>
+</mapper>

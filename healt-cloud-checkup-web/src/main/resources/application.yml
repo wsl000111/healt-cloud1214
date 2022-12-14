@@ -1,0 +1,8 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: checkupweb # 服务名称
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss #返回json的全局时间格式
+    time-zone: GMT+8

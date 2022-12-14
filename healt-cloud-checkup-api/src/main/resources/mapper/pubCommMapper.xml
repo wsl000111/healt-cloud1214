@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.mapper.pubComm.PubCommMapper">
+
+    <select id="findItemExternalInterface" resultType="com.healt.cloud.checkup.vo.pubComm.InterfaceSourceVo">
+        select b.source_id sourceId,b.source_name sourceName,b.service_name serviceName,
+               b.user_name userName,b.password,ORDER_DEPT orderDept
+        from v_hc_item_pack_dict a, interface_source b
+        where a.hospital_id = b.hospital_id
+          and a.apply_sendto = b.source_id
+          and a.item_pack_code = #{itemPackCode, jdbcType=VARCHAR}
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findPublicDict" resultType="com.healt.cloud.checkup.vo.pubComm.PublicDictVo">
+        select name,input_code inputCode from common_dict
+        where dict_type = #{dictType, jdbcType=VARCHAR} and use_flag = '1'
+        order by sort_no
+    </select>
+
+    <select id="selectExamNo" resultType="String" flushCache="true">
+        select HCEXAM.EXAM_NO.nextval from dual
+    </select>
+
+    <select id="selectTestNo" resultType="String" flushCache="true">
+        SELECT HCLAB.LAB_NO.NEXTVAL FROM DUAL
+    </select>
+
+    <select id="selectSysdate" resultType="String">
+        SELECT TO_CHAR(SYSDATE,'YYMMDD') FROM DUAL
+    </select>
+
+    <select id="selectPersonInfo" resultType="com.healt.cloud.checkup.vo.pubComm.PersonVisitAndInfoVo">
+        select a.HOSPITAL_ID hospitalId,a.PERSON_ID personId,a.PERSON_VISIT_ID personVisitId,a.UNIT_ID unitId,a.UNIT_VISIT_ID unitVisitId,
+               a.UNIT_NAME unitName,a.APPOINTS_DATE appointsDate,a.APPOINTS_END_DATE appointsEndDate,a.FINISHED_SIGN finishedSign,
+               a.FINISHED_DATE finishedDate,a.FINISHED_ID finishedId,a.FINISHED_NAME finishedName,a.GROUP_ID groupId,a.department,
+               a.PERSON_CHARGE personCharge,a.age,a.job,a.source,a.EXAM_CLASS examClass,a.PERSON_LEVEL personLevel,a.RESULT_STATUS resultStatus,
+               a.discount,a.BUILD_DATE buildDate,a.USER_ID userId,a.USER_NAME userName,a.BEFORE_SIGN beforeSign,a.BEFORE_DATE beforeDate,
+               a.BEFORE_ID beforeId,a.BEFORE_NAME beforeName,a.BLOOD_SIGN bloodSign,a.BLOOD_DATE bloodDate,a.BLOOD_ID bloodId,
+               a.BLOOD_NAME bloodName,a.PRINT_SIGN printSign,a.PRINT_DATE printDate,a.PRINT_ID printId,a.PRINT_NAME printName,
+               a.PRINT_TYPE printType,a.RETRIEVE_SIGN retrieveSign,a.RETRIEVE_DATE retrieveDate,a.RETRIEVE_ID retrieveId,a.RETRIEVE_NAME retrieveName,
+               a.FINAL_DOCOTER finalDocoter,a.FINAL_DATE finalDate,a.FINAL_NAME finalName,a.FIRST_DOCOTER firstDocoter,a.FIRST_DATE firstDate,
+               a.FIRST_NAME firstName,a.IMAGE_PATH imagePath,a.CARD_NO cardNo,a.BEFORE_PRINT_NO beforePrintNo,a.FIRST_FLAG firstFlag,
+               a.REPAIR_EXAM_FLAG repairExamFlag,a.REPAIR_EXAM_DATE repairExamDate,a.REPAIR_EXAM_USER repairExamUser,a.GET_REPORT_TYPE getReportType,
+               a.MAILING_ADDRESS mailingAddress,
+               b.name,b.sex,b.id_no idNo,b.input_code inputCode,b.marital_status maritalStatus,b.country,b.nation,
+               b.area,b.address,b.pwd,b.mobile,b.email,to_char(b.barthday,'yyyy-mm-dd') barthday,b.identity, b.patient_id patientId
+        from hc_person_visit_info a,hc_person_info b
+        where a.person_id = b.person_id and a.hospital_id = b.hospital_id
+          and a.person_id = #{personId, jdbcType=VARCHAR} and a.person_visit_id = #{personVisitId, jdbcType=VARCHAR}
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectExamClass" resultType="java.util.HashMap">
+        select a.exam_class examClass, a.exam_sub_class examSubClass, b.exam_class_code examClassCode
+        from v_hc_item_pack_dict a, v_exam_class_dict b
+        where a.EXAM_CLASS = b.exam_class_name
+          and a.HOSPITAL_ID = b.hospital_id
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.item_pack_code = #{itemPackCode, jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectItemVsCode" resultType="java.util.HashMap">
+        select a.item_pack_code itemPackCode,
+               a.item_no itemNo,
+               b.item_code itemCode,
+               b.item_name itemName,
+               b.item_price itemPrice,
+               'D' as itemClass,
+               a.hospital_id hospitalId
+        from hc_pack_vs_item_dict a, v_hc_item_dict b
+        where a.hospital_id = b.hospital_id
+          and a.item_code = b.item_code
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.item_pack_code = #{itemPackCode, jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectPackVsItemVsExternal" resultType="java.util.HashMap">
+        select item_pack_code itemPackCode,
+               item_code itemCode,
+               b.item_no itemNo,
+               a.hospital_id hospitalId,
+               b.ext_code extCode,
+               b.ext_name extName
+        from healthcheckup.hc_pack_vs_item_dict a, HC_ITEM_VS_EXTERNAL b
+        where a.hospital_id = b.hospital_id
+          and a.item_code = b.hc_item_code
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.item_pack_code = #{itemPackCode, jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectPackVsClinic" resultType="java.util.HashMap">
+        select a.item_pack_code itemPackCode,
+               a.item_code itemCode,
+               a.item_no itemNo,
+               a.hospital_id hospitalId,
+               a.ITEM_CODE extCode,
+               a.ITEM_NAME extName
+        from HC_PACK_VS_CLINIC a
+        where a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.item_pack_code = #{itemPackCode, jdbcType=VARCHAR}
+          and a.item_class = #{itemClass, jdbcType=VARCHAR}
+    </select>
+
+</mapper>

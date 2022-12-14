@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.queue.mapper.IntervalRecordMapper">
+
+    <select id="findIntervalRecord" parameterType="com.healt.cloud.checkup.queue.vo.IntervalRecordDictVo" resultType="com.healt.cloud.checkup.entity.HcIntervalRecord">
+        select PERSON_ID personId,PERSON_VISIT_ID personVisitId,ROOM_CODE roomCode,BEGIN_TIME beginTime,END_TIME endTime,doctor,operator,QUEUE_INDICATOR queueIndicator,
+               HOSPITAL_ID hospitalId,name,QUEUE_NO queueNo,QUEUE_DATE queueDate
+        from HEALTHCHECKUP.HC_INTERVAL_RECORD
+        where hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        <if test="beginTime != '' and beginTime != null">
+            and begin_time &gt;= to_date(concat(#{beginTime, jdbcType=VARCHAR},' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+        </if>
+        <if test="roomCode != '' and roomCode != null">
+            and room_code = #{roomCode, jdbcType=VARCHAR}
+        </if>
+    </select>
+
+</mapper>

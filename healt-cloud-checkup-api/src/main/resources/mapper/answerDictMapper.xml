@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.questionnaire.mapper.AnswerDictMapper">
+
+    <select id="findMaxAnswerCode" resultType="java.lang.Integer">
+        select max(to_number(ANSWER_CODE))
+        from HEALTHCHECKUP.HC_ANSWER_DICT
+        where HOSPITAL_ID = #{hospitalId, jdbcType=VARCHAR}
+          and INVEST_CODE = #{investCode, jdbcType=VARCHAR}
+          and QUESTION_CODE = #{questionCode, jdbcType=VARCHAR}
+    </select>
+
+</mapper>

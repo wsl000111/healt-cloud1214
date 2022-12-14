@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.printReport.mapper.PersonReportMapper">
+
+    <select id="findPrintPersonTotal" parameterType="com.healt.cloud.checkup.printReport.vo.PrintPersonDictVo" resultType="com.healt.cloud.checkup.printReport.vo.PrintPersonVo">
+        select a.hospital_id hospitalId,
+               a.person_id personId,
+               a.name,
+               a.unit_id unitId,
+               a.sex,
+               b.unit_name unitName,
+               a.PHONE_NUMBER phoneNumber,
+               b.PERSON_VISIT_ID personVisitId,
+               a.id_no idNo,
+               a.barthday,
+               b.appoints_date appointsDate,
+               b.finished_sign finishedSign,
+               b.finished_date finishedDate,
+               b.finished_id finishedId,
+               b.finished_name finishedName,
+               b.group_id groupId,
+               b.department,
+               b.person_charge personCharge,
+               b.age,
+               b.exam_class examClass,
+               b.result_status resultStatus,
+               b.discount,
+               b.build_date buildDate,
+               b.user_id userId,
+               b.user_name userName,
+               b.before_sign beforeSign,
+               b.before_date beforeDate,
+               b.before_id beforeId,
+               b.before_name beforeName,
+               b.blood_date bloodDate,
+               b.blood_id bloodId,
+               b.blood_name bloodName,
+               b.blood_sign bloodSign,
+               b.print_sign printSign,
+               b.print_date printDate,
+               b.print_id printId,
+               b.print_name printName,
+               b.print_type printType,
+               b.retrieve_sign retrieveSign,
+               b.retrieve_date retrieveDate,
+               b.retrieve_id retrieveId,
+               b.retrieve_name retrieveName,
+               b.final_docoter finalDocoter,
+               b.final_name finalName,
+               b.FINAL_DATE finalDate,
+               b.first_docoter firstDocoter,
+               b.first_date firstDate,
+               b.first_name firstName
+        from hc_person_info a, hc_person_visit_info b
+        where a.hospital_id = b.hospital_id
+          and a.person_id = b.person_id
+          and b.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        <if test="unitId != '' and unitId != null">
+            and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        </if>
+        <if test="unitVisitId != '' and unitVisitId != null">
+            and b.UNIT_VISIT_ID = #{unitVisitId, jdbcType=VARCHAR}
+        </if>
+        <if test="beginDate != '' and beginDate != null">
+            and b.FINAL_DATE &gt;= to_date(#{beginDate},'yyyy-mm-dd hh24:mi:ss')
+        </if>
+        <if test="endDate != '' and endDate != null">
+            and b.FINAL_DATE &lt;= to_date(#{endDate},'yyyy-mm-dd hh24:mi:ss')
+        </if>
+        <if test="personId != '' and personId != null">
+            and b.person_id = #{personId, jdbcType=VARCHAR}
+        </if>
+        <if test="personVisitId != '' and personVisitId != null">
+            and b.PERSON_VISIT_ID = #{personVisitId, jdbcType=VARCHAR}
+        </if>
+        <if test="name != '' and name != null">
+            and a.name = #{name, jdbcType=VARCHAR}
+        </if>
+        <if test="printDate == '' or printDate == null">
+            and b.print_date is null
+        </if>
+        <if test="printDate != '' and printDate != null">
+            and b.print_date is not null
+        </if>
+    </select>
+
+    <select id="findPrintPerson" parameterType="com.healt.cloud.checkup.printReport.vo.PrintPersonDictVo" resultType="com.healt.cloud.checkup.printReport.vo.PrintPersonVo">
+        SELECT *
+        FROM (
+        SELECT TMP.*, ROWNUM ROW_ID
+        FROM (
+        select a.hospital_id hospitalId,
+        a.person_id personId,
+        a.name,
+        a.unit_id unitId,
+        a.sex,
+        b.unit_name unitName,
+        a.PHONE_NUMBER phoneNumber,
+        b.PERSON_VISIT_ID personVisitId,
+        a.id_no idNo,
+        a.barthday,
+        b.appoints_date appointsDate,
+        b.finished_sign finishedSign,
+        b.finished_date finishedDate,
+        b.finished_id finishedId,
+        b.finished_name finishedName,
+        b.group_id groupId,
+        b.department,
+        b.person_charge personCharge,
+        b.age,
+        b.exam_class examClass,
+        b.result_status resultStatus,
+        b.discount,
+        b.build_date buildDate,
+        b.user_id userId,
+        b.user_name userName,
+        b.before_sign beforeSign,
+        b.before_date beforeDate,
+        b.before_id beforeId,
+        b.before_name beforeName,
+        b.blood_date bloodDate,
+        b.blood_id bloodId,
+        b.blood_name bloodName,
+        b.blood_sign bloodSign,
+        b.print_sign printSign,
+        b.print_date printDate,
+        b.print_id printId,
+        b.print_name printName,
+        b.print_type printType,
+        b.retrieve_sign retrieveSign,
+        b.retrieve_date retrieveDate,
+        b.retrieve_id retrieveId,
+        b.retrieve_name retrieveName,
+        b.final_docoter finalDocoter,
+        b.final_name finalName,
+        b.FINAL_DATE finalDate,
+        b.first_docoter firstDocoter,
+        b.first_date firstDate,
+        b.first_name firstName
+        from hc_person_info a, hc_person_visit_info b
+        where a.hospital_id = b.hospital_id
+        and a.person_id = b.person_id
+        and b.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        <if test="unitId != '' and unitId != null">
+            and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        </if>
+        <if test="unitVisitId != '' and unitVisitId != null">
+            and b.UNIT_VISIT_ID = #{unitVisitId, jdbcType=VARCHAR}
+        </if>
+        <if test="beginDate != '' and beginDate != null">
+            and b.FINAL_DATE &gt;= to_date(#{beginDate},'yyyy-mm-dd hh24:mi:ss')
+        </if>
+        <if test="endDate != '' and endDate != null">
+            and b.FINAL_DATE &lt;= to_date(#{endDate},'yyyy-mm-dd hh24:mi:ss')
+        </if>
+        <if test="personId != '' and personId != null">
+            and b.person_id = #{personId, jdbcType=VARCHAR}
+        </if>
+        <if test="personVisitId != '' and personVisitId != null">
+            and b.PERSON_VISIT_ID = #{personVisitId, jdbcType=VARCHAR}
+        </if>
+        <if test="name != '' and name != null">
+            and a.name = #{name, jdbcType=VARCHAR}
+        </if>
+        <if test="printDate == '' or printDate == null">
+            and b.print_date is null
+        </if>
+        <if test="printDate != '' and printDate != null">
+            and b.print_date is not null
+        </if>
+        ) TMP
+        WHERE ROWNUM &lt;= ${pageNum*pageSize})
+        WHERE ROW_ID &gt; ${(pageNum-1)*pageSize}
+    </select>
+
+    <select id="findPersonBasicInfo" resultType="com.healt.cloud.checkup.printReport.vo.PersonBasicInfoVo">
+        select a.hospital_id hospitalId,
+               a.person_id personId,
+               a.name,
+               a.unit_id unitId,
+               a.sex,
+               b.unit_name unitName,
+               a.mobile,
+               a.PHONE_NUMBER phoneNumber,
+               a.id_no idNo,
+               a.barthday,
+               b.appoints_date appointsDate,
+               b.finished_sign finishedSign,
+               b.finished_date finishedDate,
+               b.finished_id finishedId,
+               b.finished_name finishedName,
+               b.group_id groupId,
+               b.department,
+               b.person_charge personCharge,
+               b.age,
+               b.exam_class examClass,
+               b.result_status resultStatus,
+               b.discount,
+               b.build_date buildDate,
+               b.user_id userId,
+               b.user_name userName,
+               b.before_sign beforeSign,
+               b.before_date beforeDate,
+               b.before_id beforeId,
+               b.before_name beforeName,
+               b.blood_date bloodDate,
+               b.blood_id bloodId,
+               b.blood_name bloodName,
+               b.blood_sign bloodSign,
+               b.print_sign printSign,
+               b.print_date printDate,
+               b.print_id printId,
+               b.print_name printName,
+               b.print_type printType,
+               b.retrieve_sign retrieveSign,
+               b.retrieve_date retrieveDate,
+               b.retrieve_id retrieveId,
+               b.retrieve_name retrieveName,
+               b.final_docoter finalDocoter,
+               b.final_name finalName,
+               b.FINAL_DATE finalDate,
+               b.first_docoter firstDocoter,
+               b.first_date firstDate,
+               b.first_name firstName
+        from hc_person_info a, hc_person_visit_info b
+        where a.hospital_id = b.hospital_id
+          and a.person_id = b.person_id
+          and b.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and b.person_id = #{personId, jdbcType=VARCHAR}
+          and b.person_visit_id = #{personVisitId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findPersonResultItems" resultType="com.healt.cloud.checkup.printReport.vo.PersonResultItemsVo">
+        select rownum XH,
+               aa.content,
+               aa.description,
+               aa.dept_id deptId,
+               aa.dept_name deptName,
+               aa.sort_no sortNo
+        from (select a.content, a.description, a.dept_id, a.dept_name, a.sort_no
+              from hc_dept_result_items a
+              where a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+                and a.person_id = #{personId, jdbcType=VARCHAR}
+                and a.person_visit_id = #{personVisitId, jdbcType=VARCHAR}
+              order by a.sort_no asc) aa
+    </select>
+
+    <select id="findPersonAppendResult" resultType="com.healt.cloud.checkup.printReport.vo.PersonAppendResultVo">
+        select a.content, a.description
+        from hc_append_result a
+        where a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.person_id = #{personId, jdbcType=VARCHAR}
+          and a.person_visit_id = #{personVisitId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findPersonResult" resultType="com.healt.cloud.checkup.printReport.vo.PersonResultVo">
+        select a.conclusion_text conclusionText, a.suggest_text suggestText, a.DEPT_NAME deptName
+        from hc_dept_result_dict a
+        where a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.person_id = #{personId, jdbcType=VARCHAR}
+          and a.person_visit_id = #{personVisitId, jdbcType=VARCHAR}
+          and a.conclusion_text is not null
+    </select>
+
+    <update id="updatePrint">
+        update hc_person_visit_info a
+        set a.print_date = sysdate,a.print_id = #{userName, jdbcType=VARCHAR},
+            a.print_name = #{userRealName, jdbcType=VARCHAR},a.print_type ='窗口', a.print_sign ='1'
+        where a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.person_id = #{personId, jdbcType=VARCHAR}
+          and a.person_visit_id = #{personVisitId, jdbcType=VARCHAR}
+    </update>
+
+</mapper>

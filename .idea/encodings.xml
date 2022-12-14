@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/healt-cloud-api-pom" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/healt-cloud-checkup-api" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/healt-cloud-checkup-pdf" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/healt-cloud-checkup-service-orcl" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/healt-cloud-checkup-web" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/healt-cloud-common" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/healt-cloud-component-resultex" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/healt-cloud-core-pom" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/healt-cloud-gateway" charset="UTF-8" />
+  </component>
+</project>

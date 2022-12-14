@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.mapper.RoleMapper">
+    <resultMap id="RoleMenuVoResult" type="com.healt.cloud.checkup.vo.sys.role.RoleMenuVoResult">
+        <result column="menu_code" property="MENU_CODE" jdbcType="VARCHAR"/>
+        <result column="display_text" property="DISPLAY_TEXT" jdbcType="VARCHAR"/>
+        <result column="parent_menu_code" property="PARENT_MENU_CODE" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="findUnallocatedMenuList" parameterType="com.healt.cloud.checkup.vo.sys.role.RoleVsMenuVo" resultMap="RoleMenuVoResult">
+        select menu_code, display_text, parent_menu_code from (
+            select menu_code, display_text, parent_menu_code,serial_no
+                from main_menu
+            where isvisible = 1
+                and hospital_id = #{hospitalId, jdbcType=VARCHAR}
+            minus
+            select b.menu_code, b.display_text, b.parent_menu_code,b.serial_no
+                from healthcheckup.role_menu a, main_menu b
+            where b.isvisible = 1
+                and a.menu_code = b.menu_code
+                and a.hospital_id = b.hospital_id
+                and a.role_id = #{roleId, jdbcType=VARCHAR}
+                and a.hospital_id = #{hospitalId, jdbcType=VARCHAR})
+        order by serial_no
+    </select>
+    <select id="findAlreadyMenuList" parameterType="com.healt.cloud.checkup.vo.sys.role.RoleVsMenuVo" resultMap="RoleMenuVoResult">
+        select b.menu_code, b.display_text, b.parent_menu_code
+            from healthcheckup.role_menu a, main_menu b
+        where b.isvisible = 1
+            and a.menu_code = b.menu_code
+            and a.hospital_id = b.hospital_id
+            and a.role_id = #{roleId, jdbcType=VARCHAR}
+            and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        order by b.serial_no
+    </select>
+</mapper>

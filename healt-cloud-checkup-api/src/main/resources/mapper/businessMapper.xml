@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.mapper.BusinessMapper">
+    <select id="findItemsByClass" parameterType="com.healt.cloud.checkup.vo.busniess.item.HcItemDictVo" resultType="com.healt.cloud.checkup.entity.HcItemDict">
+        select a.*
+        from hc_item_dict a, v_depart_dict b
+        where a.hospital_id = b.hospital_id
+          and a.hc_dept_code = b.dept_id
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and b.class_name = #{deptClass, jdbcType=VARCHAR}
+        order by a.sort_no
+    </select>
+    <select id="findPageItemsByClass" parameterType="com.healt.cloud.checkup.vo.busniess.item.HcItemDictVo" resultType="com.healt.cloud.checkup.entity.HcItemDict">
+        SELECT *
+        FROM (
+            SELECT TMP.*, ROWNUM ROW_ID
+            FROM (
+                 select a.ITEM_CODE itemCode,
+                        a.ITEM_NAME itemName,
+                        a.INPUT_CODE inputCode,
+                        a.HC_DEPT_CODE hcDeptCode,
+                        a.SORT_NO sortNo,
+                        a.SEX sex,
+                        a.INPUT_TYPE inputType,
+                        a.RESULT_TYPE resultType,
+                        a.NORMAL_VALUE normalValue,
+                        a.DEFAULT_VALUE defaultValue,
+                        a.UNIT unit,
+                        a.TOP_LIMIT topLimit,
+                        a.BOTTOM_LIMIT bottomLimit,
+                        a.FMTOP_LIMIT fmtopLimit,
+                        a.FMBOTTOM_LIMIT fmbottomLimit,
+                        a.PRINT_CONTEXT printContext,
+                        a.DESCRIBES describes,
+                        a.ADVICE advice,
+                        a.NOTES notes,
+                        a.EFFECTIVE_FLAG effectiveFlag,
+                        a.HOSPITAL_ID hospitalId,
+                        a.ITEM_PRICE itemPrice
+                 from hc_item_dict a, v_depart_dict b
+                 where a.hospital_id = b.hospital_id
+                   and a.hc_dept_code = b.dept_id
+                   and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+                   and b.class_name = #{deptClass, jdbcType=VARCHAR}
+                <if test="inputCode != null">
+                    and a.input_code like concat('%',#{inputCode},'%')
+                </if>
+                 order by a.sort_no) TMP
+            WHERE ROWNUM &lt;= ${pageNum*pageSize})
+        WHERE ROW_ID &gt; ${(pageNum-1)*pageSize}
+    </select>
+    <select id="countItemDictByClass" parameterType="com.healt.cloud.checkup.vo.busniess.item.HcItemDictVo" resultType="Integer">
+        select count(*)
+        from hc_item_dict a, v_depart_dict b
+        where a.hospital_id = b.hospital_id
+          and a.hc_dept_code = b.dept_id
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and b.class_name = #{deptClass, jdbcType=VARCHAR}
+        <if test='inputCode != null'>
+            and a.input_code like concat('%',#{inputCode},'%')
+        </if>
+    </select>
+    <select id="findItemPackByClass" parameterType="com.healt.cloud.checkup.vo.busniess.itemPack.HcItemPackDictVo" resultType="com.healt.cloud.checkup.entity.HcItemPackDict">
+        select a.SORT_NO sortNo,
+               a.ITEM_PACK_CODE itemPackCode,
+               a.ITEM_PACK_NAME itemPackName,
+               a.INPUT_CODE inputCode,
+               a.HOSPITAL_ID hospitalId,
+               a.HC_DEPT_CODE hcDeptCode,
+               a.SEX sex,
+               a.PACK_CLASS packClass,
+               a.CLINICAL_SIGNIFICANCE clinicalSignificance,
+               a.GUIDEGROUP_CODE guidegroupCode,
+               a.GUIDE_TIP guideTip,
+               a.APPLY_SENDTO applySendto,
+               a.RESULT_RECIEVED resultRecieved,
+               a.HIS_DEPART_CODE hisDepartCode,
+               a.HIS_DEPART_NAME hisDepartName,
+               a.DRAW_BLOOD drawBlood,
+               a.TEST_TUBE_CODE testTubeCode,
+               a.SPECIMAN_NAME specimanName,
+               a.EXAM_CLASS examClass,
+               a.EXAM_SUB_CLASS examSubClass,
+               a.COST_CLASS_CODE costClassCode,
+               a.IS_DISCOUNT isDiscount,
+               a.ITEM_PACK_PRICE itemPackPrice,
+               a.ITEM_PACK_DISCOUNT_PRICE itemPackDiscountPrice,
+               a.AUTO_FINISHED autoFinished,
+               a.REPORT_FLAG reportFlag,
+               a.RESULT_HANDLE resultHandle,
+               a.EFFECTIVE_FLAG effectiveFlag
+        from hc_item_pack_dict a, v_depart_dict b
+        where a.hospital_id = b.hospital_id
+          and a.hc_dept_code = b.dept_id
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and b.class_name = #{deptClass, jdbcType=VARCHAR}
+        order by a.sort_no
+    </select>
+    <select id="findItemPackByClassPage" parameterType="com.healt.cloud.checkup.vo.busniess.itemPack.HcItemPackDictVo" resultType="com.healt.cloud.checkup.entity.HcItemPackDict">
+        SELECT *
+        FROM (
+        SELECT TMP.*, ROWNUM ROW_ID FROM (
+                 select a.SORT_NO sortNo,
+                        a.ITEM_PACK_CODE itemPackCode,
+                        a.ITEM_PACK_NAME itemPackName,
+                        a.INPUT_CODE inputCode,
+                        a.HOSPITAL_ID hospitalId,
+                        a.HC_DEPT_CODE hcDeptCode,
+                        a.SEX sex,
+                        a.PACK_CLASS packClass,
+                        a.CLINICAL_SIGNIFICANCE clinicalSignificance,
+                        a.GUIDEGROUP_CODE guidegroupCode,
+                        a.GUIDE_TIP guideTip,
+                        a.APPLY_SENDTO applySendto,
+                        a.RESULT_RECIEVED resultRecieved,
+                        a.HIS_DEPART_CODE hisDepartCode,
+                        a.HIS_DEPART_NAME hisDepartName,
+                        a.DRAW_BLOOD drawBlood,
+                        a.TEST_TUBE_CODE testTubeCode,
+                        a.SPECIMAN_NAME specimanName,
+                        a.EXAM_CLASS examClass,
+                        a.EXAM_SUB_CLASS examSubClass,
+                        a.COST_CLASS_CODE costClassCode,
+                        a.IS_DISCOUNT isDiscount,
+                        a.ITEM_PACK_PRICE itemPackPrice,
+                        a.ITEM_PACK_DISCOUNT_PRICE itemPackDiscountPrice,
+                        a.AUTO_FINISHED autoFinished,
+                        a.REPORT_FLAG reportFlag,
+                        a.RESULT_HANDLE resultHandle,
+                        a.EFFECTIVE_FLAG effectiveFlag
+                 from hc_item_pack_dict a, v_depart_dict b
+                 where a.hospital_id = b.hospital_id
+                    and a.hc_dept_code = b.dept_id
+                    and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+                    and b.class_name = #{deptClass, jdbcType=VARCHAR}
+                    <if test="columnName != null and columnValue != null">
+                        and ${columnName} like '%${columnValue}%'
+                    </if>
+                 order by a.sort_no
+            ) TMP WHERE ROWNUM &lt;= ${pageNum*pageSize})
+        WHERE ROW_ID &gt; ${(pageNum-1)*pageSize}
+    </select>
+    <select id="findDtClinicItems" parameterType="string" resultType="com.healt.cloud.checkup.vo.busniess.packClinic.VClinicItemsVo">
+        SELECT ITEM_NAME  AS itemName,
+        ITEM_NAME  AS name,
+        ITEM_CLASS AS itemClass,
+        ITEM_CODE  AS itemCode,
+        ITEM_CODE  AS code,
+        INPUT_CODE AS inputCode,
+        PRICE_MONEY as priceMoney,
+        EXPAND3
+        FROM V_CLINIC_ITEMS
+        <if test='"*" != itemClass'>
+            WHERE (ITEM_CLASS = #{itemClass})
+        </if>
+    </select>
+
+
+    <select id="findItemPackByClassTotal" parameterType="com.healt.cloud.checkup.vo.busniess.itemPack.HcItemPackDictVo" resultType="Integer">
+        select count(*)
+        from hc_item_pack_dict a, v_depart_dict b
+        where a.hospital_id = b.hospital_id
+        and a.hc_dept_code = b.dept_id
+        and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        and b.class_name = #{deptClass, jdbcType=VARCHAR}
+        <if test="columnName != null and columnValue != null">
+            and ${columnName} like '%${columnValue}%'
+        </if>
+    </select>
+    <select id="findtDtPackVsItem" parameterType="com.healt.cloud.checkup.vo.busniess.itemPack.HcPackVsItemDictVo" resultType="com.healt.cloud.checkup.vo.busniess.itemPack.HcPackVsItemDictVoResult">
+        select a.ITEM_PACK_CODE ITEM_PACK_CODE, a.ITEM_CODE ITEM_CODE, a.ITEM_NO ITEM_NO, a.HOSPITAL_ID HOSPITAL_ID,
+               (select b.item_name
+                from v_hc_item_dict b
+                where b.item_code = a.item_code
+                  and b.hospital_id = a.hospital_id) ITEM_NAME
+        from hc_pack_vs_item_dict a
+        where a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.ITEM_PACK_CODE = #{itemPackCode, jdbcType=VARCHAR}
+        order by a.ITEM_NO
+    </select>
+    <select id="findDtSetVsPack" resultType="com.healt.cloud.checkup.vo.busniess.packSet.HcSetVsPackDictVo">
+        select a.SET_CODE setCode,
+               a.ITEM_PACK_CODE itemPackCode,
+               a.ITEM_NO itemNo,
+               a.HOSPITAL_ID hospitalId,
+               (select b.ITEM_PACK_NAME
+                from v_hc_item_pack_dict b
+                where b.ITEM_PACK_CODE = a.item_pack_code
+                  and b.hospital_id = a.hospital_id) itemPackName,
+               (select b.ITEM_PACK_PRICE
+                from v_hc_item_pack_dict b
+                where b.ITEM_PACK_CODE = a.item_pack_code
+                  and b.hospital_id = a.hospital_id) itemPackPrice
+        from hc_set_vs_pack_dict a
+        where a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.SET_CODE = #{setCode, jdbcType=VARCHAR}
+        order by a.ITEM_NO
+    </select>
+    <select id="findDtItemPackDict" resultType="com.healt.cloud.checkup.vo.busniess.packSet.VHcItemPackDictVo">
+        SELECT V_DEPART_DICT.CLASS_NAME className,
+               V_DEPART_DICT.DEPT_NAME deptName,
+               V_DEPART_DICT.SORT_NO sortNo,
+               V_HC_ITEM_PACK_DICT.ITEM_PACK_CODE itemPackCode,
+               V_HC_ITEM_PACK_DICT.ITEM_PACK_NAME itemPackName
+        FROM V_HC_ITEM_PACK_DICT, V_DEPART_DICT
+        WHERE (V_HC_ITEM_PACK_DICT.HC_DEPT_CODE = V_DEPART_DICT.DEPT_ID)
+          AND (V_HC_ITEM_PACK_DICT.HOSPITAL_ID = V_DEPART_DICT.HOSPITAL_ID)
+          AND (V_HC_ITEM_PACK_DICT.EFFECTIVE_FLAG = '1')
+          AND V_HC_ITEM_PACK_DICT.HOSPITAL_ID = #{hospitalId, jdbcType=VARCHAR}
+        order by V_HC_ITEM_PACK_DICT.SORT_NO
+    </select>
+    <select id="findDtItemPackLab" resultType="com.healt.cloud.checkup.vo.busniess.itemExtern.ItemPackLabVo">
+        select a.ITEM_PACK_CODE itemPackCode, a.ITEM_PACK_NAME itemPackName, c.item_code itemCode, c.item_name itemName
+        from v_hc_item_pack_dict a, hc_pack_vs_item_dict b, v_hc_item_dict c
+        where a.ITEM_PACK_CODE = b.item_pack_code
+          and a.HOSPITAL_ID = b.hospital_id
+          and b.item_code = c.item_code
+          and b.hospital_id = c.hospital_id
+          and a.HC_DEPT_CODE in (select d.dept_id
+                                 from v_depart_dict d
+                                 where d.hospital_id = a.HOSPITAL_ID
+                                   and d.class_name = '检验')
+          and a.ITEM_PACK_CODE in
+              (select hc_pack_vs_clinic.item_pack_code from hc_pack_vs_clinic)
+          and (a.effective_flag = '1')
+          and a.HOSPITAL_ID = #{hospitalId, jdbcType=VARCHAR}
+        order by a.SORT_NO
+    </select>
+
+    <select id="findPackSetNew" resultType="com.healt.cloud.checkup.vo.busniess.packSet.PackSetNewVo">
+        select a.set_code setCode,b.set_name setName,c.item_pack_code itemPackCode,
+               c.item_pack_name itemPackName,b.set_amount setAmount,c.item_pack_price itemPackPrice,
+               dd.ysje,
+               ROUND(b.set_amount/dd.ysje,4) as zkl
+        from hc_set_vs_pack_dict a, HC_PACK_SET_DICT b, hc_item_pack_dict c ,
+             (select a.set_code,sum(c.item_pack_price) ysje
+              from hc_set_vs_pack_dict a, HC_PACK_SET_DICT b, hc_item_pack_dict c
+              where a.set_code = b.set_code
+                and a.item_pack_code = c.item_pack_code
+              group by a.set_code) dd
+        where a.set_code = b.set_code
+          and a.item_pack_code = c.item_pack_code
+          and a.set_code = dd.set_code
+    </select>
+</mapper>

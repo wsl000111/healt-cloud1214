@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/healt-cloud.iml" filepath="$PROJECT_DIR$/healt-cloud.iml" />
+      <module fileurl="file://$PROJECT_DIR$/healt-cloud-api-pom/healt-cloud-api-pom.iml" filepath="$PROJECT_DIR$/healt-cloud-api-pom/healt-cloud-api-pom.iml" />
+      <module fileurl="file://$PROJECT_DIR$/healt-cloud-checkup-api/healt-cloud-checkup-api.iml" filepath="$PROJECT_DIR$/healt-cloud-checkup-api/healt-cloud-checkup-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/healt-cloud-checkup-pdf/healt-cloud-checkup-pdf.iml" filepath="$PROJECT_DIR$/healt-cloud-checkup-pdf/healt-cloud-checkup-pdf.iml" />
+      <module fileurl="file://$PROJECT_DIR$/healt-cloud-checkup-service-orcl/healt-cloud-checkup-service-orcl.iml" filepath="$PROJECT_DIR$/healt-cloud-checkup-service-orcl/healt-cloud-checkup-service-orcl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/healt-cloud-checkup-web/healt-cloud-checkup-web.iml" filepath="$PROJECT_DIR$/healt-cloud-checkup-web/healt-cloud-checkup-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/healt-cloud-common/healt-cloud-common.iml" filepath="$PROJECT_DIR$/healt-cloud-common/healt-cloud-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/healt-cloud-component-resultex/healt-cloud-component-resultex.iml" filepath="$PROJECT_DIR$/healt-cloud-component-resultex/healt-cloud-component-resultex.iml" />
+      <module fileurl="file://$PROJECT_DIR$/healt-cloud-core-pom/healt-cloud-core-pom.iml" filepath="$PROJECT_DIR$/healt-cloud-core-pom/healt-cloud-core-pom.iml" />
+      <module fileurl="file://$PROJECT_DIR$/healt-cloud-gateway/healt-cloud-gateway.iml" filepath="$PROJECT_DIR$/healt-cloud-gateway/healt-cloud-gateway.iml" />
+    </modules>
+  </component>
+</project>

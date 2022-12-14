@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.appointmentReg.mapper.UnitPersonsMapper">
+    <select id="findDtUnit" parameterType="com.healt.cloud.checkup.vo.appointmentReg.unitPersons.DtUnitVo" resultType="com.healt.cloud.checkup.vo.appointmentReg.unitPersons.DtUnitVo">
+        select a.unit_id unitId,a.unit_name unitName,a.input_code inputCode
+        from hc_unit_info a
+        where a.hospital_id=#{hospitalId, jdbcType=VARCHAR} and a.unit_id != '0000'
+        order by a.unit_id,a.unit_name
+    </select>
+
+    <select id="findDtClassType" parameterType="com.healt.cloud.checkup.vo.appointmentReg.unitPersons.DtClassTypeVo" resultType="com.healt.cloud.checkup.vo.appointmentReg.unitPersons.DtClassTypeVo">
+        SELECT CODE,NAME,INPUT_CODE inputCode
+        FROM v_hc_class_dict
+        WHERE USE_FLAG='1' AND HOSPITAL_ID=#{hospitalId, jdbcType=VARCHAR}
+        order by sort_no
+    </select>
+
+    <select id="findDtCountry" parameterType="com.healt.cloud.checkup.vo.appointmentReg.unitPersons.DtCountryVo" resultType="com.healt.cloud.checkup.vo.appointmentReg.unitPersons.DtCountryVo">
+        SELECT CODE,NAME,INPUT_CODE inputCode
+        FROM V_COUNTRY_DICT
+        WHERE USE_FLAG='1' AND HOSPITAL_ID=#{hospitalId, jdbcType=VARCHAR}
+        order by sort_no
+    </select>
+
+    <select id="findDtArea" parameterType="com.healt.cloud.checkup.vo.appointmentReg.unitPersons.DtAreaVo" resultType="com.healt.cloud.checkup.vo.appointmentReg.unitPersons.DtAreaVo">
+        SELECT CODE,NAME,INPUT_CODE inputCode
+        FROM V_AREA_DICT
+        WHERE USE_FLAG='1' AND HOSPITAL_ID=#{hospitalId, jdbcType=VARCHAR}
+        order by sort_no
+    </select>
+
+    <select id="findDtNation" parameterType="com.healt.cloud.checkup.vo.appointmentReg.unitPersons.DtNationVo" resultType="com.healt.cloud.checkup.vo.appointmentReg.unitPersons.DtNationVo">
+        SELECT CODE,NAME,INPUT_CODE inputCode
+        FROM V_NATION_DICT
+        WHERE USE_FLAG='1' AND HOSPITAL_ID=#{hospitalId, jdbcType=VARCHAR}
+        order by sort_no
+    </select>
+
+    <select id="findDtJob" parameterType="com.healt.cloud.checkup.vo.appointmentReg.unitPersons.DtJobVo" resultType="com.healt.cloud.checkup.vo.appointmentReg.unitPersons.DtJobVo">
+        SELECT CODE,NAME,INPUT_CODE inputCode
+        FROM V_OCCUPATION_DICT
+        WHERE USE_FLAG='1' AND HOSPITAL_ID=#{hospitalId, jdbcType=VARCHAR}
+        order by sort_no
+    </select>
+
+    <select id="findDtMaritalStatus" parameterType="com.healt.cloud.checkup.vo.appointmentReg.unitPersons.DtMaritalStatusVo" resultType="com.healt.cloud.checkup.vo.appointmentReg.unitPersons.DtMaritalStatusVo">
+        SELECT CODE,NAME,INPUT_CODE inputCode
+        FROM V_MARITAL_STATUS_DICT
+        WHERE USE_FLAG='1' AND HOSPITAL_ID=#{hospitalId, jdbcType=VARCHAR}
+        order by sort_no
+    </select>
+
+    <select id="findDtChargeType" parameterType="com.healt.cloud.checkup.vo.appointmentReg.unitPersons.DtChargeTypeVo" resultType="com.healt.cloud.checkup.vo.appointmentReg.unitPersons.DtChargeTypeVo">
+        SELECT CODE,NAME,INPUT_CODE inputCode
+        FROM v_costclass_dict
+        WHERE USE_FLAG='1' AND HOSPITAL_ID=#{hospitalId, jdbcType=VARCHAR}
+        order by sort_no
+    </select>
+
+    <select id="findDtIdentity" parameterType="com.healt.cloud.checkup.vo.appointmentReg.unitPersons.DtIdentityVo" resultType="com.healt.cloud.checkup.vo.appointmentReg.unitPersons.DtIdentityVo">
+        SELECT CODE,NAME,INPUT_CODE inputCode
+        FROM V_IDENTITY_DICT
+        WHERE USE_FLAG='1' AND HOSPITAL_ID=#{hospitalId, jdbcType=VARCHAR}
+        order by sort_no
+    </select>
+
+    <select id="findDtPersonInfo" parameterType="com.healt.cloud.checkup.vo.appointmentReg.unitPersons.DtPersonInfoVo" resultType="com.healt.cloud.checkup.vo.appointmentReg.unitPersons.DtPersonInfoVo">
+        select '0' isaway,
+               a.HOSPITAL_ID hospitalId,
+               a.PERSON_ID personId,
+               a.name,
+               a.UNIT_ID unitId,
+               a.sex,
+               a.UNIT_NAME unitName,
+               a.ID_NO idNo,
+               a.barthday,
+               a.INPUT_CODE inputCode,
+               a.MARITAL_STATUS maritalStatus,
+               a.country,
+               a.area,
+               a.pwd,
+               a.nation,
+               a.address,
+               a.postcode,
+               a.PHONE_NUMBER phoneNumber,
+               a.mobile,
+               a.email,
+               a.source,
+               a.job,
+               a.EXAM_CLASS examClass,
+               a.PERSON_LEVEL personLevel,
+               a.department,
+               a.CHARGE_TYPE chargeType,
+               a.PERSON_CHARGE personCharge,
+               a.identity,
+               a.BUILD_DATE buildDate,
+               a.USER_ID userId,
+               a.USER_NAME userName,
+               a.note,
+               a.salt
+        from HC_PERSON_INFO a
+        where a.hospital_id=#{hospitalId, jdbcType=VARCHAR} and a.UNIT_ID=#{unitId, jdbcType=VARCHAR}
+    </select>
+</mapper>

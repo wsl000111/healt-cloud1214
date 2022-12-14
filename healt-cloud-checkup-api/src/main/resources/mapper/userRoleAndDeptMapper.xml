@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.mapper.appointmentReg.UserRoleAndDeptMapper">
+
+    <select id="findRoleId" resultType="java.lang.String">
+        select role_id from healthcheckup.user_role
+        where user_id = #{userId, jdbcType=VARCHAR}
+          and role_id = #{roleId, jdbcType=VARCHAR}
+          and hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findDeptId" resultType="java.lang.String">
+        select dept_id from healthcheckup.doctor_depart_right
+        where user_id = #{userId, jdbcType=VARCHAR}
+          and dept_id = #{deptId, jdbcType=VARCHAR}
+          and hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findAllocatedRoles" resultType="com.healt.cloud.checkup.sysDict.vo.AllocatedRolesVo">
+        select a.hospital_id hospitalId,a.user_id userId,a.role_id roleId,b.role_name roleName
+        from healthcheckup.user_role a,healthcheckup.role_dict b
+        where a.hospital_id = b.hospital_id and a.role_id = b.role_id
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.user_id = #{userId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findUnallocatedRoles" resultType="com.healt.cloud.checkup.sysDict.vo.UnallocatedRolesVo">
+        select hospital_id hospitalId,role_id roleId,role_name roleName
+        from healthcheckup.role_dict where hospital_id = #{hospitalId, jdbcType=VARCHAR}
+            minus
+        select a.hospital_id,a.role_id,b.role_name
+        from healthcheckup.user_role a,healthcheckup.role_dict b
+        where a.hospital_id = b.hospital_id and a.role_id = b.role_id
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.user_id = #{userId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findAllocatedDept" resultType="com.healt.cloud.checkup.sysDict.vo.AllocatedDeptVo">
+        select a.dept_id deptId,b.dept_name deptName,a.user_id userId
+        from DOCTOR_DEPART_RIGHT a,v_depart_dict b
+        where a.hospital_id = b.hospital_id and
+            a.dept_id = b.dept_id and
+            a.user_id = #{userId, jdbcType=VARCHAR} and
+            a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findUnAllocatedDept" resultType="com.healt.cloud.checkup.sysDict.vo.UnAllocatedDeptVo">
+        select a.dept_id deptId,a.dept_name deptName
+        from v_depart_dict a
+        where a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+            minus
+        select a.dept_id,b.dept_name
+        from DOCTOR_DEPART_RIGHT a,v_depart_dict b
+        where a.hospital_id = b.hospital_id and
+            a.dept_id = b.dept_id and
+            a.user_id = #{userId, jdbcType=VARCHAR} and
+            a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+    <delete id="deleteUserRole">
+        delete from healthcheckup.user_role
+        where hospital_id= #{hospitalId, jdbcType=VARCHAR}
+          and user_id= #{userId, jdbcType=VARCHAR}
+          and role_id = #{roleId, jdbcType=VARCHAR}
+    </delete>
+
+    <insert id="addUserRole">
+        INSERT INTO healthcheckup.USER_ROLE ( HOSPITAL_ID, USER_ID, ROLE_ID )
+        VALUES ( #{hospitalId, jdbcType=VARCHAR}, #{userId, jdbcType=VARCHAR}, #{roleId, jdbcType=VARCHAR} )
+    </insert>
+
+    <select id="findUserList" resultType="com.healt.cloud.checkup.sysDict.vo.UserListVo">
+        select a.user_id userId,a.user_name userName,a.sex,b.dept_name deptName
+        from v_users_dict a,v_depart_dict b
+        where a.dept_id = b.dept_id and a.hospital_id = b.hospital_id
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </select>
+</mapper>

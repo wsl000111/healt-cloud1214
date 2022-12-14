@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.mapper.appointmentReg.ExamResultBrowseMapper">
+
+    <select id="findHcDeptResult" parameterType="com.healt.cloud.checkup.physicalExa.vo.HcDeptResultDictVo" resultType="com.healt.cloud.checkup.physicalExa.vo.HcDeptResultVo">
+        SELECT healthcheckup.HC_DEPT_RESULT_DICT.person_id personId,
+               healthcheckup.HC_DEPT_RESULT_DICT.person_visit_id personVisitId,
+               healthcheckup.HC_DEPT_RESULT_DICT.dept_id deptId,
+               healthcheckup.HC_DEPT_RESULT_DICT.hc_result_date hcResultDate,
+               healthcheckup.HC_DEPT_RESULT_DICT.medical_history medicalHistory,
+               healthcheckup.HC_DEPT_RESULT_DICT.MED_IN_DEPT_REPORT medInDeptReport,
+               healthcheckup.HC_DEPT_RESULT_DICT.DOCTOR,
+               healthcheckup.HC_DEPT_RESULT_DICT.CONCLUSION_TEXT conclusionText,
+               healthcheckup.HC_DEPT_RESULT_DICT.SUGGEST_TEXT suggestText,
+               healthcheckup.HC_DEPT_RESULT_DICT.OPERATOR,
+               healthcheckup.HC_DEPT_RESULT_DICT.JUDGEMENT,
+               healthcheckup.HC_DEPT_RESULT_DICT.CHIEF_SUM_FLAG chiefSumFlag,
+               healthcheckup.HC_DEPT_RESULT_DICT.OPERATOR_NAME operatorName,
+               healthcheckup.HC_DEPT_RESULT_DICT.DOCTOR_NAME doctorName,
+               healthcheckup.HC_DEPT_RESULT_DICT.dept_name deptName
+        FROM healthcheckup.HC_DEPT_RESULT_DICT
+        WHERE HC_DEPT_RESULT_DICT.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and (healthcheckup.HC_DEPT_RESULT_DICT.person_id = #{personId, jdbcType=VARCHAR})
+          and (healthcheckup.HC_DEPT_RESULT_DICT.person_visit_id = #{personVisitId, jdbcType=VARCHAR})
+        <if test="deptId != '' and deptId != null">
+            and (healthcheckup.HC_DEPT_RESULT_DICT.dept_id = #{deptId, jdbcType=VARCHAR})
+        </if>
+    </select>
+
+    <select id="findExamMasterCount" resultType="java.lang.String">
+        select count(*)
+        from HEALTHCHECKUP.V_EXAM_MASTER
+        where exam_no = #{examNo, jdbcType=VARCHAR}
+          and result_status in ('3', '4')
+    </select>
+
+    <select id="findExamReportCount" resultType="java.lang.String">
+        select count(*)
+        from HEALTHCHECKUP.V_EXAM_REPORT
+        where exam_no = #{examNo, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findExamReport" resultType="com.healt.cloud.checkup.physicalExa.vo.ExamReportVo">
+        select DESCRIPTION, IMPRESSION, RECOMMENDATION, EXAM_PARA examPara
+        from HEALTHCHECKUP.V_EXAM_REPORT
+        where exam_no = #{examNo, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findExamMasterReporter" resultType="com.healt.cloud.checkup.physicalExa.vo.ExamMasterReporterVo">
+        select reporter, exam_class examClass
+        from HEALTHCHECKUP.V_EXAM_MASTER
+        where exam_no = #{examNo, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findExamMaster" resultType="com.healt.cloud.checkup.physicalExa.vo.ExamMasterVo">
+        select (select WMSYS.WM_CONCAT(d.exam_item)
+                from HEALTHCHECKUP.v_exam_items d
+                where d.EXAM_NO = a.EXAM_NO) as examName,
+               a.req_date_time reqDateTime,
+               a.EXAM_NO examNo
+        from HEALTHCHECKUP.v_exam_master a
+        where a.EXAM_NO in
+              (select distinct apply_no
+               from hc_person_appreg_items b, HC_ITEM_PACK_DICT c
+               where b.item_pack_code = c.item_pack_code
+                 and c.Exam_Class is not null
+                 and b.apply_no is not null
+                 and b.apply_no is not null
+                 and b.PERSON_ID || '_' || b.person_visit_id in (#{txzbl, jdbcType=VARCHAR}))
+    </select>
+
+    <select id="findExamReport1" resultType="com.healt.cloud.checkup.physicalExa.vo.ExamReport1Vo">
+        select a.exam_para examPara,
+               a.description,
+               a.impression,
+               a.recommendation,
+               a.is_abnormal isAbnormal
+        from healthcheckup.v_exam_report a
+        where a.exam_no = #{examNo, jdbcType=VARCHAR}
+    </select>
+</mapper>

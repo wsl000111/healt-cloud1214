@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.mapper.appointmentReg.IncomeStatBySettleBillMapper">
+
+    <select id="findSettleBill" parameterType="com.healt.cloud.checkup.queryReport.vo.SettleBillDictVo" resultType="com.healt.cloud.checkup.queryReport.vo.SettleBillVo">
+        select v.dept_name deptName,
+               a.item_pack_code itemPackCode,
+               a.item_pack_name itemPackName,
+               sum(a.costs) as costs,
+               sum(a.payments) as payments
+        from hc_settle_detail a, hc_settle_master b, v_hc_item_pack_dict v
+        where a.hospital_id = b.hospital_id
+          and a.rcpt_no = b.rcpt_no
+          and a.item_pack_code = v.ITEM_PACK_CODE
+        <if test="unitId != '' and unitId != null">
+            and b.unit_id = #{unitId, jdbcType=VARCHAR}
+        </if>
+        <if test="unitVisitId != '' and unitVisitId != null">
+            and b.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+        </if>
+        <if test="beginDate != '' and beginDate != null">
+            and b.settling_date &gt;= to_date(#{beginDate},'yyyy-mm-dd hh24:mi:ss')
+        </if>
+        <if test="endDate != '' and endDate != null">
+            and b.settling_date &lt;= to_date(#{endDate},'yyyy-mm-dd hh24:mi:ss')
+        </if>
+        <if test="personId != '' and personId != null">
+            and b.person_id = #{personId, jdbcType=VARCHAR}
+        </if>
+        <if test="personVisitId != '' and personVisitId != null">
+            and b.PERSON_VISIT_ID = #{personVisitId, jdbcType=VARCHAR}
+        </if>
+        group by v.dept_name,a.item_pack_code,a.item_pack_name
+    </select>
+
+</mapper>

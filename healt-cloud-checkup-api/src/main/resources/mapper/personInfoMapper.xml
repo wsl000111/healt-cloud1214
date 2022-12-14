@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.appointmentReg.mapper.PersonInfoMapper">
+    <select id="findPeId" resultType="string">
+        select healthcheckup.getPeId(#{hospitalCode, jdbcType=VARCHAR}) from dual
+    </select>
+</mapper>

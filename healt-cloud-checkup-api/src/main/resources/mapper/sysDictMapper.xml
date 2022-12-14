@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.mapper.SysDictMapper">
+    <select id="findDtHisDepart" parameterType="com.healt.cloud.checkup.vo.HospitalVo" resultType="com.healt.cloud.checkup.vo.sys.depart.VHisDeptDictVo">
+        SELECT SERIAL_NO   AS serialNo,
+        DEPT_CODE   AS deptCode,
+        DEPT_NAME   AS deptName,
+        DEPT_CODE   AS code,
+        DEPT_NAME   AS name,
+        HOSPITAL_ID AS hospitalId,
+        INPUT_CODE  AS inputCode,
+        CLINIC_ATTR AS clinicAttr,
+        OUTP_OR_INP AS outpOrInp,
+        POSITION
+        FROM  HEALTHCHECKUP.V_HIS_DEPT_DICT
+        <if test="hospitalCode != null and hospitalCode != ''">
+            where HOSPITAL_ID = #{hospitalCode, jdbcType=VARCHAR}
+        </if>
+        order by SERIAL_NO
+    </select>
+
+    <select id="findDeptList" resultType="com.healt.cloud.checkup.entity.VHisDeptDict">
+        select dept_code deptCode,dept_name deptName,input_code inputCode from healthcheckup.v_his_dept_dict
+        where hospital_id = #{hospitalCode, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findItemsDepartList" resultType="com.healt.cloud.checkup.vo.sys.knowledge.ItemsDepartListVo">
+        select b.class_name className,
+               b.dept_name deptName,
+               a.item_code itemCode,
+               a.item_name itemName,
+               a.sex sex,
+               a.input_type inputType,
+               a.result_type resultType,
+               a.normal_value normalValue,
+               a.default_value defaultValue,
+               a.sort_no sortNo,
+               b.dept_id deptId
+        from hc_item_dict a, v_depart_dict b
+        where a.hospital_id = b.hospital_id
+          and a.hc_dept_code = b.dept_id
+        order by b.class_name, b.dept_name, a.sort_no
+    </select>
+
+    <select id="findKnowledgeDict" resultType="com.healt.cloud.checkup.vo.sys.knowledge.HcKnowledgeDictVoRsp">
+        select a.HOSPITAL_ID,
+        a.KNOWLEDGE_CODE,
+        a.KNOWLEDGE_NAME,
+        a.KNOWLEDGE_TYPE,
+        a.ITEM_CODE,
+        a.DEPT_ID,
+        a.POSITIVE_INDICATOR,
+        a.GUIDE_SUGGEST,
+        a.INPUT_CODE,
+        a.DISEASE_CODE,
+        a.POPULAR_SCIENCE,
+        a.BOTTOM_LIMIT,
+        a.TOP_LIMIT,
+        a.SEX,
+        a.AGE_TOP,
+        a.ITEM_RESULT,
+        a.ITEM_PACK,
+        a.AGE_BOTTOM,
+        a.ITEM_DETERMINE,
+        a.SORT_NO,
+        a.UNIT_REPORT_SHOW,
+        b.disease_name,
+        nvl(a.item_name_flag, '0') item_name_flag
+        from hc_knowledge_dict a, hc_disease_dict b
+        where a.disease_code = b.disease_code(+)
+          and a.hospital_id = #{hospitalId}
+        <if test="knowledgeType != null">
+          and a.knowledge_type = #{knowledgeType}
+        </if>
+        <if test="itemCode != null">
+            and a.item_code = #{itemCode}
+        </if>
+        <if test="deptId != null">
+            and a.dept_id = #{deptId}
+        </if>
+        <if test="inputCode != null">
+            and a.input_code = #{inputCode}
+        </if>
+        <if test="itemNameFlag != null">
+            and a.item_name_flag = #{itemNameFlag}
+        </if>
+        <if test="knowledgeName != null">
+            and a.KNOWLEDGE_NAME = #{knowledgeName}
+        </if>
+        <if test="diseaseCode != null">
+        <choose>
+            <when test="diseaseCode == 'notNull'">
+                and a.disease_code is not null
+            </when>
+            <otherwise>
+                and a.disease_code = #{diseaseCode}
+            </otherwise>
+        </choose>
+        </if>
+    </select>
+</mapper>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.appointmentReg.mapper.UnitSettleMapper">
+
+    <select id="findUnitInfo" resultType="com.healt.cloud.checkup.vo.settlement.UnitInfoVo">
+        select a.unit_id unitId,a.unit_name unitName,a.input_code inputCode
+        from hc_unit_info a
+        where a.hospital_id= #{hospitalId, jdbcType=VARCHAR} and a.unit_id != '0000'
+    </select>
+
+    <select id="findDiscountScheme" resultType="com.healt.cloud.checkup.vo.settlement.DiscountSchemeVo">
+        select a.scheme_name schemeName,a.scheme_code schemeCode
+        from hc_discount_scheme a
+        where a.effective_flag ='1'
+    </select>
+
+    <select id="findDtUnitGroup" resultType="com.healt.cloud.checkup.vo.settlement.HcUnitGroupVo">
+        select a.group_code groupCode,a.group_name groupName,a.input_code inputCode
+        from hc_unit_group a
+        where a.hospital_id= #{hospitalId, jdbcType=VARCHAR} and a.unit_id= #{unitId, jdbcType=VARCHAR}
+          and a.unit_visit_id= #{unitVisitId, jdbcType=INTEGER}
+    </select>
+
+    <select id="findDtxmmx" resultType="com.healt.cloud.checkup.vo.settlement.DtxmmxVo">
+        select a.person_id personId,a.person_visit_id personVisitId,a.unit_id unitId,a.unit_name unitName,b.item_pack_code itemPackCode,p.name,p.sex,
+               b.item_pack_name itemPackName,d.cost_class_name costClassName,b.num,b.item_no itemNo,b.costs,b.charges,b.bill_indicator billIndicator,1 as discountRate,
+               b.finished_sign finishedSign,B.ADD_ITEM addItem,b.set_code setCode, c.IS_DISCOUNT isDiscount,
+               (SELECT ITEM_CODE FROM HC_PACK_VS_CLINIC PVC
+                WHERE PVC.ITEM_PACK_CODE = B.ITEM_PACK_CODE AND PVC.HOSPITAL_ID = B.HOSPITAL_ID AND ROWNUM=1 ) zlItemCode,
+               (SELECT ITEM_NAME FROM HC_PACK_VS_CLINIC PVC
+                WHERE PVC.ITEM_PACK_CODE = B.ITEM_PACK_CODE AND PVC.HOSPITAL_ID = B.HOSPITAL_ID AND ROWNUM=1 ) zlItemName
+        from HC_PERSON_VISIT_INFO a, hc_person_appreg_items b,HC_ITEM_PACK_DICT c,COST_CLASSIFICATION_DICT d,Hc_Person_info p
+        where a.hospital_id= b.hospital_id and a.person_id = p.person_id and a.hospital_id = p.hospital_id
+          and a.person_id = b.person_id
+          and a.person_visit_id = b.person_visit_id
+          and b.hospital_id = c.hospital_id
+          and b.item_pack_code = c.item_pack_code
+          and c.cost_class_code = d.cost_class_code
+          and c.hospital_id = d.hospital_id
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.unit_id = #{unitId, jdbcType=VARCHAR}
+          and a.unit_visit_id = #{unitVisitId, jdbcType=INTEGER}
+          and b.bill_indicator ='0'
+          and b.UPLOAD_FLAG is null
+        order by a.person_id,b.item_pack_code asc
+    </select>
+
+    <select id="findDtxmmxPerson" resultType="com.healt.cloud.checkup.vo.settlement.DtxmmxVo">
+        select a.person_id personId,a.person_visit_id personVisitId,a.unit_id unitId,a.unit_name unitName,b.item_pack_code itemPackCode,p.name,p.sex,
+               b.item_pack_name itemPackName,d.cost_class_name costClassName,b.num,b.item_no itemNo,b.costs,b.charges,b.bill_indicator billIndicator,1 as discountRate,
+               b.finished_sign finishedSign,B.ADD_ITEM addItem,b.set_code setCode, c.IS_DISCOUNT isDiscount,
+               (SELECT ITEM_CODE FROM HC_PACK_VS_CLINIC PVC
+                WHERE PVC.ITEM_PACK_CODE = B.ITEM_PACK_CODE AND PVC.HOSPITAL_ID = B.HOSPITAL_ID AND ROWNUM=1 ) zlItemCode,
+               (SELECT ITEM_NAME FROM HC_PACK_VS_CLINIC PVC
+                WHERE PVC.ITEM_PACK_CODE = B.ITEM_PACK_CODE AND PVC.HOSPITAL_ID = B.HOSPITAL_ID AND ROWNUM=1 ) zlItemName
+        from HC_PERSON_VISIT_INFO a, hc_person_appreg_items b,HC_ITEM_PACK_DICT c,COST_CLASSIFICATION_DICT d,Hc_Person_info p
+        where a.hospital_id= b.hospital_id and a.person_id = p.person_id and a.hospital_id = p.hospital_id
+          and a.person_id = b.person_id
+          and a.person_visit_id = b.person_visit_id
+          and b.hospital_id = c.hospital_id
+          and b.item_pack_code = c.item_pack_code
+          and c.cost_class_code = d.cost_class_code
+          and c.hospital_id = d.hospital_id
+          and a.hospital_id = '${hospitalId}'
+          and a.unit_id = '${unitId}'
+          and a.unit_visit_id = '${unitVisitId}'
+          and b.UPLOAD_FLAG is null
+          and b.bill_indicator ='0'
+          and a.person_id in ${personIdStrWhe}
+        order by a.person_id,b.item_pack_code asc
+    </select>
+
+    <select id="findDtxmHZ" resultType="com.healt.cloud.checkup.vo.settlement.DtxmHZVo">
+        select aa.cost_class_name costClassName,sum(aa.costs) costs,sum(aa.charges) as charges
+        from( select a.person_id,a.person_visit_id,a.unit_id,a.unit_name,b.item_pack_code,p.name,p.sex,
+                     b.item_pack_name,d.cost_class_name,b.num,b.item_no,b.costs,b.charges,b.bill_indicator,
+                     b.finished_sign,B.ADD_ITEM from HC_PERSON_VISIT_INFO a, hc_person_appreg_items b,
+                                                     HC_ITEM_PACK_DICT c,COST_CLASSIFICATION_DICT d,Hc_Person_info p
+              where a.hospital_id= b.hospital_id and a.person_id = p.person_id and a.hospital_id = p.hospital_id
+                and a.person_id = b.person_id
+                and a.person_visit_id = b.person_visit_id
+                and b.hospital_id = c.hospital_id
+                and b.item_pack_code = c.item_pack_code
+                and c.cost_class_code = d.cost_class_code
+                and c.hospital_id = d.hospital_id
+                and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+                and a.unit_id = #{unitId, jdbcType=VARCHAR}
+                and a.unit_visit_id = #{unitVisitId, jdbcType=INTEGER}
+                and  (b.ADD_ITEM is null or  b.ADD_ITEM ='0')
+                and b.bill_indicator ='0') aa
+        group by aa.cost_class_name
+    </select>
+
+    <select id="findDtxmHZPerson" resultType="com.healt.cloud.checkup.vo.settlement.DtxmHZVo">
+        select aa.cost_class_name costClassName,sum(aa.costs) costs,sum(aa.charges) as charges
+        from( select a.person_id,a.person_visit_id,a.unit_id,a.unit_name,b.item_pack_code,p.name,p.sex,
+                     b.item_pack_name,d.cost_class_name,b.num,b.item_no,b.costs,b.charges,b.bill_indicator,
+                     b.finished_sign,B.ADD_ITEM from HC_PERSON_VISIT_INFO a, hc_person_appreg_items b,
+                                                     HC_ITEM_PACK_DICT c,COST_CLASSIFICATION_DICT d,Hc_Person_info p
+              where a.hospital_id= b.hospital_id and a.person_id = p.person_id and a.hospital_id = p.hospital_id
+                and a.person_id = b.person_id
+                and a.person_visit_id = b.person_visit_id
+                and b.hospital_id = c.hospital_id
+                and b.item_pack_code = c.item_pack_code
+                and c.cost_class_code = d.cost_class_code
+                and c.hospital_id = d.hospital_id
+                and a.hospital_id = '${hospitalId}'
+                and a.unit_id = '${unitId}'
+                and a.unit_visit_id = '${unitVisitId}'
+                and b.UPLOAD_FLAG is null
+                and  (b.ADD_ITEM is null or  b.ADD_ITEM ='0')
+                and b.bill_indicator ='0' and a.person_id in ${personIdStrWhe}) aa
+        group by aa.cost_class_name
+    </select>
+
+    <select id="findSbYy" resultType="com.healt.cloud.checkup.vo.settlement.SbYyVo">
+        select a.person_id personId,a.person_visit_id personVisitId,a.unit_id unitId,a.unit_name unitName,b.item_pack_code itemPackCode,
+               p.name,p.sex,dsd.discount_class discountClass,dsd.discount_ratio discountRatio,dsd.discount_price discountPrice,
+               b.item_pack_name itemPackName,d.cost_class_name costClassName,b.num,b.item_no itemNo,b.costs,b.charges,b.bill_indicator billIndicator,
+               b.finished_sign finishedSign,B.ADD_ITEM addItem
+        from HC_PERSON_VISIT_INFO a, hc_person_appreg_items b,HC_ITEM_PACK_DICT c,
+             COST_CLASSIFICATION_DICT d,Hc_Person_info p,HC_DISCOUNT_SCHEME_DETAIL dsd
+        where a.hospital_id= b.hospital_id and a.person_id = p.person_id and a.hospital_id = p.hospital_id
+          and a.person_id = b.person_id
+          and a.person_visit_id = b.person_visit_id
+          and b.hospital_id = c.hospital_id
+          and b.item_pack_code = c.item_pack_code
+          and c.cost_class_code = d.cost_class_code
+          and b.item_pack_code = dsd.item_assem_code
+          and c.hospital_id = dsd.hospital_id
+          and c.hospital_id = d.hospital_id
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.unit_id = #{unitId, jdbcType=VARCHAR}
+          and a.unit_visit_id =  #{unitVisitId, jdbcType=INTEGER}
+          and b.bill_indicator ='0'
+          and dsd.scheme_code = #{schemeCode, jdbcType=INTEGER}
+        order by a.person_id,b.item_pack_code asc
+    </select>
+
+
+</mapper>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.appointmentReg.mapper.UnitModifyLastAuditMapper">
+
+    <select id="unitModifyLastAuditBase" resultType="com.healt.cloud.checkup.appointmentReg.vo.unitModifyLastAudit.UnitBaseVo">
+        select a.unit_id unitId, a.unit_name unitName, a.unit_visit_id unitVisitId, a.unit_type unitType,
+               b.CONTACTS,b.PHONE,b.ADDRESS,b.CLASS_TYPE classType,a.FINISHED_DATE finishedDate,a.finished_persons finishedPersons
+        ,(select count(*) from hc_person_visit_info c
+        where c.hospital_id = a.hospital_id and c.unit_id = a.unit_id
+          and c.unit_visit_id = a.unit_visit_id and c.result_status = '9') as total
+        from hc_unit_visit_info a, hc_unit_info b
+        where a.hospital_id = b.hospital_id
+          and a.unit_id = b.unit_id
+          and a.finished_sign != '1' and a.unit_id != '0000'
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        <if test='unitId != "*"'>
+            and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <select id="unitModifyLastAuditPersonInfo" resultType="com.healt.cloud.checkup.appointmentReg.vo.unitModifyLastAudit.UnitBasePersonInfoVo">
+        select a.person_id personId,a.person_visit_id personVisitId,b.name
+        from hc_person_visit_info a,hc_person_info b
+        where a.hospital_id = b.hospital_id and a.person_id = b.person_id
+          and a.unit_id = #{unitId, jdbcType=VARCHAR}
+          and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.result_status != '9'
+    </select>
+
+    <update id="updatePersonStatus">
+        update hc_person_visit_info a
+        set a.result_status = '9'
+        where a.unit_id = #{unitId, jdbcType=VARCHAR}
+          and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and  a.result_status != '9'
+    </update>
+
+    <select id="findPersonCount" resultType="java.lang.Integer">
+        select count(*) from hc_person_visit_info a
+        where a.unit_id = #{unitId, jdbcType=VARCHAR}
+          and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+    <update id="updateUnitSign">
+        update hc_unit_visit_info
+        set FINISHED_SIGN = '1',FINISHED_DATE = sysdate ,FINISHED_PERSONS = #{tsl, jdbcType=VARCHAR}
+        where UNIT_ID = #{unitId, jdbcType=VARCHAR}
+          and unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+          and hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </update>
+</mapper>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.appointmentReg.mapper.PersonModifyResultStatusMapper">
+    <select id="selectPersonName" parameterType="java.lang.String" resultType="java.lang.String">
+        select b.name from hc_person_info b
+        where b.person_id = #{personId, jdbcType=VARCHAR}
+        and b.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectResultStatus" resultType="java.lang.String">
+        select a.result_status resultStatus from hc_person_visit_info a
+        where a.person_id = #{personId, jdbcType=VARCHAR}
+        and a.person_visit_id = #{personVisitId, jdbcType=INTEGER}
+        and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectPersonCheckInfo" resultType="com.healt.cloud.checkup.vo.appointmentReg.personAppointReg.PersonCheckInfoVo">
+        select a.person_id personId,a.person_visit_id personVisitId,b.name,b.sex,a.unit_id unitId,
+        a.unit_visit_id unitVisitId,a.unit_name unitName,a.before_date beforeDate,a.before_name beforeName,
+        a.finished_sign finishedSign,a.result_status resultStatus,a.final_docoter finalDocoter,a.final_date finalDate,
+        a.final_name finalName,a.first_docoter firstDocoter,a.first_date firstDate,a.first_name firstName
+        from hc_person_visit_info a, hc_person_info b
+        where a.person_id = b.person_id and a.hospital_id = b.hospital_id
+        and a.person_id = #{personId, jdbcType=VARCHAR} and a.person_visit_id = #{personVisitId, jdbcType=INTEGER}
+        and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+    <update id="updateInChiefReport">
+        update hc_dept_result_items set IN_CHIEF_REPORT = '0'
+        where person_id = #{personId, jdbcType=VARCHAR} and person_visit_id = #{personVisitId, jdbcType=INTEGER}
+        and hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </update>
+
+    <delete id="deleteDiagnosisRecord">
+        delete from hc_diagnosis_record
+        where person_id = #{personId, jdbcType=VARCHAR} and person_visit_id = #{personVisitId, jdbcType=INTEGER}
+    </delete>
+
+    <update id="updateResultStatus">
+        update  hc_person_visit_info
+        set result_status ='2',final_docoter ='',final_date =  null,final_name=''
+        where person_id = #{personId, jdbcType=VARCHAR} and person_visit_id = #{personVisitId, jdbcType=INTEGER}
+        and hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateResultStatusFinal">
+        update  hc_person_visit_info
+        set result_status ='9',final_docoter = #{finalDocoter, jdbcType=VARCHAR},final_date =  sysdate ,final_name= #{finalName, jdbcType=VARCHAR}
+        where person_id = #{personId, jdbcType=VARCHAR} and person_visit_id = #{personVisitId, jdbcType=INTEGER}
+        and hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </update>
+
+</mapper>

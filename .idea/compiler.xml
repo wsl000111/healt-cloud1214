@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="healt-cloud-api-pom" />
+        <module name="healt-cloud-checkup-api" />
+        <module name="healt-cloud-checkup-pdf" />
+        <module name="healt-cloud-checkup-service-orcl" />
+        <module name="healt-cloud-checkup-web" />
+        <module name="healt-cloud-common" />
+        <module name="healt-cloud-component-resultex" />
+        <module name="healt-cloud-core-pom" />
+        <module name="healt-cloud-gateway" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="healt-cloud" target="1.8" />
+      <module name="healt-cloud-api-pom" target="8" />
+      <module name="healt-cloud-checkup-api" target="8" />
+      <module name="healt-cloud-checkup-pdf" target="8" />
+      <module name="healt-cloud-checkup-service-orcl" target="8" />
+      <module name="healt-cloud-checkup-web" target="8" />
+      <module name="healt-cloud-common" target="8" />
+      <module name="healt-cloud-component-resultex" target="8" />
+      <module name="healt-cloud-core-pom" target="8" />
+      <module name="healt-cloud-gateway" target="8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

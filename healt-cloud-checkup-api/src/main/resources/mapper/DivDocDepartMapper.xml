@@ -1,0 +1,659 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.frmDivDocDepart.mapper.DivDocDepartMapper">
+    <select id="validateRight" resultType="java.util.Map">
+        select healthcheckup.doctor_depart_right.dept_id,
+               healthcheckup.v_depart_dict.dept_name,
+               healthcheckup.v_depart_dict.class_name
+        from healthcheckup.doctor_depart_right, healthcheckup.v_depart_dict
+        where healthcheckup.v_depart_dict.Hospital_Id = healthcheckup.doctor_depart_right.Hospital_Id
+          and healthcheckup.v_depart_dict.dept_id = healthcheckup.doctor_depart_right.dept_id
+          and healthcheckup.doctor_depart_right.Hospital_Id = #{hospitalId}
+          and healthcheckup.doctor_depart_right.USER_ID = #{userId}
+        order by healthcheckup.v_depart_dict.sort_no
+    </select>
+
+<!--    <select id="findPerson" parameterType="com.healt.cloud.checkup.frmDivDocDepart.vo.FrmGetPersonVo" resultType="com.healt.cloud.checkup.frmDivDocDepart.vo.FrmGetPersonVoRsp">-->
+<!--        SELECT *-->
+<!--        FROM (-->
+<!--                 SELECT TMP.*, ROWNUM ROW_ID-->
+<!--                 FROM (-->
+<!--        SELECT hc_person_info.NAME,-->
+<!--            hc_person_info.SEX,-->
+<!--            hc_unit_info.UNIT_NAME,-->
+<!--            hpv.person_id,-->
+<!--            hpv.person_visit_id,-->
+<!--            hpv.AGE,-->
+<!--            hpv.appoints_date,-->
+<!--            hpv.BEFORE_DATE,-->
+<!--        case-->
+<!--            when (SELECT COUNT(*)-->
+<!--        from hc_person_appreg_items-->
+<!--        where hc_person_appreg_items.dept_id = '${deptId}'-->
+<!--            and hpv.person_id = hc_person_appreg_items.person_id-->
+<!--            and hpv.person_visit_id = hc_person_appreg_items.person_visit_id-->
+<!--            and hc_person_appreg_items.finished_sign = '完成') &gt; 0 then '完成'-->
+<!--        when (SELECT COUNT(*)-->
+<!--            from hc_person_appreg_items-->
+<!--            where hc_person_appreg_items.dept_id = #{deptId}-->
+<!--            and hpv.person_id = hc_person_appreg_items.person_id-->
+<!--            and hpv.person_visit_id = hc_person_appreg_items.person_visit_id-->
+<!--            and hc_person_appreg_items.finished_sign = '未完成') &gt; 0 then '未完成'-->
+<!--            else '拒检'-->
+<!--        end FINISHED_SIGN,-->
+<!--        hpv.finished_date-->
+<!--        FROM hc_person_info, hc_person_visit_info hpv, hc_unit_info-->
+<!--        WHERE hc_person_info.hospital_id = hpv.hospital_id-->
+<!--        and hc_person_info.person_id = hpv.person_id-->
+<!--        and hpv.hospital_id = hc_unit_info.hospital_id(+)-->
+<!--        and hpv.unit_id = hc_unit_info.unit_id(+)-->
+<!--        and (('${stype}' = '1' and-->
+<!--        hpv.BEFORE_DATE &gt;=-->
+<!--        to_date(#{beginDate}, 'yyyy-mm-dd hh24:mi:ss') and-->
+<!--        hpv.BEFORE_DATE &lt;=-->
+<!--        to_date(#{endDate}, 'yyyy-mm-dd hh24:mi:ss')) or-->
+<!--        ('${stype}' = '2' and-->
+<!--        hpv.appoints_date &gt;=-->
+<!--        to_date(#{beginDate}, 'yyyy-mm-dd hh24:mi:ss') and-->
+<!--        hpv.appoints_date &lt;=-->
+<!--        to_date(#{endDate}, 'yyyy-mm-dd hh24:mi:ss')) or-->
+<!--        ('${stype}' = '3' and exists-->
+<!--        (select hc_person_appreg_items.item_pack_code-->
+<!--        from hc_person_appreg_items-->
+<!--        where hc_person_appreg_items.hospital_id = hpv.hospital_id-->
+<!--        and hc_person_appreg_items.person_id = hpv.person_id-->
+<!--        and hc_person_appreg_items.person_visit_id = hpv.person_visit_id-->
+<!--        and hc_person_appreg_items.dept_id = '${deptId}') and-->
+<!--        (hpv.finished_date &gt;=-->
+<!--        to_date(#{beginDate}, 'yyyy-mm-dd hh24:mi:ss') and-->
+<!--        hpv.finished_date &lt;=-->
+<!--        to_date(#{endDate}, 'yyyy-mm-dd hh24:mi:ss') and-->
+<!--        (hpv.finished_id = #{operater} or #{operater} = '****')))-->
+<!--        or ('${stype}' = '4' and-->
+<!--        hpv.BEFORE_DATE &gt;=-->
+<!--        to_date(#{beginDate}, 'yyyy-mm-dd hh24:mi:ss') and-->
+<!--        hpv.BEFORE_DATE &lt;=-->
+<!--        to_date(#{endDate}, 'yyyy-mm-dd hh24:mi:ss') and-->
+<!--        hpv.finished_date is null  and hpv.person_id = #{personId}))-->
+<!--        and (SELECT COUNT(*)-->
+<!--        from hc_person_appreg_items-->
+<!--        where hc_person_appreg_items.dept_id = '${deptId}'-->
+<!--        and hpv.person_id = hc_person_appreg_items.person_id-->
+<!--        and hpv.person_visit_id = hc_person_appreg_items.person_visit_id) &gt; 0-->
+<!--                      ) TMP-->
+<!--                 WHERE ROWNUM &lt;= ${pageNum*pageSize})-->
+<!--        WHERE ROW_ID &gt; ${(pageNum-1)*pageSize}-->
+<!--    </select>-->
+
+        <select id="findPerson" parameterType="com.healt.cloud.checkup.frmDivDocDepart.vo.FrmGetPersonVo" resultType="com.healt.cloud.checkup.frmDivDocDepart.vo.FrmGetPersonVoRsp">
+            SELECT *
+            FROM (
+            SELECT TMP.*, ROWNUM ROW_ID
+            FROM (
+
+            SELECT hc_person_info.NAME,
+            hc_person_info.SEX,
+            hc_unit_info.UNIT_NAME,
+            hpv.person_id,
+            hpv.person_visit_id,
+            hpv.AGE,
+            hpv.appoints_date,
+            hpv.BEFORE_DATE,
+            case
+            when (SELECT COUNT(*)
+            from hc_person_appreg_items
+            where hc_person_appreg_items.dept_id = '${deptId}'
+            and hpv.person_id = hc_person_appreg_items.person_id
+            and hpv.person_visit_id =
+            hc_person_appreg_items.person_visit_id
+            and hc_person_appreg_items.finished_sign = '完成') > 0 then
+            '完成'
+            when (SELECT COUNT(*)
+            from hc_person_appreg_items
+            where hc_person_appreg_items.dept_id = '${deptId}'
+            and hpv.person_id = hc_person_appreg_items.person_id
+            and hpv.person_visit_id =
+            hc_person_appreg_items.person_visit_id
+            and hc_person_appreg_items.finished_sign = '未完成') > 0 then
+            '未完成'
+            else
+            '拒检'
+            end FINISHED_SIGN,
+            hpv.finished_date
+            FROM hc_person_info, hc_person_visit_info hpv, hc_unit_info
+            WHERE hc_person_info.hospital_id = hpv.hospital_id
+            and hc_person_info.person_id = hpv.person_id
+            and hpv.hospital_id = hc_unit_info.hospital_id(+)
+            and hpv.unit_id = hc_unit_info.unit_id(+)
+            and ( ('${stype}' = '1' and
+            hpv.BEFORE_DATE &gt;=
+            to_date(#{beginDate}, 'yyyy-mm-dd hh24:mi:ss') and
+            hpv.BEFORE_DATE &lt;=
+            to_date(#{endDate}, 'yyyy-mm-dd hh24:mi:ss')) or
+            ('${stype}' = '2' and
+            hpv.appoints_date &gt;=
+            to_date(#{beginDate}, 'yyyy-mm-dd hh24:mi:ss') and
+            hpv.appoints_date &lt;=
+            to_date(#{endDate}, 'yyyy-mm-dd hh24:mi:ss'))  or
+            ('${stype}' = '3' and exists
+            (select hc_person_appreg_items.item_pack_code,hc_person_appreg_items.person_visit_id,hc_person_appreg_items.person_id
+            from hc_person_appreg_items
+            where hc_person_appreg_items.hospital_id = hpv.hospital_id
+            and hc_person_appreg_items.person_id = hpv.person_id
+            and hc_person_appreg_items.person_visit_id = hpv.person_visit_id
+            and hc_person_appreg_items.dept_id = '${deptId}'
+            and  hc_person_appreg_items.finished_date &gt;=
+            to_date(#{beginDate}, 'yyyy-mm-dd hh24:mi:ss') and
+            hc_person_appreg_items.finished_date &lt;=
+            to_date(#{endDate}, 'yyyy-mm-dd hh24:mi:ss') and
+            ( hc_person_appreg_items.editer_id  = '****' or '****' = '****')  )
+
+            )   or
+            ('${stype}' = '5' and
+            hpv.BEFORE_DATE &gt;=
+            to_date(#{beginDate}, 'yyyy-mm-dd hh24:mi:ss') and
+            hpv.BEFORE_DATE &lt;=
+            to_date(#{endDate}, 'yyyy-mm-dd hh24:mi:ss') and exists
+            (  select hc_person_appreg_items.item_pack_code,hc_person_appreg_items.person_visit_id,hc_person_appreg_items.person_id
+            from hc_person_appreg_items
+            where hc_person_appreg_items.hospital_id = hpv.hospital_id
+            and hc_person_appreg_items.person_id = hpv.person_id
+            and hc_person_appreg_items.person_visit_id = hpv.person_visit_id
+            and hc_person_appreg_items.dept_id = '${deptId}'
+            and hc_person_appreg_items.finished_sign = '未完成'
+            )) or
+            ('${stype}' = '4' and
+            hpv.BEFORE_DATE &gt;=
+            to_date(#{beginDate}, 'yyyy-mm-dd hh24:mi:ss') and
+            hpv.BEFORE_DATE &lt;=
+            to_date(#{endDate}, 'yyyy-mm-dd hh24:mi:ss')
+            and hpv.person_id = #{personId}
+            )
+            )
+            and (SELECT COUNT(*)
+            from hc_person_appreg_items
+            where hc_person_appreg_items.dept_id = '${deptId}'
+            and hpv.person_id = hc_person_appreg_items.person_id
+            and hpv.person_visit_id = hc_person_appreg_items.person_visit_id) > 0
+
+            ) TMP
+            WHERE ROWNUM &lt;= ${pageNum*pageSize})
+            WHERE ROW_ID &gt; ${(pageNum-1)*pageSize}
+        </select>
+
+
+    <select id="findPersonCount" resultType="Integer">
+        SELECT count(*)
+        FROM hc_person_info, hc_person_visit_info hpv, hc_unit_info
+        WHERE hc_person_info.hospital_id = hpv.hospital_id
+          and hc_person_info.person_id = hpv.person_id
+          and hpv.hospital_id = hc_unit_info.hospital_id(+)
+          and hpv.unit_id = hc_unit_info.unit_id(+)
+          and ((#{stype} = '1' and
+                hpv.BEFORE_DATE &gt;=
+                to_date(#{beginDate}, 'yyyy-mm-dd hh24:mi:ss') and
+                hpv.BEFORE_DATE &lt;=
+                to_date(#{endDate}, 'yyyy-mm-dd hh24:mi:ss')) or
+               (#{stype} = '2' and
+                hpv.appoints_date &gt;=
+                to_date(#{beginDate}, 'yyyy-mm-dd hh24:mi:ss') and
+                hpv.appoints_date &lt;=
+                to_date(#{endDate}, 'yyyy-mm-dd hh24:mi:ss')) or
+               (#{stype} = '3' and exists
+                   (select hc_person_appreg_items.item_pack_code
+                    from hc_person_appreg_items
+                    where hc_person_appreg_items.hospital_id = hpv.hospital_id
+                      and hc_person_appreg_items.person_id = hpv.person_id
+                      and hc_person_appreg_items.person_visit_id = hpv.person_visit_id
+                      and hc_person_appreg_items.dept_id = '${deptId}') and
+                (hpv.finished_date &gt;=
+                 to_date(#{beginDate}, 'yyyy-mm-dd hh24:mi:ss') and
+                 hpv.finished_date &lt;=
+                 to_date(#{endDate}, 'yyyy-mm-dd hh24:mi:ss') and
+                 (hpv.finished_id = #{operater} or #{operater} = '****')))
+                or (#{stype} = '4' and
+                   hpv.BEFORE_DATE &gt;=
+                   to_date(#{beginDate}, 'yyyy-mm-dd hh24:mi:ss') and
+                   hpv.BEFORE_DATE &lt;=
+                   to_date(#{endDate}, 'yyyy-mm-dd hh24:mi:ss') and
+                   hpv.finished_date is null and hpv.person_id = #{personId}))
+          and (SELECT COUNT(*)
+               from hc_person_appreg_items
+               where hc_person_appreg_items.dept_id = '${deptId}'
+                 and hpv.person_id = hc_person_appreg_items.person_id
+                 and hpv.person_visit_id = hc_person_appreg_items.person_visit_id) &gt; 0
+    </select>
+
+    <select id="findUnitPerson" resultType="com.healt.cloud.checkup.frmDivDocDepart.vo.FrmGetPersonVoRsp">
+        SELECT *
+        FROM (
+                 SELECT TMP.*, ROWNUM ROW_ID
+                 FROM (
+        SELECT hc_person_info.NAME,
+               hc_person_info.SEX,
+               hc_unit_info.UNIT_NAME,
+               hpv.person_id,
+               hpv.person_visit_id,
+               hpv.UNIT_ID,
+               hpv.UNIT_VISIT_ID,
+               hpv.AGE,
+               hpv.appoints_date,
+               hpv.BEFORE_DATE,
+               case
+                   when (SELECT COUNT(*)
+                         from hc_person_appreg_items
+                         where hc_person_appreg_items.dept_id = #{deptCode}
+                           and hpv.person_id = hc_person_appreg_items.person_id
+                           and hpv.person_visit_id =
+                               hc_person_appreg_items.person_visit_id
+                           and hc_person_appreg_items.finished_sign = '完成') &gt; 0 then
+                       '完成'
+                   when (SELECT COUNT(*)
+                         from hc_person_appreg_items
+                         where hc_person_appreg_items.dept_id = #{deptCode}
+                           and hpv.person_id = hc_person_appreg_items.person_id
+                           and hpv.person_visit_id =
+                               hc_person_appreg_items.person_visit_id
+                           and hc_person_appreg_items.finished_sign = '未完成') &gt; 0 then
+                       '未完成'
+                   else
+                       '拒检'
+                   end FINISHED_SIGN,
+               hpv.finished_date
+        FROM hc_person_info, hc_person_visit_info hpv, hc_unit_info
+        WHERE hc_person_info.hospital_id = hpv.hospital_id
+          and hc_person_info.person_id = hpv.person_id
+          and hpv.hospital_id = hc_unit_info.hospital_id(+)
+          and hpv.unit_id = hc_unit_info.unit_id(+)
+          and hpv.hospital_id = #{hospitalId}
+          and hpv.unit_id = #{unitId}
+          and hpv.unit_visit_id = #{unitVisitId}
+          and (SELECT COUNT(*)
+               from hc_person_appreg_items
+               where hpv.person_id = hc_person_appreg_items.person_id
+                 and hpv.person_visit_id = hc_person_appreg_items.person_visit_id
+                 and hc_person_appreg_items.dept_id = #{deptCode}) &gt; 0
+                      ) TMP
+                 WHERE ROWNUM &lt;= ${pageNum*pageSize})
+        WHERE ROW_ID &gt; ${(pageNum-1)*pageSize}
+    </select>
+
+    <select id="findUnitPersonCount" resultType="Integer">
+        SELECT count(*)
+        FROM hc_person_info, hc_person_visit_info hpv, hc_unit_info
+        WHERE hc_person_info.hospital_id = hpv.hospital_id
+          and hc_person_info.person_id = hpv.person_id
+          and hpv.hospital_id = hc_unit_info.hospital_id(+)
+          and hpv.unit_id = hc_unit_info.unit_id(+)
+          and hpv.hospital_id = #{hospitalId}
+          and hpv.unit_id = #{unitId}
+          and hpv.unit_visit_id = #{unitVisitId}
+          and (SELECT COUNT(*)
+               from hc_person_appreg_items
+               where hpv.person_id = hc_person_appreg_items.person_id
+                 and hpv.person_visit_id = hc_person_appreg_items.person_visit_id
+                 and hc_person_appreg_items.dept_id = #{deptCode}) &gt; 0
+    </select>
+
+    <select id="findGetPersonHistory" resultType="com.healt.cloud.checkup.frmDivDocDepart.vo.FrmGetPersonVoRsp">
+        SELECT hc_person_info.NAME,
+               hc_person_info.SEX,
+               hc_unit_info.UNIT_NAME,
+               hpv.person_id,
+               hpv.person_visit_id,
+               hpv.AGE,
+               hpv.appoints_date,
+               hpv.BEFORE_DATE,
+               case
+                   when (SELECT COUNT(*)
+                         from hc_person_appreg_items
+                         where hc_person_appreg_items.dept_id = #{deptId}
+                           and hpv.person_id = hc_person_appreg_items.person_id
+                           and hpv.person_visit_id =
+                               hc_person_appreg_items.person_visit_id
+                           and hc_person_appreg_items.finished_sign = '完成') &gt; 0 then
+                       '完成'
+                   when (SELECT COUNT(*)
+                         from hc_person_appreg_items
+                         where hc_person_appreg_items.dept_id = #{deptId}
+                           and hpv.person_id = hc_person_appreg_items.person_id
+                           and hpv.person_visit_id =
+                               hc_person_appreg_items.person_visit_id
+                           and hc_person_appreg_items.finished_sign = '未完成') &gt; 0 then
+                       '未完成'
+                   else
+                       '拒检'
+                   end FINISHED_SIGN,
+               hpv.finished_date
+        FROM hc_person_info, hc_person_visit_info hpv, hc_unit_info
+        WHERE hc_person_info.hospital_id = hpv.hospital_id
+          and hc_person_info.person_id = hpv.person_id
+          and hpv.hospital_id = hc_unit_info.hospital_id(+)
+          and hpv.unit_id = hc_unit_info.unit_id(+)
+          and hpv.person_id = #{personId}
+          and (SELECT COUNT(*)
+               from hc_person_appreg_items
+               where hpv.person_id = hc_person_appreg_items.person_id
+                 and hpv.person_visit_id = hc_person_appreg_items.person_visit_id
+                 and hc_person_appreg_items.dept_id = #{deptId}) &gt; 0
+    </select>
+
+    <select id="findWorkInfo" resultType="int">
+        SELECT count(*)
+        from (SELECT person_id, person_visit_id, hospital_id
+        from hc_person_visit_info
+        where hc_person_visit_info.${value1} &gt;=
+        to_date(to_char(sysdate, 'yyyy-mm-dd'), 'yyyy-mm-dd')
+        and hc_person_visit_info.${value1} &lt;= sysdate) temp1
+        where exists (select person_id
+        from hc_person_appreg_items
+        where temp1.hospital_id = hc_person_appreg_items.hospital_id
+        and temp1.person_id = hc_person_appreg_items.person_id
+        and temp1.person_visit_id =
+        hc_person_appreg_items.person_visit_id
+        and hc_person_appreg_items.dept_id = #{deptId}
+        and hc_person_appreg_items.finished_sign = #{value2})
+    </select>
+
+    <select id="findPackVsItems" resultType="com.healt.cloud.checkup.frmDivDocDepart.vo.FrmPackVsItems">
+        SELECT hc_pack_vs_item_dict.item_pack_code,
+               hc_pack_vs_item_dict.item_code,
+               hc_pack_vs_item_dict.item_no,
+               v_hc_item_dict.item_name,
+               v_hc_item_dict.hc_dept_code,
+               v_hc_item_dict.input_type,
+               v_hc_item_dict.result_type,
+               v_hc_item_dict.unit,
+               v_hc_item_dict.top_limit,
+               v_hc_item_dict.bottom_limit,
+               v_hc_item_dict.sex,
+               v_hc_item_dict.fmtop_limit,
+               v_hc_item_dict.fmbottom_limit,
+               v_hc_item_dict.normal_value
+        FROM hc_pack_vs_item_dict, v_hc_item_dict
+        WHERE hc_pack_vs_item_dict.hospital_id = v_hc_item_dict.hospital_id
+          and hc_pack_vs_item_dict.item_code = v_hc_item_dict.item_code
+          and hc_pack_vs_item_dict.hospital_id = #{hospitalId}
+          and hc_pack_vs_item_dict.item_pack_code = #{itemPackCode}
+    </select>
+
+    <select id="findPackItems" resultType="com.healt.cloud.checkup.frmDivDocDepart.vo.FrmPackItems">
+        select item_pack_code,item_pack_name from HEALTHCHECKUP.V_HC_ITEM_PACK_DICT
+        WHERE hospital_id=#{hospitalId}
+    </select>
+
+    <select id="findItemVsExternal" resultType="com.healt.cloud.checkup.frmDivDocDepart.vo.FrmItemVsExternal">
+        select hc_item_vs_external.hc_item_code,
+               hc_item_vs_external.item_no,
+               hc_item_vs_external.ext_code
+        from hc_item_vs_external
+        where hc_item_vs_external.hospital_id = #{hospitalId}
+          and hc_item_vs_external.hc_item_code = #{itemCode}
+        order by hc_item_vs_external.item_no asc
+    </select>
+
+    <select id="findLabResult" resultType="com.healt.cloud.checkup.frmDivDocDepart.vo.FrmLabResultVo">
+        SELECT HEALTHCHECKUP.V_LAB_RESULT.REPORT_ITEM_NAME,
+               HEALTHCHECKUP.V_LAB_RESULT.REPORT_ITEM_CODE,
+               HEALTHCHECKUP.V_LAB_RESULT.RESULT,
+               HEALTHCHECKUP.V_LAB_RESULT.UNITS,
+               HEALTHCHECKUP.V_LAB_RESULT.ABNORMAL_INDICATOR,
+               HEALTHCHECKUP.V_LAB_RESULT.INSTRUMENT_ID,
+               HEALTHCHECKUP.V_LAB_RESULT.RESULT_DATE_TIME,
+               HEALTHCHECKUP.V_LAB_RESULT.PRINT_CONTEXT,
+               HEALTHCHECKUP.V_LAB_RESULT.TEST_NO
+        FROM HEALTHCHECKUP.V_LAB_RESULT, HEALTHCHECKUP.V_LAB_TEST_MASTER
+        WHERE HEALTHCHECKUP.V_LAB_RESULT.TEST_NO =
+              HEALTHCHECKUP.V_LAB_TEST_MASTER.TEST_NO
+          and HEALTHCHECKUP.V_LAB_RESULT.TEST_NO in ($(testNoList))
+          AND HEALTHCHECKUP.V_LAB_TEST_MASTER.RESULT_STATUS = '4'
+    </select>
+
+    <select id="countHcPersonAppregItems" resultType="Integer">
+        select case count(*)
+                   when 0 then
+                       '2'
+                   else
+                       '1'
+                   end
+        From hc_person_appreg_items
+        where person_id = #{personId}
+          And person_visit_id = #{personVisitId}
+          And finished_sign = #{finishedSign}
+          and not exists (select v_hc_item_pack_dict.ITEM_PACK_CODE
+                          from v_hc_item_pack_dict
+                          where v_hc_item_pack_dict.ITEM_PACK_CODE =
+                                hc_person_appreg_items.item_pack_code
+                            and auto_finished = '1')
+
+    </select>
+
+    <select id="findDeptNameList" resultType="com.healt.cloud.checkup.frmDivDocDepart.vo.DeptNameListVo">
+        select  dept_name from v_depart_dict where  dept_id = #{deptId} and hospital_id= #{hospitalId}
+    </select>
+
+    <select id="findResultStatusList" resultType="com.healt.cloud.checkup.frmDivDocDepart.vo.ResultStatusListVo">
+        Select result_status From hc_person_visit_info  where person_id = #{personId} And person_visit_id = #{personVisitId}
+    </select>
+
+    <select id="initDept" resultType="com.healt.cloud.checkup.frmDivDocDepart.vo.InitDeptVo">
+        select v_depart_dict.DEPT_ID, v_depart_dict.DEPT_NAME
+        from v_depart_dict, DOCTOR_DEPART_RIGHT
+        where v_depart_dict.dept_id = DOCTOR_DEPART_RIGHT.DEPT_ID
+          and DOCTOR_DEPART_RIGHT.Hospital_Id = v_depart_dict.hospital_id
+          and DOCTOR_DEPART_RIGHT.USER_ID = #{userName}
+        order by v_depart_dict.sort_no";
+    </select>
+
+    <select id="initDoctor" resultType="com.healt.cloud.checkup.frmDivDocDepart.vo.InitDoctorVo">
+        SELECT v_users_dict.USER_ID, v_users_dict.USER_NAME
+        FROM v_users_dict, DOCTOR_DEPART_RIGHT
+        WHERE v_users_dict.hospital_id = DOCTOR_DEPART_RIGHT.Hospital_Id
+          and UPPER(v_users_dict.user_id) = UPPER(DOCTOR_DEPART_RIGHT.User_Id)
+          AND DOCTOR_DEPART_RIGHT.Hospital_Id = #{hospitalId}
+          and DOCTOR_DEPART_RIGHT.Dept_Id = #{deptId}
+    </select>
+
+    <select id="findHcResult" resultType="com.healt.cloud.checkup.frmDivDocDepart.vo.GetHcResultVo">
+        SELECT hc_RESULT_DICT.Person_Id,
+               hc_RESULT_DICT.Person_Visit_Id,
+               hc_RESULT_DICT.Unit_Id,
+               hc_RESULT_DICT.Unit_Visit_Id,
+               hc_RESULT_DICT.Dept_Id,
+               hc_RESULT_DICT.Dept_Name,
+               hc_RESULT_DICT.Item_Assem_Code,
+               hc_RESULT_DICT.Item_Assem_Name,
+               hc_RESULT_DICT.Hc_Item_Code,
+               hc_RESULT_DICT.Hc_Item_Name,
+               hc_RESULT_DICT.Assem_Sort_No,
+               hc_RESULT_DICT.Item_Order_No,
+               hc_RESULT_DICT.Show_Type,
+               hc_RESULT_DICT.Result_Type,
+               hc_RESULT_DICT.Key_Name,
+               hc_RESULT_DICT.Hc_Result,
+               hc_RESULT_DICT.Result_Decimal,
+               hc_RESULT_DICT.Result_Date,
+               hc_RESULT_DICT.Unit,
+               hc_RESULT_DICT.Print_Context,
+               hc_RESULT_DICT.Abnormal_Indicator,
+               hc_RESULT_DICT.Result_Date
+        FROM hc_RESULT_DICT
+        WHERE
+            <choose>
+                <when test='deptId!="*"'>
+                    exists ( select a.ITEM_PACK_CODE from HEALTHCHECKUP.V_HC_ITEM_PACK_DICT a
+                    where a.HOSPITAL_ID=hc_RESULT_DICT.hospital_id
+                    and a.ITEM_PACK_CODE=hc_RESULT_DICT.Item_Assem_Code
+                    and a.ITEM_PACK_NAME=hc_RESULT_DICT.ITEM_ASSEM_NAME and a.HC_DEPT_CODE=#{deptId})
+                    AND hc_RESULT_DICT.hospital_id=#{hospitalId} and ( hc_RESULT_DICT.Person_Id = #{personId}) AND
+                    ( hc_RESULT_DICT.Person_Visit_Id = #{visitId} )
+                </when>
+                <otherwise>
+                    hc_RESULT_DICT.hospital_id= #{hospitalId} and ( hc_RESULT_DICT.Person_Id = #{personId} ) AND
+                    ( hc_RESULT_DICT.Person_Visit_Id = #{visitId} )
+                </otherwise>
+            </choose>
+            <choose>
+                <when test='packCode != "*"'>
+                    AND  ( hc_RESULT_DICT.Item_Assem_Code = #{packCode} )
+                </when>
+            </choose>
+    </select>
+
+    <select id="findHcAppregItem" resultType="com.healt.cloud.checkup.frmDivDocDepart.vo.FrmGetHcAppregItem">
+        SELECT hc_person_appreg_items.person_id,
+               hc_person_appreg_items.person_visit_id,
+               hc_person_appreg_items.unit_id,
+               hc_person_appreg_items.UNIT_VISIT_ID,
+               hc_person_appreg_items.item_pack_code,
+               hc_person_appreg_items.item_pack_name,
+               hc_person_appreg_items.ITEM_NO,
+               hc_person_visit_info.person_charge,
+               hc_person_visit_info.FINISHED_SIGN,
+               DEPT_ID DEPT_CODE,
+               (SELECT V_DEPART_DICT.dept_name
+                FROM V_DEPART_DICT
+                WHERE V_DEPART_DICT.hospital_id =
+                      hc_person_appreg_items.hospital_id
+                  AND V_DEPART_DICT.dept_id = hc_person_appreg_items.DEPT_ID) DEPT_NAME,
+               hc_person_appreg_items.CHART_CODE,
+               hc_person_appreg_items.APPLY_NO,
+               hc_person_appreg_items.COSTS,
+               hc_person_appreg_items.CHARGES,
+               hc_person_appreg_items.SUBMIT_APPLY,
+               hc_person_appreg_items.set_code,
+               hc_person_visit_info.finished_date,
+               hc_person_visit_info.user_id,
+               hc_person_visit_info.user_name,
+               hc_person_visit_info.final_docoter,
+               hc_person_visit_info.finished_name
+        FROM hc_person_appreg_items, hc_person_visit_info
+        WHERE (hc_person_visit_info.hospital_id =
+               hc_person_appreg_items.hospital_id and
+               hc_person_visit_info.person_id = hc_person_appreg_items.person_id and
+               hc_person_visit_info.person_visit_id =
+               hc_person_appreg_items.person_visit_id)
+          and (hc_person_appreg_items.hospital_id = #{hospitalId})
+          AND (hc_person_appreg_items.person_id = #{personId})
+          AND (hc_person_appreg_items.person_visit_id = #{personVisitId})
+          AND (hc_person_appreg_items.item_pack_code = #{packCode})
+    </select>
+
+    <select id="findHcAppregItems" resultType="com.healt.cloud.checkup.frmDivDocDepart.vo.HcAppregItemsVo">
+        SELECT hc_person_visit_info.person_id,
+               hc_person_visit_info.person_visit_id,
+               hc_person_visit_info.unit_id,
+               hc_person_visit_info.unit_visit_id,
+               hc_person_visit_info.appoints_date,
+               hc_person_appreg_items.item_pack_code,
+               hc_person_appreg_items.item_pack_name,
+               hc_person_appreg_items.apply_no,
+               hc_person_appreg_items.finished_sign,
+               hc_person_appreg_items.finished_date,
+               hc_person_appreg_items.dept_name,
+               hc_person_appreg_items.doctor_id,
+               hc_person_appreg_items.doctor_name,
+               hc_person_appreg_items.ITEM_NO,
+               v_hc_item_pack_dict.dept_name         as his_depart_name,
+               v_hc_item_pack_dict.RESULT_HANDLE,
+               v_hc_item_pack_dict.his_depart_code,
+               v_hc_item_pack_dict.APPLY_SENDTO,
+               v_hc_item_pack_dict.RESULT_RECIEVED,
+               hc_person_appreg_items.dept_id        as HC_DEPT_CODE,
+               v_hc_item_pack_dict.HC_DEPT_CODE      as HC_DEPT_CODE1,
+               v_depart_dict.DEPT_NAME,
+               v_depart_dict.class_name
+        FROM hc_person_visit_info,
+             hc_person_appreg_items,
+             v_hc_item_pack_dict,
+             v_depart_dict
+        WHERE hc_person_visit_info.hospital_id =
+              hc_person_appreg_items.hospital_id
+          and hc_person_visit_info.person_id = hc_person_appreg_items.person_id
+          and hc_person_visit_info.person_visit_id =
+              hc_person_appreg_items.person_visit_id
+          and hc_person_visit_info.hospital_id = #{hospitalId}
+          and hc_person_visit_info.person_id = #{personId}
+          AND hc_person_visit_info.person_visit_id = #{visitId}
+          AND v_hc_item_pack_dict.hc_dept_code = v_depart_dict.dept_id
+          and hc_person_appreg_items.hospital_id = v_hc_item_pack_dict.hospital_id
+          and hc_person_appreg_items.item_pack_code =
+              v_hc_item_pack_dict.item_pack_code
+          and v_Depart_Dict.CLASS_NAME = #{deptClass}
+          and hc_person_appreg_items.FINISHED_SIGN = '未完成'
+          and (hc_person_appreg_items.person_id = #{personId})
+          AND (hc_person_appreg_items.person_visit_id = #{visitId})
+    </select>
+
+    <select id="setDivSource" resultType="com.healt.cloud.checkup.frmDivDocDepart.vo.FrmSetDivSourceVoRes">
+        select a.HOSPITAL_ID,
+               a.PERSON_ID,
+               a.PERSON_VISIT_ID,
+               a.UNIT_ID,
+               a.UNIT_VISIT_ID,
+               a.ITEM_PACK_CODE,
+               a.ITEM_PACK_NAME,
+               a.REGISTER_DATE,
+               a.REGISTER,
+               a.REGISTER_NAME,
+               a.ADD_ITEM,
+               a.CHART_CODE,
+               a.APPLY_NO,
+               a.SUBMIT_APPLY,
+               a.APPLY_NO_PRINT,
+               a.COSTS,
+               a.CHARGES,
+               a.BILL_INDICATOR,
+               a.FINISHED_SIGN,
+               a.NUM,
+               a.SET_CODE,
+               a.ITEM_NO,
+               a.FINISHED_DATE,
+               a.DEPT_ID,
+               a.DEPT_NAME,
+               a.DOCTOR_ID,
+               a.DOCTOR_NAME,
+               a.EDITER_ID,
+               a.EDITER_NAME,
+               a.AUTO_FINISHED,
+               a.FUTURE_CONTINUE,
+               a.IMAGEPATH,
+               a.DOUBLE_DOCTOR_NAME,
+               a.HB_PRINT_FLAG,
+               a.HB_PRINT_DATE,
+               b.item_no,
+               C.ITEM_CODE,
+               C.ITEM_NAME,
+               (select t.hc_result
+                from HEALTHCHECKUP.HC_RESULT_DICT t
+                where t.hospital_id = a.hospital_id
+                  and t.person_id = a.person_id
+                  and t.person_visit_id = a.person_visit_id
+                  and t.HC_ITEM_CODE = b.ITEM_CODE
+                  and t.item_assem_code = a.item_pack_code
+                  and t.item_assem_code = b.ITEM_PACK_CODE) RLT_VAL,
+               C.UNIT,
+               C.NORMAL_VALUE,
+               C.RESULT_TYPE,
+               C.DEFAULT_VALUE,
+               C.input_type SHOW_TYPE,
+               C.PRINT_CONTEXT,
+               c.top_limit,
+               c.bottom_limit,
+               c.fmtop_limit,
+               c.fmbottom_limit,
+               c.sort_no,
+               b.ITEM_NO as ITEM_ORDER_NO,
+               '' KEY_NAME,
+               'N' ABNORMAL_INDICATOR
+        from hc_person_appreg_items a, hc_pack_vs_item_dict b, v_hc_item_dict c
+        where a.item_pack_code = b.item_pack_code
+          and a.hospital_id = b.hospital_id
+          and b.hospital_id = c.hospital_id
+          and b.item_code = c.item_code
+          and a.hospital_id = #{hospitalId}
+          and a.DEPT_ID = #{deptId}
+          and a.person_id = #{personId}
+          and a.person_visit_id = #{visitId}
+    </select>
+</mapper>

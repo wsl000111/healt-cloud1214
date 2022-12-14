@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.mapper.appointmentReg.SettleMasterQueryMapper">
+
+    <select id="findSettleMasterQuery" parameterType="com.healt.cloud.checkup.queryReport.vo.SettleMasterQueryDictVo" resultType="com.healt.cloud.checkup.queryReport.vo.SettleMasterQueryVo">
+        select to_char(a.settling_date,'yyyy-mm-dd hh24:mi:ss') settlingDate,
+               a.rcpt_no rcptNo,
+               a.unit_id unitId,
+               a.unit_visit_id unitVisitId,
+               a.person_id personId,
+               a.person_visit_id personVisitId,
+               b.unit_name unitName,
+               c.name,
+               c.sex,
+               a.settle_type settleType,
+               a.jion_flag jionFlag,
+               a.costs,
+               a.payments,
+               a.wiping_zero wipingZero,
+               a.discount_rate discountRate,
+               a.discount_money discountMoney,
+               a.user_name userName,
+               a.return_rept_no returnReptNo,
+               a.invoice_no invoiceNo
+        from hc_settle_master a, hc_unit_info b, hc_person_info c
+        where a.hospital_id = b.hospital_id(+)
+          and a.unit_id = b.unit_id(+)
+          and a.hospital_id = c.hospital_id(+)
+          and a.person_id = c.person_id(+)
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        <if test="unitId != '' and unitId != null">
+            and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        </if>
+        <if test="unitVisitId != '' and unitVisitId != null">
+            and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+        </if>
+        <if test="beginDate != '' and beginDate != null">
+            and a.settling_date &gt;= to_date(concat(#{beginDate},' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+        </if>
+        <if test="endDate != '' and endDate != null">
+            and a.settling_date &lt;= to_date(concat(#{endDate},' 23:59:59'),'yyyy-mm-dd hh24:mi:ss')
+        </if>
+        <if test="personId != '' and personId != null">
+            and a.person_id = #{personId, jdbcType=VARCHAR}
+        </if>
+        <if test="personVisitId != '' and personVisitId != null">
+            and a.person_visit_id = #{personVisitId, jdbcType=VARCHAR}
+        </if>
+        <if test="name != '' and name != null">
+            and c.name = #{name, jdbcType=VARCHAR}
+        </if>
+        order by a.settling_date asc
+    </select>
+
+    <select id="findSettleMasterQueryNew" parameterType="com.healt.cloud.checkup.queryReport.vo.SettleMasterQueryDictVo" resultType="com.healt.cloud.checkup.queryReport.vo.SettleMasterQueryNewVo">
+        select to_char(a.OPERATETIME,'yyyy-mm-dd hh24:mi:ss') as settlingDate,
+               a.REKID as rcptNo,
+               a.unit_id unitId,
+               a.unit_visit_id unitVisitId,
+               a.person_id personId,
+               a.person_visit_id personVisitId,
+               a.examcompanyname as unitName,
+               c.name,
+               c.sex,
+               a.FEESTATUS as settleType,
+               a.invoiceid as invoiceNo,
+               a.operator as userName,
+        (select sum(TOTALPRICE) from cost_detail_billing e where
+        e.PERSON_ID = a.person_id and e.PERSON_VISIT_ID = a.person_visit_id
+        and e.REKID =a.rekid ) as costs,
+        (select sum(d.charges)
+        from cost_detail_billing  d
+        where d.HOSPITAL_ID = a.hospital_id
+        and d.PERSON_ID = a.person_id
+        and d.PERSON_VISIT_ID = a.person_visit_id
+        and d.REKID = a.rekid) as charges
+        from HEALTHCHECKUP.COST_CHARGE_STATE_MASTER a ,hc_person_info c
+        where a.hospital_id = c.hospital_id(+)
+          and a.person_id = c.person_id(+)
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        <if test="unitId != '' and unitId != null">
+            and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        </if>
+        <if test="unitVisitId != '' and unitVisitId != null">
+            and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+        </if>
+        <if test="beginDate != '' and beginDate != null">
+            and a.OPERATETIME &gt;= to_date(concat(#{beginDate},' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+        </if>
+        <if test="endDate != '' and endDate != null">
+            and a.OPERATETIME &lt;= to_date(concat(#{endDate},' 23:59:59'),'yyyy-mm-dd hh24:mi:ss')
+        </if>
+        <if test="personId != '' and personId != null">
+            and a.person_id = #{personId, jdbcType=VARCHAR}
+        </if>
+        <if test="personVisitId != '' and personVisitId != null">
+            and a.person_visit_id = #{personVisitId, jdbcType=VARCHAR}
+        </if>
+        <if test="name != '' and name != null">
+            and c.name = #{name, jdbcType=VARCHAR}
+        </if>
+        union all
+        select to_char(aa.OPERATETIME,'yyyy-mm-dd hh24:mi:ss') as settlingDate,
+        aa.rekid as rcptNo,
+        bb.unit_id unitId,bb.unit_visit_id unitVisitId, bb.unit_id as personId ,bb.unit_visit_id as personVisitId ,aa.examcompanyname as unitName,aa.examcompanyname as name,
+        '' sex ,aa.FEESTATUS as settleType,aa.invoiceid as invoiceNo ,aa.operator userName,
+        bb.RECEIVABLEPRICE as costs,
+        bb.realprice as charges
+        from HEALTHCHECKUP.ACCOUNTS_CHARGE_BACK aa,company_cost_back  bb
+        where  aa.rekid = bb.rekid
+        <if test="unitId != '' and unitId != null">
+            and bb.unit_id = #{unitId, jdbcType=VARCHAR}
+        </if>
+        <if test="unitVisitId != '' and unitVisitId != null">
+            and bb.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+        </if>
+        <if test="beginDate != '' and beginDate != null">
+            and aa.OPERATETIME &gt;= to_date(concat(#{beginDate},' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+        </if>
+        <if test="endDate != '' and endDate != null">
+            and aa.OPERATETIME &lt;= to_date(concat(#{endDate},' 23:59:59'),'yyyy-mm-dd hh24:mi:ss')
+        </if>
+
+    </select>
+
+</mapper>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.mapper.appointmentReg.QueueStatMapper">
+
+    <select id="findPersonListTotal" parameterType="com.healt.cloud.checkup.queryReport.vo.StrWherePageVo" resultType="com.healt.cloud.checkup.queryReport.vo.PersonListVo">
+        select '0' selectflag,
+               a.person_id personId,
+               a.person_visit_id personVisitId,
+               a.person_charge personCharge,
+               nvl(a.before_sign, '0') beforeSign,
+               a.before_date beforeDate,
+               a.age,
+               a.exam_class examClass,
+               a.job,
+               b.name,
+               b.sex,
+               a.UNIT_NAME unitName,
+               b.barthday,
+               a.final_date finalDate,
+               a.final_name finalName,
+               b.marital_status maritalStatus,
+               b.area,
+               b.id_no idNo,
+               b.country,
+               b.department,
+               (select sum(COSTS) from hc_person_appreg_items d
+               where d.hospital_id = a.hospital_id and d.person_id = a.person_id
+               and d.person_visit_id = a.person_visit_id ) as gezfy,
+               (select sum(charges) from hc_person_appreg_items d
+               where d.hospital_id = a.hospital_id and d.person_id = a.person_id
+               and d.person_visit_id = a.person_visit_id and d.bill_indicator ='1' ) as grcharges,
+               '' as tcje
+        from hc_person_visit_info a, hc_person_info b, HC_UNIT_INFO C
+        where a.person_id = b.person_id
+          and a.hospital_id = b.hospital_id
+          AND A.UNIT_ID = C.UNIT_ID
+          AND A.HOSPITAL_ID = C.HOSPITAL_ID
+        <if test="strWhere != '' and strWhere != null">
+            ${strWhere}
+        </if>
+    </select>
+    <select id="findPersonList11111" parameterType="com.healt.cloud.checkup.queryReport.vo.StrWherePageVo" resultType="com.healt.cloud.checkup.queryReport.vo.PersonListVo">
+        select '0' selectflag,
+        a.person_id personId,
+        a.person_visit_id personVisitId,
+        a.person_charge personCharge,
+        nvl(a.before_sign, '0') beforeSign,
+        a.before_date beforeDate,
+        a.age,
+        a.exam_class examClass,
+        a.job,
+        b.name,
+        b.sex,
+        a.UNIT_NAME unitName,
+        b.barthday,
+        a.final_date finalDate,
+        a.final_name finalName,
+        b.marital_status maritalStatus,
+        b.area,
+        b.id_no idNo,
+        b.country,
+        b.department,
+        (select sum(COSTS) from hc_person_appreg_items d
+        where d.hospital_id = a.hospital_id and d.person_id = a.person_id
+        and d.person_visit_id = a.person_visit_id ) as gezfy,
+        (select sum(charges) from hc_person_appreg_items d
+        where d.hospital_id = a.hospital_id and d.person_id = a.person_id
+        and d.person_visit_id = a.person_visit_id and d.bill_indicator ='1' ) as grcharges,
+        '' as tcje
+        from hc_person_visit_info a, hc_person_info b, HC_UNIT_INFO C
+        where a.person_id = b.person_id
+        and a.hospital_id = b.hospital_id
+        AND A.UNIT_ID = C.UNIT_ID
+        AND A.HOSPITAL_ID = C.HOSPITAL_ID
+        <if test="strWhere != '' and strWhere != null">
+            ${strWhere}
+        </if>
+    </select>
+    <select id="findPersonList" parameterType="com.healt.cloud.checkup.queryReport.vo.StrWherePageVo" resultType="com.healt.cloud.checkup.queryReport.vo.PersonListVo">
+        select '0' selectflag,
+        a.person_id personId,
+        a.person_visit_id personVisitId,
+        a.person_charge personCharge,
+        nvl(a.before_sign, '0') beforeSign,
+        a.before_date beforeDate,
+        a.age,
+        a.exam_class examClass,
+        a.job,
+        b.name,
+        b.sex,
+        a.UNIT_NAME unitName,
+        b.barthday,
+        a.final_date finalDate,
+        a.final_name finalName,
+        b.marital_status maritalStatus,
+        b.area,
+        b.id_no idNo,
+        b.country,
+        b.department,
+        (select sum(COSTS) from hc_person_appreg_items d
+        where d.hospital_id = a.hospital_id and d.person_id = a.person_id
+        and d.person_visit_id = a.person_visit_id ) as gezfy,
+        (select sum(charges) from hc_person_appreg_items d
+        where d.hospital_id = a.hospital_id and d.person_id = a.person_id
+        and d.person_visit_id = a.person_visit_id and d.bill_indicator ='1' ) as grcharges,
+        '' as tcje
+        from hc_person_visit_info a, hc_person_info b, HC_UNIT_INFO C
+        where a.person_id = b.person_id
+        and a.hospital_id = b.hospital_id
+        AND A.UNIT_ID = C.UNIT_ID
+        AND A.HOSPITAL_ID = C.HOSPITAL_ID
+        <if test="strWhere != '' and strWhere != null">
+            ${strWhere}
+        </if>
+    </select>
+    <select id="findSumItemsTotal" parameterType="com.healt.cloud.checkup.queryReport.vo.StrWherePageVo" resultType="com.healt.cloud.checkup.queryReport.vo.SumItemsVo">
+        select c.dept_name deptName,
+               pai.item_pack_name itemPackName,
+               sum(case when pai.FINISHED_SIGN ='完成' then 1 else 0 end ) finishedAmount,
+               sum(case when pai.FINISHED_SIGN ='未完成' then 1 else 0 end ) noFinishedAmount,
+               sum(1) sumAmount
+        from hc_person_visit_info a, hc_person_appreg_items pai,v_hc_item_pack_dict b,depart_dict c
+        where a.hospital_id = pai.hospital_id
+          and a.person_id = pai.person_id
+          and a.person_visit_id = pai.person_visit_id
+          and b.HC_DEPT_CODE = c.dept_id and b.HOSPITAL_ID = c.hospital_id
+        <if test="strWhere != '' and strWhere != null">
+            ${strWhere}
+        </if>
+        GROUP BY c.dept_name,pai.item_pack_name
+    </select>
+
+    <select id="findSumItems" parameterType="com.healt.cloud.checkup.queryReport.vo.StrWherePageVo" resultType="com.healt.cloud.checkup.queryReport.vo.SumItemsVo">
+        SELECT *
+        FROM (
+        SELECT TMP.*, ROWNUM ROW_ID
+        FROM (
+        select c.dept_name deptName,
+        pai.item_pack_name itemPackName,
+        sum(case when pai.FINISHED_SIGN ='完成' then 1 else 0 end ) finishedAmount,
+        sum(case when pai.FINISHED_SIGN ='未完成' then 1 else 0 end ) noFinishedAmount,
+        sum(1) sumAmount
+        from hc_person_visit_info a, hc_person_appreg_items pai,v_hc_item_pack_dict b,depart_dict c
+        where a.hospital_id = pai.hospital_id
+        and a.person_id = pai.person_id
+        and a.person_visit_id = pai.person_visit_id
+        and b.HC_DEPT_CODE = c.dept_id and b.HOSPITAL_ID = c.hospital_id
+        <if test="strWhere != '' and strWhere != null">
+            ${strWhere}
+        </if>
+        GROUP BY c.dept_name,pai.item_pack_name
+        ) TMP
+        WHERE ROWNUM &lt;= ${pageNum*pageSize})
+        WHERE ROW_ID &gt; ${(pageNum-1)*pageSize}
+    </select>
+
+    <select id="findSumCharges" resultType="java.lang.String">
+        select
+            sum( (select sum(COSTS) from hc_person_appreg_items d
+                  where d.hospital_id = a.hospital_id and d.person_id = a.person_id
+                    and d.person_visit_id = a.person_visit_id ))  gezfy
+        from hc_person_visit_info a, hc_person_info b, HC_UNIT_INFO C
+        where a.person_id = b.person_id
+          and a.hospital_id = b.hospital_id
+          AND A.UNIT_ID = C.UNIT_ID
+          AND A.HOSPITAL_ID = C.HOSPITAL_ID
+        <if test="strWhere != '' and strWhere != null">
+            ${strWhere}
+        </if>
+    </select>
+
+    <select id="findSumChargesNew" resultType="java.lang.String">
+        select
+        sum( (select sum(charges) from hc_person_appreg_items d
+        where d.hospital_id = a.hospital_id and d.person_id = a.person_id
+        and d.person_visit_id = a.person_visit_id and d.bill_indicator ='1'))  gezfy
+        from hc_person_visit_info a, hc_person_info b, HC_UNIT_INFO C
+        where a.person_id = b.person_id
+        and a.hospital_id = b.hospital_id
+        AND A.UNIT_ID = C.UNIT_ID
+        AND A.HOSPITAL_ID = C.HOSPITAL_ID
+        <if test="strWhere != '' and strWhere != null">
+            ${strWhere}
+        </if>
+    </select>
+</mapper>

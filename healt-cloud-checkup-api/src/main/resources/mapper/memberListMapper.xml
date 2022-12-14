@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.mapper.appointmentReg.MemberListMapper">
+
+    <select id="findMemberList" resultType="com.healt.cloud.checkup.vo.member.MemberListVo">
+        select a.card_no cardNo,a.name,a.status,a.money,a.build_date buildDate,a.total_fun totalFun,a.current_fun currentFun,
+               a.user_id userId,a.over_date overDate,a.card_type cardType,a.unit_id unitId,a.id_no idNo,a.person_id personId,a.self_no selfNo,a.note
+        from hc_member_info a
+        where a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findUserList" resultType="com.healt.cloud.checkup.vo.member.UserListVo">
+        select d.user_id userId,d.user_name userName from healthcheckup.v_users_dict d
+        where d.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findCardNo" resultType="java.lang.String">
+        select card_no from hc_member_info
+        where card_no = #{cardNo, jdbcType=VARCHAR} and hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findDataByCardNo" resultType="com.healt.cloud.checkup.vo.member.MemberListVo">
+        select a.card_no cardNo,a.name,a.status,a.money,a.build_date buildDate,a.total_fun totalFun,a.current_fun currentFun,
+               a.user_id userId,a.over_date overDate,a.card_type cardType,a.unit_id unitId,a.id_no idNo,a.person_id personId,a.self_no selfNo,a.note
+        from hc_member_info a
+        where a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.card_no = #{cardNo, jdbcType=VARCHAR}
+    </select>
+
+    <update id="updateMemberInfo">
+        update healthcheckup.hc_member_info
+        set status= #{status, jdbcType=VARCHAR}
+        where card_no = #{cardNo, jdbcType=VARCHAR} and hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </update>
+
+    <select id="findCardTypeList" resultType="com.healt.cloud.checkup.entity.CommonDict">
+        select a.DICT_TYPE dictType,a.HOSPITAL_ID hospitalId,a.code,a.name,
+               a.SORT_NO sortNo,a.USE_FLAG useFlag,a.INPUT_CODE inputCode
+        from common_dict a
+        where dict_type = '会员卡类型' and hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </select>
+</mapper>

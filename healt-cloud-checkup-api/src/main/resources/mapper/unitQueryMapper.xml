@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.mapper.appointmentReg.UnitQueryMapper">
+
+    <select id="findDtUnit" resultType="com.healt.cloud.checkup.vo.appointmentReg.unitPersons.DtUnitVo">
+        select a.unit_id unitId,a.unit_name unitName,a.input_code inputCode
+        from hc_unit_info a
+        where a.hospital_id = #{hospitalId, jdbcType=VARCHAR} and a.unit_id != '0000'
+        <if test="unitId != ''">
+            and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <select id="findUnitQuery" parameterType="com.healt.cloud.checkup.queryReport.vo.UnitQueryDictVo" resultType="com.healt.cloud.checkup.queryReport.vo.UnitQueryVo">
+        select a.unit_id unitId,a.unit_name unitName,a.unit_alias unitAlias,a.contacts,a.phone,a.address ,b.unit_visit_id unitVisitId,
+        b.appoints_date appointsDate,b.appoints_end_date appointsEndDate,b.finished_sign finishedSign,b.finished_date finishedDate,b.finished_persons finishedPersons,
+        a.source,a.unit_type unitType,a.class_type classType,a.charge_type chargeType,
+        (select sum(hsm.costs)  from hc_settle_master hsm where hsm.hospital_id = b.hospital_id and hsm.unit_id = b.unit_id and hsm.unit_visit_id = b.unit_visit_id) as costs ,
+        (select sum(hsm.payments)  from hc_settle_master hsm where hsm.hospital_id = b.hospital_id and hsm.unit_id = b.unit_id and hsm.unit_visit_id = b.unit_visit_id) as payments,
+        (select sum(hsm.wiping_zero)  from hc_settle_master hsm where hsm.hospital_id = b.hospital_id and hsm.unit_id = b.unit_id and hsm.unit_visit_id = b.unit_visit_id) as wiping_zero
+        from hc_unit_info a,hc_unit_visit_info b
+        where a.hospital_id = b.hospital_id and a.unit_id = b.unit_id
+        and b.REGISTER_DATE &gt;= to_date(concat(#{beginDate},' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+        and b.REGISTER_DATE &lt;= to_date(concat(#{endDate},' 23:59:59'),'yyyy-mm-dd hh24:mi:ss')
+        <if test="unitId != '' and unitId != null">
+            and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        </if>
+        <if test="classTypeValue != '' and classTypeValue != null">
+            and a.class_type like '%${classTypeValue}%'
+        </if>
+        <if test="addressValue != '' and addressValue != null">
+            and a.address like '%${addressValue}%'
+        </if>
+    </select>
+
+</mapper>

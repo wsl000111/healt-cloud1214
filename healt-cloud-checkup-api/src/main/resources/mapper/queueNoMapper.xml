@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.queue.mapper.QueueNoMapper">
+
+    <select id="findQueueNo" parameterType="com.healt.cloud.checkup.queue.vo.QueueNoDictVo" resultType="com.healt.cloud.checkup.entity.HcQueueNo">
+        select QUEUE_NO queueNo,PERSON_ID personId,PERSON_VISIT_ID personVisitId,name,sex,QUEUE_LEVEL queueLevel,QUEUE_DATE queueDate,
+               HC_DEPT_CODE hcDeptCode,HC_QUEUE_CODE hcQueueCode,HC_SEQ hcSeq,ROOM_CODE roomCode,HOSPITAL_ID hospitalId
+        from HEALTHCHECKUP.HC_QUEUE_NO
+        where hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        <if test="queueLevel != '' and queueLevel != null">
+            and queue_level = #{queueLevel, jdbcType=VARCHAR}
+        </if>
+        <if test="queueDate != '' and queueDate != null">
+            and queue_date &gt;= to_date(#{queueDate, jdbcType=VARCHAR},'yyyy-mm-dd')
+        </if>
+        <if test="hcDeptCode != '' and hcDeptCode != null">
+            and hc_dept_code = #{hcDeptCode, jdbcType=VARCHAR}
+        </if>
+        <if test="roomCode != '' and roomCode != null">
+            and room_code = #{roomCode, jdbcType=VARCHAR}
+        </if>
+          and hc_queue_code in (0,2)
+    </select>
+
+    <select id="findQueueBigScreen" resultType="com.healt.cloud.checkup.queue.vo.QueueBigScreenVo">
+        select QUEUE_NAME queueName, max(Firstlist) Firstlist
+        from (select LISTAGG(aaa.xhname, ' ') WITHIN GROUP(order by aaa.queue_no) OVER(partition by aaa.room_name) Firstlist,
+               aaa.room_name as QUEUE_NAME
+              from (select b.room_name,
+                  a.name || '(' || a.queue_no || ')' xhname,
+                  a.queue_no
+                  from HEALTHCHECKUP.HC_QUEUE_NO  a,
+                  HEALTHCHECKUP.Hc_Room_Dict b
+                  where a.hospital_id = b.hospital_id
+                  and a.room_code = b.room_code
+                  and a.hc_queue_code in ('0', '2')
+                  and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+                  and b.counsel_no = #{counselNo, jdbcType=VARCHAR}
+                  and a.queue_date >= to_date(#{queueDate, jdbcType=VARCHAR}, 'yyyy-MM-dd')) aaa) bbb
+        group by bbb.QUEUE_NAME
+    </select>
+
+    <select id="findCallBigScreen" resultType="com.healt.cloud.checkup.queue.vo.CallBigScreenVo">
+        select  a.ROOM_NAME||':'||a.sppid as zzhj
+        from Hc_Room_Dict a
+        where  a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.counsel_no = #{counselNo, jdbcType=VARCHAR}
+          and a.sppid is not null
+    </select>
+
+    <select id="findQueueBigScreenNew" resultType="com.healt.cloud.checkup.queue.vo.QueueBigScreenVoNew">
+        select b.room_code roomCode, b.room_name as queueName ,
+               a.name || '(' || a.queue_no || ')' xhname,
+               a.queue_no queueNo
+        from HEALTHCHECKUP.HC_QUEUE_NO a,
+             HEALTHCHECKUP.Hc_Room_Dict b
+        where a.hospital_id = b.hospital_id
+          and a.room_code = b.room_code
+          and a.hc_queue_code in ('0', '2')
+          and b.counsel_no = #{counselNo}
+          and a.queue_date &gt;= to_date(#{queueDate}, 'yyyy-MM-dd')
+
+        order by a.queue_no
+    </select>
+</mapper>

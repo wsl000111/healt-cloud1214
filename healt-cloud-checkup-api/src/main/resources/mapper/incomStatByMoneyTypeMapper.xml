@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.mapper.appointmentReg.IncomStatByMoneyTypeMapper">
+
+    <select id="findMoneyType" resultType="com.healt.cloud.checkup.queryReport.vo.MoneyTypeVo">
+        select b.user_id userId,
+        b.user_name userName,
+        a.payment_type paymentType,
+        sum(a.payment_money) as payment_money
+        from hc_rcpt_pay a, hc_settle_master b
+        where a.hospital_id = b.hospital_id
+        and a.rcpt_no = b.rcpt_no
+        and b.settling_date &gt;=
+        to_date(#{beginDate},'yyyy-mm-dd hh24:mi:ss')
+        and b.settling_date &lt;=
+        to_date(#{endDate},'yyyy-mm-dd hh24:mi:ss')
+        group by b.user_id, b.user_name, a.payment_type
+    </select>
+
+</mapper>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.mapper.appointmentReg.UnitResultSearchMapper">
+
+    <select id="findUnitInfo" resultType="com.healt.cloud.checkup.queryReport.vo.UnitInfoVo">
+        select a.unit_id unitId,
+               a.unit_name unitName,
+               a.unit_alias unitAlias,
+               a.contacts,
+               a.phone,
+               a.address,
+               a.unit_type unitType,
+               a.class_type classType
+        from hc_unit_info a
+        where a.unit_id = #{unitId, jdbcType=VARCHAR}
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findPersonListTotal" parameterType="com.healt.cloud.checkup.queryReport.vo.PersonTztListDictVo" resultType="com.healt.cloud.checkup.queryReport.vo.PersonListVo">
+        select '0' selectflag,
+        a.person_id personId,
+        a.person_visit_id personVisitId,
+        a.person_charge personCharge,
+        nvl(a.before_sign, '0') beforeSign,
+        a.before_date beforeDate,
+        a.age,
+        a.exam_class examClass,
+        a.job,
+        b.name,
+        b.sex,
+        C.UNIT_NAME unitName,
+        b.barthday,
+        a.final_date finalDate,
+        a.final_name finalName,
+        b.marital_status maritalStatus,
+        b.area,
+        b.id_no idNo,
+        b.country,
+        b.department
+        from hc_person_visit_info a, hc_person_info b, HC_UNIT_INFO C
+        where a.person_id = b.person_id
+        and a.hospital_id = b.hospital_id
+        AND A.UNIT_ID = C.UNIT_ID
+        AND A.HOSPITAL_ID = C.HOSPITAL_ID
+        and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        and a.UNIT_VISIT_ID = #{unitVisitId, jdbcType=VARCHAR}
+        <if test='tzt == "0"'>
+            and a.BEFORE_DATE is null
+        </if>
+        <if test='tzt == "1"'>
+            and a.BEFORE_DATE is not null
+            and a.FINAL_DATE is null
+        </if>
+        <if test='tzt == "2"'>
+            and a.FINAL_DATE is not null
+        </if>
+    </select>
+
+    <select id="findPersonList" parameterType="com.healt.cloud.checkup.queryReport.vo.PersonTztListDictVo" resultType="com.healt.cloud.checkup.queryReport.vo.PersonListVo">
+        SELECT *
+        FROM (
+        SELECT TMP.*, ROWNUM ROW_ID
+        FROM (
+        select '0' selectflag,
+        a.person_id personId,
+        a.person_visit_id personVisitId,
+        a.person_charge personCharge,
+        nvl(a.before_sign, '0') beforeSign,
+        a.before_date beforeDate,
+        a.age,
+        a.exam_class examClass,
+        a.job,
+        b.name,
+        b.sex,
+        C.UNIT_NAME unitName,
+        b.barthday,
+        a.final_date finalDate,
+        a.final_name finalName,
+        b.marital_status maritalStatus,
+        b.area,
+        b.id_no idNo,
+        b.country,
+        b.department
+        from hc_person_visit_info a, hc_person_info b, HC_UNIT_INFO C
+        where a.person_id = b.person_id
+        and a.hospital_id = b.hospital_id
+        AND A.UNIT_ID = C.UNIT_ID
+        AND A.HOSPITAL_ID = C.HOSPITAL_ID
+        and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        and a.UNIT_VISIT_ID = #{unitVisitId, jdbcType=VARCHAR}
+        <if test='tzt == "0"'>
+            and a.BEFORE_DATE is null
+        </if>
+        <if test='tzt == "1"'>
+            and a.BEFORE_DATE is not null
+            and a.FINAL_DATE is null
+        </if>
+        <if test='tzt == "2"'>
+            and a.FINAL_DATE is not null
+        </if>
+        ) TMP
+        WHERE ROWNUM &lt;= ${pageNum*pageSize})
+        WHERE ROW_ID &gt; ${(pageNum-1)*pageSize}
+    </select>
+
+</mapper>

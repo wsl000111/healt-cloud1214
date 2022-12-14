@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.mapper.MyHcPackVsPriceMapper">
+    <select id="findHcPersonPriceByUnit" resultType="com.healt.cloud.checkup.vo.busniess.clinicPrice.HcPersonPriceVo">
+        select a.person_id,
+               a.person_visit_id,
+               pvc.item_class,
+               a.unit_id,
+               a.unit_name,
+               b.item_pack_code,
+               p.name,
+               p.sex,
+               b.item_pack_name,
+               b.num,
+               b.item_no,
+               b.bill_indicator,
+               1 as Discount_rate,
+               b.finished_sign,
+               B.ADD_ITEM,
+               b.set_code,
+               b.costs,
+               b.charges,
+               b.order_id,
+               pvc.clinic_item_code,
+               pvc.clinic_item_name,
+               pvc.charge_item_code,
+               pvc.charge_item_name,
+               pvc.charge_item_class,
+               pvc.charge_pricemoney,
+               pvc.item_unit,
+               pvc.outp_rcpt_code,
+               b.num * pvc.charge_pricemoney as hiscosts,
+               b.num * pvc.charge_pricemoney as hischarges, c.his_depart_code,
+               c.his_depart_name,
+               c.IS_DISCOUNT
+        from HC_PERSON_VISIT_INFO   a,
+             hc_person_appreg_items b,
+             HC_ITEM_PACK_DICT      c,
+             healthcheckup.V_HC_PACK_VS_PRICE       PVC,
+             Hc_Person_info         p
+        where a.hospital_id = b.hospital_id
+          and a.person_id = p.person_id
+          and a.hospital_id = p.hospital_id
+          and b.hospital_id = c.hospital_id
+          and b.item_pack_code = c.item_pack_code
+          and a.person_id = b.person_id
+          and a.person_visit_id = b.person_visit_id
+          and b.hospital_id = pvc.hospital_id
+          and b.item_pack_code = pvc.item_pack_code
+          and b.upload_flag is null
+          and a.hospital_id = #{hospitalId}
+          and a.unit_id = #{unitId}
+          and a.unit_visit_id = #{unitVisitId}
+          and b.bill_indicator = '0'
+        order by a.person_id, b.item_pack_code asc
+    </select>
+
+    <select id="findHcPersonPriceByPerson" resultType="com.healt.cloud.checkup.vo.busniess.clinicPrice.HcPersonPriceVo">
+        select a.person_id,
+               a.person_visit_id,
+               pvc.item_class,
+               a.unit_id,
+               a.unit_name,
+               b.item_pack_code,
+               p.name,
+               p.sex,
+               b.item_pack_name,
+               b.num,
+               b.item_no,
+               b.bill_indicator,
+               1 as Discount_rate,
+               b.finished_sign,
+               B.ADD_ITEM,
+               b.set_code,
+               b.costs,
+               b.charges,
+               b.order_id,
+               pvc.clinic_item_code,
+               pvc.clinic_item_name,
+               pvc.charge_item_code,
+               pvc.charge_item_name,
+               pvc.charge_item_class,
+               pvc.charge_pricemoney,
+               pvc.item_unit,
+               pvc.outp_rcpt_code,
+               b.num * pvc.charge_pricemoney as hiscosts,
+               b.num * pvc.charge_pricemoney as hischarges, c.his_depart_code,
+               c.his_depart_name,
+               c.IS_DISCOUNT
+        from HC_PERSON_VISIT_INFO   a,
+             hc_person_appreg_items b,
+             HC_ITEM_PACK_DICT      c,
+             healthcheckup.V_HC_PACK_VS_PRICE       PVC,
+             Hc_Person_info         p
+        where a.hospital_id = b.hospital_id
+          and a.person_id = p.person_id
+          and a.hospital_id = p.hospital_id
+          and b.hospital_id = c.hospital_id
+          and b.item_pack_code = c.item_pack_code
+          and a.person_id = b.person_id
+          and a.person_visit_id = b.person_visit_id
+          and b.hospital_id = pvc.hospital_id
+          and b.item_pack_code = pvc.item_pack_code
+          and b.upload_flag is null
+          and a.hospital_id = #{hospitalId}
+          and a.person_id = #{personId}
+          and a.person_visit_id = #{personVisitId}
+          and b.bill_indicator = '0'
+        order by a.person_id, b.item_pack_code asc
+    </select>
+
+    <select id="findHcPersonPriceByUnitPerson" resultType="com.healt.cloud.checkup.vo.busniess.clinicPrice.HcPersonPriceVo">
+        select a.person_id,
+               a.person_visit_id,
+               pvc.item_class,
+               a.unit_id,
+               a.unit_name,
+               b.item_pack_code,
+               p.name,
+               p.sex,
+               b.item_pack_name,
+               b.num,
+               b.item_no,
+               b.bill_indicator,
+               1 as Discount_rate,
+               b.finished_sign,
+               B.ADD_ITEM,
+               b.set_code,
+               b.costs,
+               b.charges,
+               b.order_id,
+               pvc.clinic_item_code,
+               pvc.clinic_item_name,
+               pvc.charge_item_code,
+               pvc.charge_item_name,
+               pvc.charge_item_class,
+               pvc.charge_pricemoney,
+               pvc.item_unit,
+               pvc.outp_rcpt_code,
+               b.num * pvc.charge_pricemoney as hiscosts,
+               b.num * pvc.charge_pricemoney as hischarges, c.his_depart_code,
+               c.his_depart_name,
+               c.IS_DISCOUNT
+        from HC_PERSON_VISIT_INFO   a,
+             hc_person_appreg_items b,
+             HC_ITEM_PACK_DICT      c,
+             healthcheckup.V_HC_PACK_VS_PRICE       PVC,
+             Hc_Person_info         p
+        where a.hospital_id = b.hospital_id
+          and a.person_id = p.person_id
+          and a.hospital_id = p.hospital_id
+          and b.hospital_id = c.hospital_id
+          and b.item_pack_code = c.item_pack_code
+          and a.person_id = b.person_id
+          and a.person_visit_id = b.person_visit_id
+          and b.hospital_id = pvc.hospital_id
+          and b.item_pack_code = pvc.item_pack_code
+          and b.upload_flag is null
+          and a.hospital_id = '${hospitalId}'
+          and a.unit_id = '${unitId}'
+          and a.unit_visit_id = '${unitVisitId}'
+          and b.bill_indicator = '0'
+          and a.person_id in ${personIdStrWhe}
+        order by a.person_id, b.item_pack_code asc
+    </select>
+
+</mapper>

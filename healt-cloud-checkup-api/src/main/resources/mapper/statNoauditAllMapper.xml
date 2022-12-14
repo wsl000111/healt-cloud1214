@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.mapper.appointmentReg.StatNoauditAllMapper">
+
+    <select id="findPersonNotFinalListTotal" parameterType="com.healt.cloud.checkup.queryReport.vo.StrWherePageVo" resultType="com.healt.cloud.checkup.queryReport.vo.PersonNotFinalListVo">
+        select a.person_id personId,
+               a.person_visit_id personVisitId,
+               a.person_charge personCharge,
+               nvl(a.before_sign, '0') beforeSign,
+               a.before_date beforeDate,
+               a.age,
+               a.exam_class examClass,
+               a.job,
+               b.name,
+               b.sex,
+               C.UNIT_NAME unitName,
+               a.BUILD_DATE buildDate,
+               a.RESULT_STATUS resultStatus
+        from hc_person_visit_info a, hc_person_info b, HC_UNIT_INFO C
+        where a.person_id = b.person_id
+          and a.hospital_id = b.hospital_id
+          AND A.UNIT_ID = C.UNIT_ID
+          AND A.HOSPITAL_ID = C.HOSPITAL_ID
+          and a.FINAL_DATE is null
+        <if test="strWhere != '' and strWhere != null">
+            ${strWhere}
+        </if>
+    </select>
+
+    <select id="findPersonNotFinalList" parameterType="com.healt.cloud.checkup.queryReport.vo.StrWherePageVo" resultType="com.healt.cloud.checkup.queryReport.vo.PersonNotFinalListVo">
+        SELECT *
+        FROM (
+        SELECT TMP.*, ROWNUM ROW_ID
+        FROM (
+        select a.person_id personId,
+        a.person_visit_id personVisitId,
+        a.person_charge personCharge,
+        nvl(a.before_sign, '0') beforeSign,
+        a.before_date beforeDate,
+        a.age,
+        a.exam_class examClass,
+        a.job,
+        b.name,
+        b.sex,
+        C.UNIT_NAME unitName,
+        a.BUILD_DATE buildDate,
+        a.RESULT_STATUS resultStatus
+        from hc_person_visit_info a, hc_person_info b, HC_UNIT_INFO C
+        where a.person_id = b.person_id
+        and a.hospital_id = b.hospital_id
+        AND A.UNIT_ID = C.UNIT_ID
+        AND A.HOSPITAL_ID = C.HOSPITAL_ID
+        and a.FINAL_DATE is null
+        <if test="strWhere != '' and strWhere != null">
+            ${strWhere}
+        </if>
+        ) TMP
+        WHERE ROWNUM &lt;= ${pageNum*pageSize})
+        WHERE ROW_ID &gt; ${(pageNum-1)*pageSize}
+    </select>
+
+    <select id="findUnitCount" resultType="java.lang.String">
+        select max(a.unit_visit_id)
+        from hc_unit_visit_info a
+        where a.unit_id = #{unitId, jdbcType=VARCHAR}
+    </select>
+</mapper>

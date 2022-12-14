@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.mapper.appointmentReg.DoctorWorkMapper">
+
+    <select id="findDoctorItem" resultType="com.healt.cloud.checkup.queryReport.vo.DoctorItemVo">
+        select a.item_pack_name itemPackName,
+               a.item_pack_code itemPackCode,
+               a.doctor_name as name,
+               count(*) as sumCount
+        from hc_person_appreg_items a
+        where a.FINISHED_DATE &gt;=
+              to_date(concat(#{beginDate},' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+          and a.FINISHED_DATE &lt;=
+              to_date(concat(#{endDate},' 23:59:59'),'yyyy-mm-dd hh24:mi:ss')
+        group by a.item_pack_name, a.item_pack_code, a.doctor_name
+    </select>
+
+    <select id="findEditerItem" resultType="com.healt.cloud.checkup.queryReport.vo.EditerItemVo">
+        select a.item_pack_name itemPackName,
+               a.item_pack_code itemPackCode,
+               a.EDITER_NAME as name,
+               count(*) as sumCount
+        from hc_person_appreg_items a
+        where a.FINISHED_DATE &gt;=
+              to_date(concat(#{beginDate},' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+          and a.FINISHED_DATE &lt;=
+              to_date(concat(#{endDate},' 23:59:59'),'yyyy-mm-dd hh24:mi:ss')
+        group by a.item_pack_name,a.item_pack_code,a.EDITER_NAME
+    </select>
+
+    <select id="findFinalDocoter" resultType="com.healt.cloud.checkup.queryReport.vo.FinalDocoterVo">
+        SELECT FINAL_DOCOTER firstDocoter,
+               FINAL_NAME as name,
+               count(*) sumCount
+        FROM hc_person_visit_info a
+        where a.FINAL_DATE &gt;=
+              to_date(concat(#{beginDate},' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+          and a.FINAL_DATE &lt;=
+              to_date(concat(#{endDate},' 23:59:59'),'yyyy-mm-dd hh24:mi:ss')
+          and result_status = '9'
+        GROUP BY FINAL_DOCOTER, FINAL_NAME
+    </select>
+
+    <select id="findItemPack" resultType="com.healt.cloud.checkup.queryReport.vo.ItemPackVo">
+        select a.item_pack_code itemPackCode,
+               a.item_pack_name itemPackName,
+               case
+                   when b.set_name is null then
+                       '非套餐部分'
+                   else
+                       b.set_name
+                   end setName,
+               count(*) sumCount
+        from hc_person_appreg_items a, healthcheckup.hc_pack_set_dict b
+        where a.hospital_id = b.hospital_id(+)
+          and a.set_code = b.set_code(+)
+          and a.finished_date &gt;=
+              to_date(concat(#{beginDate},' 00:00:00'),'yyyy-mm-dd hh24:mi:ss')
+          and a.finished_date &lt;=
+              to_date(concat(#{endDate},' 23:59:59'),'yyyy-mm-dd hh24:mi:ss')
+        group by a.item_pack_code,
+                 a.item_pack_name,
+                 case
+                     when b.set_name is null then
+                         '非套餐部分'
+                     else
+                         b.set_name
+                     end
+        order by a.item_pack_code asc
+    </select>
+</mapper>

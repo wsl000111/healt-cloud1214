@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.mapper.HcCostDetailBillingMapper">
+
+    <select id="findCostDetailBillingFilter" parameterType="com.healt.cloud.checkup.vo.busniess.costDetail.CostDetailBillingDictVo" resultType="com.healt.cloud.checkup.entity.CostDetailBilling">
+        select patientid,PERSON_ID personId,PERSON_VISIT_ID personVisitId,UNIT_ID unitId,UNIT_VISIT_ID unitVisitId,
+        patientname,patienttype,visitid,paivisitid,examtype,examcompanyno,examcompanyname,currentorgdcode,currentwardcode,
+        orderid,applyno,clinictype,feeitemclass,clinicitemid,clinicitemname,itemtype,feeitemid,feeitemname,drugspec,
+        pharmacyfactoryname,num,unit,unitprice,unitcoeff,totalprice,charges,classonrcpt,applydoctorcode,applydoctorname,
+        applyorgcode,applyorgname,execorgcode,execorgname,chargedate,enterdate,HOSPITAL_ID hospitalId,ITEM_PACK_CODE itemPackCode,
+        HC_ITEM_NO hcItemNo,rekid,RETURN_REKID returnRekid
+        from COST_DETAIL_BILLING
+        where hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        <if test="rekid != '' and rekid != null">
+            and REKID = #{rekid, jdbcType=VARCHAR}
+        </if>
+        <if test="unitId != '' and unitId != null">
+            and UNIT_ID = #{unitId, jdbcType=VARCHAR}
+        </if>
+        <if test="unitVisitId != '' and unitVisitId != null">
+            and UNIT_VISIT_ID = #{unitVisitId, jdbcType=VARCHAR}
+        </if>
+        <if test="personId != '' and personId != null">
+            and PERSON_ID = #{personId, jdbcType=VARCHAR}
+        </if>
+        <if test="personVisitId != '' and personVisitId != null">
+            and PERSON_VISIT_ID = #{personVisitId, jdbcType=VARCHAR}
+        </if>
+        <if test="itemPackCode != '' and itemPackCode != null">
+            and itemPackCode = #{itemPackCode, jdbcType=VARCHAR}
+        </if>
+        and RETURN_REKID is null
+    </select>
+
+    <select id="findCompanyOrderId" resultType="Integer" flushCache="true">
+        select sq_company_order_id.nextval from dual
+    </select>
+
+</mapper>

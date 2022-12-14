@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.mapper.appointmentReg.DiagnosisStatUnitMapper">
+
+    <select id="findTotalCount" resultType="java.lang.String">
+        select count(*)
+        from hc_person_visit_info a
+        where a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.unit_id = #{unitId, jdbcType=VARCHAR}
+          and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findTotalCount1" resultType="java.lang.String">
+        select count(*)
+        from hc_person_visit_info a
+        where a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+        <if test="department != null">
+            and a.department = #{department}
+        </if>
+        <if test="personLeve != null">
+            and a.person_level = #{personLeve}
+        </if>
+    </select>
+
+    <select id="findManCount" resultType="java.lang.String">
+        select count(*)
+        from hc_person_visit_info a,hc_person_info b
+        where a.hospital_id = b.hospital_id
+          and a.person_id = b.person_id
+          and b.sex ='男'
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.unit_id = #{unitId, jdbcType=VARCHAR}
+          and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findManCount1" resultType="java.lang.String">
+        select count(*)
+        from hc_person_visit_info a,hc_person_info b
+        where a.hospital_id = b.hospital_id
+          and a.person_id = b.person_id
+          and b.sex ='男'
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.unit_id = #{unitId, jdbcType=VARCHAR}
+          and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+        <if test="department != null">
+            and a.department = #{department}
+        </if>
+        <if test="personLeve != null">
+            and a.person_level = #{personLeve}
+        </if>
+    </select>
+
+    <select id="findWomanCount" resultType="java.lang.String">
+        select count(*)
+        from hc_person_visit_info a,hc_person_info b
+        where a.hospital_id = b.hospital_id
+          and a.person_id = b.person_id
+          and b.sex ='女'
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.unit_id = #{unitId, jdbcType=VARCHAR}
+          and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findWomanCount1" resultType="java.lang.String">
+        select count(*)
+        from hc_person_visit_info a,hc_person_info b
+        where a.hospital_id = b.hospital_id
+          and a.person_id = b.person_id
+          and b.sex ='女'
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.unit_id = #{unitId, jdbcType=VARCHAR}
+          and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+        <if test="department != null">
+            and a.department = #{department}
+        </if>
+        <if test="personLeve != null">
+            and a.person_level = #{personLeve}
+        </if>
+    </select>
+
+    <select id="findBeforeSignTotalCount" resultType="java.lang.String">
+        select count(*)
+        from hc_person_visit_info a
+        where a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.unit_id = #{unitId, jdbcType=VARCHAR}
+          and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+          and a.before_sign ='1'
+    </select>
+
+    <select id="findBeforeSignTotalCount1" resultType="java.lang.String">
+        select count(*)
+        from hc_person_visit_info a
+        where a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.unit_id = #{unitId, jdbcType=VARCHAR}
+          and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+          and a.before_sign ='1'
+        <if test="department != null">
+            and a.department = #{department}
+        </if>
+        <if test="personLeve != null">
+            and a.person_level = #{personLeve}
+        </if>
+    </select>
+
+    <select id="findBeforeSignManCount" resultType="java.lang.String">
+        select count(*)
+        from hc_person_visit_info a,hc_person_info b
+        where a.hospital_id = b.hospital_id
+          and a.person_id = b.person_id
+          and b.sex ='男'
+          and a.before_sign ='1'
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.unit_id = #{unitId, jdbcType=VARCHAR}
+          and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findBeforeSignManCount1" resultType="java.lang.String">
+        select count(*)
+        from hc_person_visit_info a,hc_person_info b
+        where a.hospital_id = b.hospital_id
+          and a.person_id = b.person_id
+          and b.sex ='男'
+          and a.before_sign ='1'
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.unit_id = #{unitId, jdbcType=VARCHAR}
+          and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+        <if test="department != null">
+            and a.department = #{department}
+        </if>
+        <if test="personLeve != null">
+            and a.person_level = #{personLeve}
+        </if>
+    </select>
+
+    <select id="findBeforeSignWomanCount" resultType="java.lang.String">
+        select count(*)
+        from hc_person_visit_info a,hc_person_info b
+        where a.hospital_id = b.hospital_id
+          and a.person_id = b.person_id
+          and b.sex ='女'
+          and a.before_sign ='1'
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.unit_id = #{unitId, jdbcType=VARCHAR}
+          and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findBeforeSignWomanCount1" resultType="java.lang.String">
+        select count(*)
+        from hc_person_visit_info a,hc_person_info b
+        where a.hospital_id = b.hospital_id
+          and a.person_id = b.person_id
+          and b.sex ='女'
+          and a.before_sign ='1'
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.unit_id = #{unitId, jdbcType=VARCHAR}
+          and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+        <if test="department != null">
+            and a.department = #{department}
+        </if>
+        <if test="personLeve != null">
+            and a.person_level = #{personLeve}
+        </if>
+    </select>
+
+    <select id="findAbnormalResults" parameterType="com.healt.cloud.checkup.queryReport.vo.AbnormalResultsDictVo" resultType="com.healt.cloud.checkup.queryReport.vo.AbnormalResultsVo">
+        SELECT rownum,rec_content recContent,mansl1,womansl1,zsl1,cjmanrs,cjwomanrs,cjzrs,manbfb,womanbfb,pjbfb,rownum||'.'||RECCONTENT_SL as reccontentSl , guide_suggest guideSuggest
+        FROM (
+                 select rownum,rec_content,mansl1,womansl1,zsl1,cjmanrs,cjwomanrs,cjzrs,manbfb,womanbfb,pjbfb , RECCONTENT_SL,ddd.guide_suggest
+                 from  (select  aaa.rec_content,
+                                sum(mansl) mansl1,
+                                sum(womansl) womansl1,
+                                sum(mansl + womansl) zsl1,
+                                bbb.cjmanrs,
+                                bbb.cjwomanrs,
+                                bbb.cjzrs,
+                                round(sum(mansl) / nvl(cjmanrs, 0), 4) manbfb,
+                                round(sum(womansl) / nvl(cjwomanrs, 0), 4) womanbfb,
+                                round(sum(mansl + womansl) / nvl(cjzrs, 0), 4) pjbfb,
+                                aaa.rec_content||'('||sum(mansl + womansl)||'人)' as RECCONTENT_SL
+                        from (select aa.rec_content, nvl(sum(aa.sl), 0) mansl, 0 womansl
+                              from (select c.rec_content, b.sex, count(a.person_id) sl
+                                    from hc_person_visit_info a,
+                                         hc_person_info       b,
+                                         HC_DIAGNOSIS_RECORD  c
+                                    where a.hospital_id = b.hospital_id
+                                      and a.person_id = b.person_id
+                                      and a.hospital_id = c.hospital_id
+                                      and a.person_id = c.person_id
+                                      and a.person_visit_id = c.person_visit_id
+                                      and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+                                      and a.unit_id = #{unitId, jdbcType=VARCHAR}
+                                      and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+                                      and a.before_sign = '1'
+        <if test='recClass == "0"'>
+            and c.REC_CLASS = #{recClass, jdbcType=VARCHAR}
+        </if>
+        <if test="recContentValue != '' and recContentValue != null">
+            and c.rec_content like '%${recContentValue}%'
+        </if>
+        group by c.rec_content, b.sex) aa
+        where aa.sex = '男'
+        group by aa.rec_content
+        union all
+        select aa.rec_content, 0 mansl, nvl(sum(aa.sl), 0) womansl
+        from (select c.rec_content, b.sex, count(a.person_id) sl
+        from hc_person_visit_info a,
+        hc_person_info       b,
+        HC_DIAGNOSIS_RECORD  c
+        where a.hospital_id = b.hospital_id
+        and a.person_id = b.person_id
+        and a.hospital_id = c.hospital_id
+        and a.person_id = c.person_id
+        and a.person_visit_id = c.person_visit_id
+        and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+        and a.before_sign = '1'
+        <if test='recClass == "0"'>
+            and c.REC_CLASS = #{recClass, jdbcType=VARCHAR}
+        </if>
+        <if test="recContentValue != '' and recContentValue != null">
+            and c.rec_content like '%${recContentValue}%'
+        </if>
+        group by c.rec_content, b.sex) aa
+        where aa.sex = '女'
+        group by aa.rec_content) aaa,
+        (select sum(cjmanrs) cjmanrs,
+        sum(cjwomanrs) cjwomanrs,
+        sum(cjzrs) cjzrs
+        from (select count(*) cjmanrs, 0 cjwomanrs, 0 cjzrs
+        from hc_person_visit_info a, hc_person_info b
+        where a.hospital_id = b.hospital_id
+        and a.person_id = b.person_id
+        and b.sex = '男'
+        and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+        and a.before_sign = '1'
+        union all
+        select 0 cjmanrs, count(*) cjwomanrs, 0 cjzrs
+        from hc_person_visit_info a, hc_person_info b
+        where a.hospital_id = b.hospital_id
+        and a.person_id = b.person_id
+        and b.sex = '女'
+        and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+        and a.before_sign = '1'
+        union all
+        select 0 cjmanrs, 0 cjwomanrs, count(*) cjzrs
+        from hc_person_visit_info a, hc_person_info b
+        where a.hospital_id = b.hospital_id
+        and a.person_id = b.person_id
+        and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        and a.unit_id = #{unitId, jdbcType=VARCHAR}
+        and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+        and a.before_sign = '1') bb) bbb
+        group by aaa.rec_content, bbb.cjmanrs, bbb.cjwomanrs, bbb.cjzrs
+        order by sum(mansl + womansl) desc ) ccc left outer join
+                     (select guide_suggest,count(*) from hc_knowledge_dict
+                                                    where hospital_id= #{hospitalId, jdbcType=VARCHAR}
+                                                      and disease_code is not null
+                                                      and positive_indicator !='正' group by guide_suggest
+                                                      HAVING COUNT(guide_suggest) &lt; 2 ) ddd
+                         on ccc.rec_content = ddd.guide_suggest ORDER BY zsl1 DESC ) EEE
+    </select>
+</mapper>

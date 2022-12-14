@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.mapper.appointmentReg.DiscountSchemeMapper">
+
+    <select id="findDtItemPack" resultType="com.healt.cloud.checkup.vo.settlement.DtItemPackVo">
+        select a.ITEM_PACK_CODE itemPackCode,a.ITEM_PACK_NAME itemPackName,a.INPUT_CODE inputCode,a.HC_DEPT_CODE hcDeptCode,a.dept_name deptName
+        from v_hc_item_pack_dict a where a.EFFECTIVE_FLAG='1' and a.hospital_id= #{hospitalId, jdbcType=VARCHAR}
+        ORDER BY a.dept_name ASC
+    </select>
+
+    <select id="findDiscountScheme" resultType="com.healt.cloud.checkup.entity.HcDiscountScheme">
+        select a.scheme_name schemeName,a.scheme_code schemeCode,a.effective_flag effectiveFlag,a.Hospital_id hospitalId
+        from healthcheckup.HC_discount_scheme a
+    </select>
+
+    <select id="findDiscountSchemeDetail" resultType="com.healt.cloud.checkup.entity.HcDiscountSchemeDetail">
+        select a.scheme_code schemeCode,a.item_assem_code itemAssemCode,a.discount_class discountClass,a.discount_ratio discountRatio,a.discount_price discountPrice,a.Hospital_id hospitalId
+        from healthcheckup.HC_DISCOUNT_SCHEME_DETAIL a
+    </select>
+
+    <select id="findSysdate" resultType="java.lang.String">
+        select to_char(sysdate,'yymmddhh24miss') from dual
+    </select>
+</mapper>

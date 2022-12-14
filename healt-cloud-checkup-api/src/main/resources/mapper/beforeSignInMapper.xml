@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.appointmentReg.mapper.BeforeSignInMapper">
+
+    <select id="findDtUnit" resultType="com.healt.cloud.checkup.vo.appointmentReg.unitPersons.DtUnitVo">
+        select a.unit_id unitId,a.unit_name unitName,a.input_code inputCode
+        from hc_unit_info a
+        where a.hospital_id=#{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectPersonAndVisit" resultType="com.healt.cloud.checkup.vo.appointmentReg.beforSign.PersonAndVisitVo">
+        SELECT *
+        FROM (
+             SELECT TMP.*, ROWNUM ROW_ID
+             FROM (
+                  select '0' selectflag,
+                         a.person_id personId,
+                         a.person_visit_id personVisitId,
+                         a.person_charge personCharge,
+                         nvl(a.before_sign, '0') beforeSign,
+                         a.before_date beforeDate,
+                         a.age,
+                         a.exam_class examClass,
+                         a.job,
+                         a.appoints_date appointsDate,
+                         b.name,
+                         b.sex,
+                         C.UNIT_NAME unitName,
+                         a.department
+                  from hc_person_visit_info a, hc_person_info b, HC_UNIT_INFO C
+                  where a.person_id = b.person_id
+                    and a.hospital_id = b.hospital_id
+                    AND A.UNIT_ID = C.UNIT_ID
+                    AND A.HOSPITAL_ID = C.HOSPITAL_ID
+                 <if test="strWhere != null">
+                    ${strWhere}
+                 </if>
+                ) TMP
+             WHERE ROWNUM &lt;= ${pageNum*pageSize})
+        WHERE ROW_ID &gt; ${(pageNum-1)*pageSize}
+    </select>
+
+    <select id="selectPersonAndVisitPrintNullNoPage" resultType="com.healt.cloud.checkup.vo.appointmentReg.beforSign.PersonAndVisitVo">
+        select distinct '0' selectflag,
+                        a.person_id personId,
+                        a.person_visit_id personVisitId,
+                        hpi.person_charge personCharge,
+                        nvl(hpvi.before_sign, '0') beforeSign,
+                        hpvi.before_date beforeDate,
+                        hpvi.age,
+                        hpvi.exam_class examClass,
+                        hpvi.job,
+                        hpi.name,
+                        hpi.sex,
+                        '' unitName
+        from  healthcheckup.hc_person_appreg_items a,v_hc_item_pack_dict b,
+              v_depart_dict c ,hc_person_visit_info hpvi,hc_person_info hpi
+        where a.hospital_id = b.HOSPITAL_ID
+          and a.item_pack_code = b.ITEM_PACK_CODE
+          and b.HC_DEPT_CODE = c.dept_id and b.HOSPITAL_ID = c.hospital_id
+          and hpvi.hospital_id = a.hospital_id  and hpvi.person_id = a.person_id and hpvi.person_visit_id = a.person_visit_id
+          and  hpi.hospital_id = a.hospital_id  and hpi.person_id = a.person_id
+          and c.class_name='检验'
+          and a.apply_no is not null
+          and a.apply_no_print is null
+          and hpvi.BEFORE_DATE &gt;= to_date('${startDate}', 'yyyy-mm-dd hh24:mi:ss')
+          and hpvi.BEFORE_DATE &lt;= to_date('${endDate}', 'yyyy-mm-dd hh24:mi:ss')
+    </select>
+
+    <select id="selectPersonAndVisitPrintNotNullNoPage" resultType="com.healt.cloud.checkup.vo.appointmentReg.beforSign.PersonAndVisitVo">
+      select distinct '0' selectflag,
+                      a.person_id personId,
+                      a.person_visit_id personVisitId,
+                      hpi.person_charge personCharge,
+                      nvl(hpvi.before_sign, '0') beforeSign,
+                      hpvi.before_date beforeDate,
+                      hpvi.age,
+                      hpvi.exam_class examClass,
+                      hpvi.job,
+                      hpi.name,
+                      hpi.sex,
+                      '' unitName
+      from  healthcheckup.hc_person_appreg_items a,v_hc_item_pack_dict b,
+            v_depart_dict c ,hc_person_visit_info hpvi,hc_person_info hpi
+      where a.hospital_id = b.HOSPITAL_ID
+        and a.item_pack_code = b.ITEM_PACK_CODE
+        and b.HC_DEPT_CODE = c.dept_id and b.HOSPITAL_ID = c.hospital_id
+        and hpvi.hospital_id = a.hospital_id  and hpvi.person_id = a.person_id and hpvi.person_visit_id = a.person_visit_id
+        and  hpi.hospital_id = a.hospital_id  and hpi.person_id = a.person_id
+        and c.class_name='检验'
+        and a.apply_no is not null
+        and a.apply_no_print is not null
+        and hpvi.BEFORE_DATE &gt;= to_date('${startDate}', 'yyyy-mm-dd hh24:mi:ss')
+        and hpvi.BEFORE_DATE &lt;= to_date('${endDate}', 'yyyy-mm-dd hh24:mi:ss')
+    </select>
+
+    <select id="selectPersonAndVisitPrintNull"
+            resultType="com.healt.cloud.checkup.vo.appointmentReg.beforSign.PersonAndVisitVo">
+        SELECT *
+        FROM (
+        SELECT TMP.*, ROWNUM ROW_ID
+        FROM (
+        select distinct '0' selectflag,
+        a.person_id personId,
+        a.person_visit_id personVisitId,
+        hpi.person_charge personCharge,
+        nvl(hpvi.before_sign, '0') beforeSign,
+        hpvi.before_date beforeDate,
+        hpvi.age,
+        hpvi.exam_class examClass,
+        hpvi.job,
+        hpi.name,
+        hpi.sex,
+        '' unitName
+        from  healthcheckup.hc_person_appreg_items a,v_hc_item_pack_dict b,
+        v_depart_dict c ,hc_person_visit_info hpvi,hc_person_info hpi
+        where a.hospital_id = b.HOSPITAL_ID
+        and a.item_pack_code = b.ITEM_PACK_CODE
+        and b.HC_DEPT_CODE = c.dept_id and b.HOSPITAL_ID = c.hospital_id
+        and hpvi.hospital_id = a.hospital_id  and hpvi.person_id = a.person_id and hpvi.person_visit_id = a.person_visit_id
+        and  hpi.hospital_id = a.hospital_id  and hpi.person_id = a.person_id
+        and c.class_name='检验'
+          and a.apply_no is not null
+          and a.apply_no_print is null
+        and hpvi.BEFORE_DATE &gt;= to_date('${startDate}', 'yyyy-mm-dd hh24:mi:ss')
+        and hpvi.BEFORE_DATE &lt;= to_date(#{endDate}, 'yyyy-mm-dd hh24:mi:ss')
+        ) TMP
+        WHERE ROWNUM &lt;= ${pageNum*pageSize})
+        WHERE ROW_ID &gt; ${(pageNum-1)*pageSize}
+    </select>
+
+    <select id="selectPersonAndVisitPrintNotNull" resultType="com.healt.cloud.checkup.vo.appointmentReg.beforSign.PersonAndVisitVo">
+        SELECT *
+        FROM (
+        SELECT TMP.*, ROWNUM ROW_ID
+        FROM (
+                 select distinct '0' selectflag,
+                                 a.person_id personId,
+                                 a.person_visit_id personVisitId,
+                                 hpi.person_charge personCharge,
+                                 nvl(hpvi.before_sign, '0') beforeSign,
+                                 hpvi.before_date beforeDate,
+                                 hpvi.age,
+                                 hpvi.exam_class examClass,
+                                 hpvi.job,
+                                 hpi.name,
+                                 hpi.sex,
+                                 '' unitName
+                 from  healthcheckup.hc_person_appreg_items a,v_hc_item_pack_dict b,
+                       v_depart_dict c ,hc_person_visit_info hpvi,hc_person_info hpi
+                 where a.hospital_id = b.HOSPITAL_ID
+                   and a.item_pack_code = b.ITEM_PACK_CODE
+                   and b.HC_DEPT_CODE = c.dept_id and b.HOSPITAL_ID = c.hospital_id
+                   and hpvi.hospital_id = a.hospital_id  and hpvi.person_id = a.person_id and hpvi.person_visit_id = a.person_visit_id
+                   and  hpi.hospital_id = a.hospital_id  and hpi.person_id = a.person_id
+                   and c.class_name='检验'
+                   and a.apply_no is not null
+                   and a.apply_no_print is not null
+                   and hpvi.BEFORE_DATE &gt;= to_date('${startDate}', 'yyyy-mm-dd hh24:mi:ss')
+                   and hpvi.BEFORE_DATE &lt;= to_date('${endDate}', 'yyyy-mm-dd hh24:mi:ss')
+        ) TMP
+        WHERE ROWNUM &lt;= ${pageNum*pageSize})
+        WHERE ROW_ID &gt; ${(pageNum-1)*pageSize}
+    </select>
+
+    <select id="selectPersonAndVisitTotal" resultType="Long">
+        select count(*)
+            from hc_person_visit_info a, hc_person_info b, HC_UNIT_INFO C
+            where a.person_id = b.person_id
+            and a.hospital_id = b.hospital_id
+            AND A.UNIT_ID = C.UNIT_ID
+            AND A.HOSPITAL_ID = C.HOSPITAL_ID
+        <if test="strWhere != null">
+            ${strWhere}
+        </if>
+    </select>
+
+    <select id="selectPersonAndVisitPrintNullTotal" resultType="Long">
+        select count(*) from (
+            select distinct '0' selectflag,
+            a.person_id personId,
+            a.person_visit_id personVisitId,
+            hpi.person_charge personCharge,
+            nvl(hpvi.before_sign, '0') beforeSign,
+            hpvi.before_date beforeDate,
+            hpvi.age,
+            hpvi.exam_class examClass,
+            hpvi.job,
+            hpi.name,
+            hpi.sex,
+            '' unitName
+            from  healthcheckup.hc_person_appreg_items a,v_hc_item_pack_dict b,
+            v_depart_dict c ,hc_person_visit_info hpvi,hc_person_info hpi
+            where a.hospital_id = b.HOSPITAL_ID
+            and a.item_pack_code = b.ITEM_PACK_CODE
+            and b.HC_DEPT_CODE = c.dept_id and b.HOSPITAL_ID = c.hospital_id
+            and hpvi.hospital_id = a.hospital_id  and hpvi.person_id = a.person_id and hpvi.person_visit_id = a.person_visit_id
+            and  hpi.hospital_id = a.hospital_id  and hpi.person_id = a.person_id
+            and c.class_name='检验'
+              and a.apply_no is not null
+              and a.apply_no_print is null
+            and hpvi.BEFORE_DATE &gt;= to_date('${startDate}', 'yyyy-mm-dd hh24:mi:ss')
+            and hpvi.BEFORE_DATE &lt;= to_date('${endDate}', 'yyyy-mm-dd hh24:mi:ss')
+        )
+    </select>
+
+    <select id="selectPersonAndVisitPrintNotNullTotal" resultType="Long">
+        select count(*) from (
+            select distinct '0' selectflag,
+            a.person_id personId,
+            a.person_visit_id personVisitId,
+            hpi.person_charge personCharge,
+            nvl(hpvi.before_sign, '0') beforeSign,
+            hpvi.before_date beforeDate,
+            hpvi.age,
+            hpvi.exam_class examClass,
+            hpvi.job,
+            hpi.name,
+            hpi.sex,
+            '' unitName
+            from  healthcheckup.hc_person_appreg_items a,v_hc_item_pack_dict b,
+            v_depart_dict c ,hc_person_visit_info hpvi,hc_person_info hpi
+            where a.hospital_id = b.HOSPITAL_ID
+            and a.item_pack_code = b.ITEM_PACK_CODE
+            and b.HC_DEPT_CODE = c.dept_id and b.HOSPITAL_ID = c.hospital_id
+            and hpvi.hospital_id = a.hospital_id  and hpvi.person_id = a.person_id and hpvi.person_visit_id = a.person_visit_id
+            and  hpi.hospital_id = a.hospital_id  and hpi.person_id = a.person_id
+            and c.class_name='检验'
+              and a.apply_no is not null
+              and a.apply_no_print is not null
+            and hpvi.BEFORE_DATE &gt;= to_date('${startDate}', 'yyyy-mm-dd hh24:mi:ss')
+            and hpvi.BEFORE_DATE &lt;= to_date('${endDate}', 'yyyy-mm-dd hh24:mi:ss')
+        )
+    </select>
+
+
+    <select id="selectPersonItems" resultType="com.healt.cloud.checkup.vo.appointmentReg.personAppointReg.PersonItemsVo">
+        select a.hospital_id hospitalId,
+               person_id personId,
+               person_visit_id personVisitId,
+               unit_id unitId,
+               unit_visit_id unitVisitId,
+               b.item_pack_code itemPackCode,
+               b.item_pack_name itemPackName,
+               register_date registerDate,
+               register,
+               register_name registerName,
+               add_item addItem,
+               chart_code chartCode,
+               apply_no applyNo,
+               nvl(submit_apply, '0') submitApply,
+               apply_no_print applyNoPrint,
+               costs,
+               charges,
+               bill_indicator billIndicator,
+               finished_sign finishedSign,
+               num,
+               set_code setCode,
+               item_no itemNo,
+               '3' img,
+               b.SPECIMAN_NAME specimanName,
+               nvl(b.DRAW_BLOOD, 0) drawBlood,
+               b.TEST_TUBE_CODE testTubeCode,
+               b.APPLY_SENDTO applySendto,
+               c.class_name applyClass,
+               c.dept_id deptId,
+               c.dept_name deptName
+        from healthcheckup.hc_person_appreg_items a,
+             v_hc_item_pack_dict                  b,
+             v_depart_dict                        c
+        where a.hospital_id = b.HOSPITAL_ID
+          and a.item_pack_code = b.ITEM_PACK_CODE
+          and b.HC_DEPT_CODE = c.dept_id
+          and b.HOSPITAL_ID = c.hospital_id
+          and a.hospital_id = #{hospitalId, jdbcType = VARCHAR}
+          and a.person_id = #{personId, jdbcType = VARCHAR}
+          and a.person_visit_id = #{personVisitId, jdbcType = INTEGER}
+    </select>
+
+
+    <select id="selectPersonItemsNew" resultType="com.healt.cloud.checkup.vo.appointmentReg.personAppointReg.PersonItemsVo">
+        select a.hospital_id hospitalId,
+               person_id personId,
+               person_visit_id personVisitId,
+               unit_id unitId,
+               unit_visit_id unitVisitId,
+               b.item_pack_code itemPackCode,
+               b.item_pack_name itemPackName,
+               register_date registerDate,
+               register,
+               register_name registerName,
+               add_item addItem,
+               chart_code chartCode,
+               apply_no applyNo,
+               nvl(submit_apply, '0') submitApply,
+               apply_no_print applyNoPrint,
+               a.costs,
+               a.charges,
+               bill_indicator billIndicator,
+               finished_sign finishedSign,
+               num,
+               set_code setCode,
+               item_no itemNo,
+               '3' img,
+               b.SPECIMAN_NAME specimanName,
+               nvl(b.DRAW_BLOOD, 0) drawBlood,
+               b.TEST_TUBE_CODE testTubeCode,
+               b.APPLY_SENDTO applySendto,
+               c.class_name applyClass,
+               c.dept_id deptId,
+               c.dept_name deptName
+        from healthcheckup.hc_person_appreg_items a,
+             v_hc_item_pack_dict                  b,
+             v_depart_dict                        c,
+             hclab_test_master htm
+        where a.hospital_id = b.HOSPITAL_ID
+          and a.item_pack_code = b.ITEM_PACK_CODE
+          and b.HC_DEPT_CODE = c.dept_id
+          and b.HOSPITAL_ID = c.hospital_id
+          and a.apply_no = htm.test_no
+          and htm.print_datetime is null
+          and a.hospital_id = #{hospitalId, jdbcType = VARCHAR}
+          and a.person_id = #{personId, jdbcType = VARCHAR}
+          and a.person_visit_id = #{personVisitId, jdbcType = INTEGER}
+    </select>
+
+    <update id="updateSubmitApplyNo">
+        update hc_person_appreg_items a set submit_apply = '1',apply_no=#{applyNo, jdbcType=VARCHAR}
+        where a.item_pack_code = #{itemPackCode, jdbcType=VARCHAR} and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        and a.person_id = #{personId, jdbcType=VARCHAR} and a.person_visit_id = #{personVisitId, jdbcType=INTEGER}
+        and a.item_no = #{itemNo, jdbcType=INTEGER}
+    </update>
+
+    <update id="updatePersonVisitInfo">
+        update hc_person_visit_info b
+        set b.before_date = sysdate,b.before_sign = '1',
+        b.before_id = #{beforeId, jdbcType=VARCHAR},b.before_name = #{beforeName, jdbcType=VARCHAR}
+        where b.person_id = #{personId, jdbcType=VARCHAR} and b.person_visit_id = #{personVisitId, jdbcType=INTEGER}
+        and b.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </update>
+
+    <select id="selectFinishedItemPackName" resultType="java.lang.String">
+        select item_pack_name itemPackName from hc_person_appreg_items
+        where person_id = #{personId, jdbcType=VARCHAR} and person_visit_id = #{personVisitId, jdbcType=INTEGER}
+        and finished_sign = '完成' and hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+    <update id="updateBeforeSign">
+        update hc_person_visit_info b set b.before_date = null,b.before_sign = '0',
+        b.before_id = null,b.before_name = null
+        where b.person_id = #{personId, jdbcType=VARCHAR} and b.person_visit_id = #{personVisitId, jdbcType=INTEGER}
+        and b.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+    </update>
+
+    <select id="xRGuidanceSheet" resultType="com.healt.cloud.checkup.appointmentReg.vo.beforeSignIn.XRGuidanceSheetVo">
+        SELECT a.person_id,
+               a.person_visit_id,
+               b.patient_id,
+               b.name,
+               b.barthday,
+               b.SEX,
+               a.item_pack_name,
+               d.unit_name,
+               e.GUIDEGROUP_NAME,
+               f.before_date,
+               c.HC_DEPT_CODE,
+               c.GUIDEGROUP_CODE,
+               h.SORT_NO,
+               a.APPLY_NO,
+               f.AGE,
+               f.DEPARTMENT,
+               c.GUIDE_TIP,
+               e.NOTE
+        FROM hc_person_appreg_items a,
+             hc_person_info         b,
+             v_hc_item_pack_dict    c,
+             hc_unit_info           d,
+             V_pack_guidegroup_dict e,
+             hc_person_visit_info   f,
+             depart_dict            h
+        WHERE (a.person_id = b.person_id)
+          and a.hospital_id = b.hospital_id
+          and (a.item_pack_code = c.ITEM_PACK_CODE)
+          and a.hospital_id = c.HOSPITAL_ID
+          and a.hospital_id = d.hospital_id
+          and (f.unit_id = d.unit_id(+))
+          and (a.person_id = f.person_id)
+          and a.hospital_id = f.hospital_id
+          and (a.person_visit_id = f.person_visit_id)
+          and (c.GUIDEGROUP_CODE = e.GUIDEGROUP_CODE(+))
+          and c.HOSPITAL_ID = e.hospital_id(+)
+          and (c.HC_DEPT_CODE = h.dept_id)
+          and c.HOSPITAL_ID = h.hospital_id
+          and ((a.person_id = #{personId}) AND
+               (a.person_visit_id = #{personVisitId}) and
+               a.hospital_id = #{hospitalId})
+        ORDER BY e.GUIDEGROUP_NAME ASC, h.SORT_NO ASC
+    </select>
+</mapper>

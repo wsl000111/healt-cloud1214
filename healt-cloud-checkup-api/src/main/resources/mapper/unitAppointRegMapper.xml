@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.healt.cloud.checkup.appointmentReg.mapper.UnitAppointRegMapper">
+    <select id="findDtPackClass" resultType="com.healt.cloud.checkup.vo.appointmentReg.unitAppointReg.DtPackClassVo">
+        SELECT DISTINCT v_hc_item_pack_dict.PACK_CLASS as classCode,
+                        nvl(v_item_pack_class_dict.CLASS_NAME, '空') as className
+        FROM v_hc_item_pack_dict, v_item_pack_class_dict
+        where v_hc_item_pack_dict.PACK_CLASS =
+              v_item_pack_class_dict.CLASS_CODE(+)
+          and v_hc_item_pack_dict.HOSPITAL_ID =
+              v_item_pack_class_dict.hospital_id(+)
+          and v_hc_item_pack_dict.HOSPITAL_ID =  #{hospitalId, jdbcType=VARCHAR}
+    </select>
+
+    <resultMap id="DtPackItemsVo" type="com.healt.cloud.checkup.vo.appointmentReg.unitAppointReg.DtPackItemsVo">
+        <result column="SORT_NO" property="sortNo" jdbcType="INTEGER"/>
+        <result column="ITEM_PACK_CODE" property="itemPackCode" jdbcType="VARCHAR"/>
+        <result column="ITEM_PACK_NAME" property="itemPackName" jdbcType="VARCHAR"/>
+        <result column="INPUT_CODE" property="inputCode" jdbcType="VARCHAR"/>
+        <result column="HOSPITAL_ID" property="hospitalId" jdbcType="VARCHAR"/>
+        <result column="HC_DEPT_CODE" property="hcDeptCode" jdbcType="VARCHAR"/>
+        <result column="SEX" property="sex" jdbcType="VARCHAR"/>
+        <result column="PACK_CLASS" property="packClass" jdbcType="VARCHAR"/>
+        <result column="CLINICAL_SIGNIFICANCE" property="clinicalSignificance" jdbcType="VARCHAR"/>
+        <result column="GUIDEGROUP_CODE" property="guidegroupCode" jdbcType="VARCHAR"/>
+        <result column="GUIDE_TIP" property="guideTip" jdbcType="VARCHAR"/>
+        <result column="APPLY_SENDTO" property="applySendto" jdbcType="VARCHAR"/>
+        <result column="RESULT_RECIEVED" property="resultRecieved" jdbcType="VARCHAR"/>
+        <result column="HIS_DEPART_CODE" property="hisDepartCode" jdbcType="VARCHAR"/>
+        <result column="HIS_DEPART_NAME" property="hisDepartName" jdbcType="VARCHAR"/>
+        <result column="DRAW_BLOOD" property="drawBlood" jdbcType="VARCHAR"/>
+        <result column="TEST_TUBE_CODE" property="testTubeCode" jdbcType="VARCHAR"/>
+        <result column="SPECIMAN_NAME" property="specimanName" jdbcType="VARCHAR"/>
+        <result column="EXAM_CLASS" property="examClass" jdbcType="VARCHAR"/>
+        <result column="EXAM_SUB_CLASS" property="examSubClass" jdbcType="VARCHAR"/>
+        <result column="COST_CLASS_CODE" property="costClassCode" jdbcType="VARCHAR"/>
+        <result column="IS_DISCOUNT" property="isDiscount" jdbcType="VARCHAR"/>
+        <result column="ITEM_PACK_PRICE" property="itemPackPrice" jdbcType="NUMERIC"/>
+        <result column="ITEM_PACK_DISCOUNT_PRICE" property="itemPackDiscountPrice" jdbcType="NUMERIC"/>
+        <result column="AUTO_FINISHED" property="autoFinished" jdbcType="VARCHAR"/>
+        <result column="REPORT_FLAG" property="reportFlag" jdbcType="VARCHAR"/>
+        <result column="RESULT_HANDLE" property="resultHandle" jdbcType="VARCHAR"/>
+        <result column="EFFECTIVE_FLAG" property="effectiveFlag" jdbcType="VARCHAR"/>
+        <result column="DEPT_NAME" property="deptName" jdbcType="VARCHAR"/>
+        <result column="PACKNAME" property="packname" jdbcType="VARCHAR"/>
+        <result column="CLASS_NAME" property="className" jdbcType="VARCHAR"/>
+        <result column="IMG" property="img" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="findDtPackItems" resultMap="DtPackItemsVo">
+        select a.*,
+               ('(' || C.CLASS_NAME || ')' || a.item_pack_name) PACKNAME,
+               c.class_name,
+               to_number(decode(sex, '男', 1, '女', 0, 2)) img
+        from v_hc_item_pack_dict a, V_ITEM_PACK_CLASS_DICT C
+        where A.PACK_CLASS = C.CLASS_CODE
+          AND A.HOSPITAL_ID = C.HOSPITAL_ID
+          and a.EFFECTIVE_FLAG = '1'
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        order by a.sort_no
+    </select>
+
+    <resultMap id="DtSetsVo" type="com.healt.cloud.checkup.vo.appointmentReg.unitAppointReg.DtSetsVo">
+        <result column="IS_GROUP" property="isGroup" jdbcType="VARCHAR"/>
+        <result column="SET_CODE" property="setCode" jdbcType="VARCHAR"/>
+        <result column="SET_NAME" property="setName" jdbcType="VARCHAR"/>
+        <result column="INPUT_CODE" property="inputCode" jdbcType="VARCHAR"/>
+        <result column="ITEM_NO" property="itemNo" jdbcType="INTEGER"/>
+        <result column="SEX" property="sex" jdbcType="VARCHAR"/>
+        <result column="SET_AMOUNT" property="setAmount" jdbcType="NUMERIC"/>
+        <result column="SET_DISCOUNT_AMOUNT" property="setDiscountAmount" jdbcType="NUMERIC"/>
+        <result column="EFFECTIVE_FLAG" property="effectiveFlag" jdbcType="VARCHAR"/>
+        <result column="HOSPITAL_ID" property="hospitalId" jdbcType="VARCHAR"/>
+        <result column="IMG" property="img" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="findDtSets" resultMap="DtSetsVo">
+        select '' IS_GROUP, a.*, to_number(decode(sex, '男', 1, '女', 0, 2)) img
+        from hc_pack_set_dict a
+        where a.EFFECTIVE_FLAG = '1'
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+        order by a.Item_No
+    </select>
+
+    <resultMap id="DtUnitTypeVo" type="com.healt.cloud.checkup.vo.appointmentReg.unitAppointReg.DtUnitTypeVo">
+        <result column="CODE" property="code" jdbcType="VARCHAR"/>
+        <result column="NAME" property="name" jdbcType="VARCHAR"/>
+        <result column="INPUT_CODE" property="inputCode" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="findDtUnitType" resultMap="DtUnitTypeVo">
+        SELECT CODE, NAME, INPUT_CODE
+        FROM V_UNIT_CLASS_DICT
+        WHERE USE_FLAG = '1'
+          AND HOSPITAL_ID = #{hospitalId, jdbcType=VARCHAR}
+        order by sort_no
+    </select>
+
+    <resultMap id="DtParentUnitVo" type="com.healt.cloud.checkup.vo.appointmentReg.unitAppointReg.DtParentUnitVo">
+        <result column="UNIT_ID" property="unitId" jdbcType="VARCHAR"/>
+        <result column="UNIT_NAME" property="unitName" jdbcType="VARCHAR"/>
+        <result column="ADDRESS" property="address" jdbcType="VARCHAR"/>
+        <result column="CONTACTS" property="contacts" jdbcType="VARCHAR"/>
+        <result column="PHONE" property="phone" jdbcType="VARCHAR"/>
+        <result column="UNIT_TYPE" property="unitType" jdbcType="VARCHAR"/>
+        <result column="INPUT_CODE" property="inputCode" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="findDtParentUnit" resultMap="DtParentUnitVo">
+        SELECT A.UNIT_ID,
+        A.UNIT_NAME,
+        A.ADDRESS,
+        A.CONTACTS,
+        A.PHONE,
+        A.UNIT_TYPE,
+        A.INPUT_CODE
+        FROM HC_UNIT_INFO A
+        WHERE A.HOSPITAL_ID = #{hospitalId, jdbcType=VARCHAR}
+        and a.unit_id &lt;&gt; '0000'
+    </select>
+
+    <resultMap id="DtUnitGroupItemsVo2" type="com.healt.cloud.checkup.vo.appointmentReg.unitAppointReg.DtUnitGroupItemsVo2">
+        <result column="GROUP_CODE" property="groupCode" jdbcType="VARCHAR" />
+        <result column="ITEM_PACK_CODE" property="itemPackCode" jdbcType="VARCHAR" />
+        <result column="HOSPITAL_ID" property="hospitalId" jdbcType="VARCHAR" />
+        <result column="ITEM_NO" property="itemNo" jdbcType="DECIMAL" />
+        <result column="GROUP_NAME" property="groupName" jdbcType="VARCHAR" />
+        <result column="ITEM_PACK_NAME" property="itemPackName" jdbcType="VARCHAR" />
+        <result column="SOURCE_NAME" property="sourceName" jdbcType="VARCHAR" />
+        <result column="UNIT_ID" property="unitId" jdbcType="VARCHAR" />
+        <result column="UNIT_VISIT_ID" property="unitVisitId" jdbcType="DECIMAL" />
+        <result column="DISCOUNT_FLAG" property="discountFlag" jdbcType="VARCHAR" />
+        <result column="PRICE" property="price" jdbcType="DECIMAL" />
+        <result column="INSURANCE_PRICE" property="insurancePrice" jdbcType="DECIMAL" />
+        <result column="NUM" property="num" jdbcType="DECIMAL" />
+        <result column="CLASS_NAME" property="className" jdbcType="VARCHAR" />
+    </resultMap>
+    <select id="findDtUnitGroupItems2" resultMap="DtUnitGroupItemsVo2">
+        SELECT a.*, c.CLASS_NAME
+        FROM hc_unit_group_items    A,
+             v_hc_item_pack_dict    b,
+             V_ITEM_PACK_CLASS_DICT C
+        where A.HOSPITAL_ID = b.hospital_id
+          and a.ITEM_PACK_CODE = b.ITEM_PACK_CODE
+          and b.PACK_CLASS = C.CLASS_CODE
+          AND b.HOSPITAL_ID = C.HOSPITAL_ID
+          and A.HOSPITAL_ID = #{hospitalId, jdbcType=VARCHAR}
+          and a.unit_id = #{unitId, jdbcType=VARCHAR}
+          and a.unit_visit_id = #{unitVisitId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findNewUnitId" resultType="String">
+        select sq_unit_id.nextval from dual
+    </select>
+
+    <select id="findMaxVisitId" resultType="Integer">
+        select nvl(max(a.unit_visit_id), 0)
+        from hc_unit_visit_info a
+        where a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.unit_id = #{unitId, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findFinishedSign" resultType="Integer">
+        select nvl(FINISHED_SIGN, '0')
+        from hc_unit_visit_info a
+        where a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.unit_id = #{unitId, jdbcType=VARCHAR}
+          and a.UNIT_VISIT_ID = #{unitVisitId, jdbcType=VARCHAR}
+    </select>
+
+    <resultMap id="SetPacksVo" type="com.healt.cloud.checkup.vo.appointmentReg.unitAppointReg.SetPacksVo">
+        <result column="SET_CODE" property="groupCode" jdbcType="VARCHAR" />
+        <result column="ITEM_PACK_CODE" property="itemPackCode" jdbcType="VARCHAR" />
+        <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+        <result column="ITEM_PACK_NAME" property="itemPackName" jdbcType="VARCHAR" />
+        <result column="ITEM_PACK_PRICE" property="itemPackPrice" jdbcType="DECIMAL" />
+        <result column="CLASS_NAME" property="className" jdbcType="VARCHAR" />
+    </resultMap>
+    <select id="findSetPacks" resultMap="SetPacksVo">
+        select a.set_code,
+               a.item_pack_code,
+               a.item_no,
+               b.item_pack_name,
+               b.ITEM_PACK_PRICE,
+               (select c.CLASS_NAME
+                from V_ITEM_PACK_CLASS_DICT C
+                where b.PACK_CLASS = C.CLASS_CODE
+                  AND b.HOSPITAL_ID = C.HOSPITAL_ID) CLASS_NAME
+        from hc_set_vs_pack_dict a, hc_item_pack_dict b
+        where a.hospital_id = b.hospital_id
+          and a.item_pack_code = b.item_pack_code
+          and b.effective_flag = '1'
+          and a.hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and a.set_code = #{setCode, jdbcType=VARCHAR}
+        order by a.item_no
+    </select>
+
+    <update id="updateHcUnitInfo">
+        update
+            hc_unit_info
+        set
+            #{values, jdbcType=VARCHAR}
+        where hospital_id = #{hospitalId, jdbcType=VARCHAR}
+          and unit_id = #{unitId, jdbcType=VARCHAR}
+    </update>
+</mapper>

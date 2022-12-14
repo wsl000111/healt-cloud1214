@@ -1,0 +1,2391 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://wegohis.com" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="HipWebServicesService" targetNamespace="http://wegohis.com">
+  <wsdl:types>
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://wegohis.com" elementFormDefault="unqualified" targetNamespace="http://wegohis.com" version="1.0">
+
+      <xs:element name="AccountInfo" nillable="true" type="xs:anyType"/>
+
+      <xs:element name="AgeInfo" type="tns:patientAgeEntity"/>
+
+      <xs:element name="Area" type="tns:bdAreaQueryVO"/>
+
+      <xs:element name="BedInfo" type="tns:bedDictVO"/>
+
+      <xs:element name="Body" nillable="true" type="xs:anyType"/>
+
+      <xs:element name="CategoryDetailDefinition" type="tns:categoryDetailDefinition"/>
+
+      <xs:element name="ClinicItem" type="tns:clinicItemEntity"/>
+
+      <xs:element name="ClinicPrice" type="tns:bdClinicpriceQueryVO"/>
+
+      <xs:element name="ConsultingRoom" type="tns:consultingRoomEntity"/>
+
+      <xs:element name="DiagInfo" type="tns:diagnosticsQueryEntity"/>
+
+      <xs:element name="Diagnosis" type="tns:diagnosisDict"/>
+
+      <xs:element name="DialysisScheduling" type="tns:dialysisPatientInfo"/>
+
+      <xs:element name="DialysisSchedulingList" type="tns:queryDialysisScheduling"/>
+
+      <xs:element name="DoctorInfo" nillable="true" type="xs:anyType"/>
+
+      <xs:element name="FrequencyDict" type="tns:frequencyEntity"/>
+
+      <xs:element name="Header" type="tns:soapHeader"/>
+
+      <xs:element name="Item" type="tns:codeTableItem"/>
+
+      <xs:element name="Material" nillable="true" type="xs:anyType"/>
+
+      <xs:element name="MedIns" type="tns:bdMedInsQueryVO"/>
+
+      <xs:element name="MsgLog" type="tns:baseMsgLog"/>
+
+      <xs:element name="OperationDict" type="tns:operationEntity"/>
+
+      <xs:element name="Organization" nillable="true" type="xs:anyType"/>
+
+      <xs:element name="OutpOrder" type="tns:outpOrderInfo"/>
+
+      <xs:element name="OutpOrderItem" type="tns:outpOrderItem"/>
+
+      <xs:element name="PatientInfo" type="tns:patientInfo"/>
+
+      <xs:element name="PatientQrInfo" type="tns:eleheCardGetqrInfoEntity"/>
+
+      <xs:element name="PatientVisit" type="tns:diagnosticsQueryPatientInfoVO"/>
+
+      <xs:element name="PhamInfo" type="tns:phamLocationPO"/>
+
+      <xs:element name="PhamItem" type="tns:phamItem"/>
+
+      <xs:element name="Prescription" type="tns:prescriptionPO"/>
+
+      <xs:element name="RechargeInfo" nillable="true" type="xs:anyType"/>
+
+      <xs:element name="ReportInfo" type="tns:pdfReport"/>
+
+      <xs:element name="Request" type="tns:soapRequest"/>
+
+      <xs:element name="ReserveInfo" type="tns:reserveInfo"/>
+
+      <xs:element name="Response" type="tns:soapResponse"/>
+
+      <xs:element name="ReturnInfo" type="tns:eleheCardGetstAticsCodeEntity"/>
+
+      <xs:element name="Schedulings" type="tns:queryScheduling"/>
+
+      <xs:element name="SpecialClinic" type="tns:specialClinic"/>
+
+      <xs:element name="Standard" type="tns:codeTable"/>
+
+      <xs:element name="message" type="tns:message"/>
+
+      <xs:element name="messageResponse" type="tns:messageResponse"/>
+
+      <xs:complexType name="message">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Request" type="tns:soapRequest"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="soapRequest">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Header" type="tns:soapHeader"/>
+          <xs:element minOccurs="0" name="Body" type="tns:soapBody"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="soapHeader">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="AuthCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="MsgId" type="xs:string"/>
+          <xs:element minOccurs="0" name="Receiver" type="xs:string"/>
+          <xs:element minOccurs="0" name="SendDate" type="xs:string"/>
+          <xs:element minOccurs="0" name="Sender" type="xs:string"/>
+          <xs:element minOccurs="0" name="ServiceCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="Version" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="soapBody">
+        <xs:sequence>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="archiveQueryBody">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBody">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="MsgLog" type="tns:msgLog"/>
+              <xs:element minOccurs="0" name="PatientInfo" type="tns:patientInfo"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="messageResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Response" type="tns:soapResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="soapResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Header" type="tns:soapHeaderResponse"/>
+          <xs:element minOccurs="0" name="Body" type="xs:anyType"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="soapHeaderResponse">
+        <xs:sequence>
+          <xs:element name="Sender" type="xs:string"/>
+          <xs:element name="Receiver" type="xs:string"/>
+          <xs:element name="SendDate" type="xs:string"/>
+          <xs:element name="ServiceCode" type="xs:string"/>
+          <xs:element name="MsgId" type="xs:string"/>
+          <xs:element name="Version" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="ssoUserInfoResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="UserInfo" type="tns:bcsUumUser"/>
+              <xs:element minOccurs="0" name="MediTeamList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" name="MediTeam" type="tns:mediTeam"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element minOccurs="0" name="UserPrivilege" type="tns:userPrivilege"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="soapBaseResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Result" type="tns:result"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="bcsUumUser">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="UserName" type="xs:string"/>
+          <xs:element minOccurs="0" name="PeopleClass" type="xs:string"/>
+          <xs:element minOccurs="0" name="PeopleClassName" type="xs:string"/>
+          <xs:element minOccurs="0" name="PeopleIdentifier" type="xs:string"/>
+          <xs:element minOccurs="0" name="PeopleName" type="xs:string"/>
+          <xs:element minOccurs="0" name="WorkDept" type="xs:string"/>
+          <xs:element name="WorkDeptName" type="xs:string"/>
+          <xs:element minOccurs="0" name="WorkPost" type="xs:string"/>
+          <xs:element minOccurs="0" name="WorkPostName" type="xs:string"/>
+          <xs:element minOccurs="0" name="WorkProfessional" type="xs:string"/>
+          <xs:element minOccurs="0" name="WorkProfessionalName" type="xs:string"/>
+          <xs:element minOccurs="0" name="Mobile" type="xs:string"/>
+          <xs:element minOccurs="0" name="Status" type="xs:string"/>
+          <xs:element minOccurs="0" name="StatusName" type="xs:string"/>
+          <xs:element minOccurs="0" name="Expires" type="xs:string"/>
+          <xs:element minOccurs="0" name="ModifyTime" type="xs:string"/>
+          <xs:element minOccurs="0" name="PyCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="WbCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="Duty" type="xs:string"/>
+          <xs:element minOccurs="0" name="DutyName" type="xs:string"/>
+          <xs:element minOccurs="0" name="IdNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="Employed" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="mediTeam">
+        <xs:sequence>
+          <xs:element name="TeamId" type="xs:string"/>
+          <xs:element name="TeamName" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="userPrivilege">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="SysUri" type="xs:string"/>
+          <xs:element default="0" minOccurs="0" name="HasContext" type="xs:string"/>
+          <xs:element minOccurs="0" name="RoleList">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="Role" type="tns:userPrivilegeRole"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" name="FuncList">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="SysFunc" type="tns:userPrivilegeFunc"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element minOccurs="0" name="AuthList">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="Auth" type="tns:userPrivilegeSysCtlAuth"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="userPrivilegeRole">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="RoleCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="RoleName" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="userPrivilegeFunc">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="FunctionCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="FunctionName" type="xs:string"/>
+          <xs:element minOccurs="0" name="FunctionType" type="xs:string"/>
+          <xs:element minOccurs="0" name="SystemFunctionValue" type="xs:string"/>
+          <xs:element minOccurs="0" name="SystemFunctionValueDesc" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="userPrivilegeSysCtlAuth">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="AuthorityCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="AuthorityName" type="xs:string"/>
+          <xs:element minOccurs="0" name="AuthorityType" type="xs:string"/>
+          <xs:element minOccurs="0" name="SystemCtlAuthorityValue" type="xs:string"/>
+          <xs:element minOccurs="0" name="SystemCtlAuthorityValueDesc" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="result">
+        <xs:sequence>
+          <xs:element name="Code" type="xs:string"/>
+          <xs:element minOccurs="0" name="Data" type="xs:anyType"/>
+          <xs:element name="Desc" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="bcsUumUserResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="UserInfoList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="UserInfo" type="tns:bcsUumUser"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="resultResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Result" type="tns:result"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="organizationResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="OrganizationList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="Organization" type="tns:org"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="org">
+        <xs:sequence>
+          <xs:element name="OrgId" type="xs:long"/>
+          <xs:element minOccurs="0" name="ParentId" type="xs:long"/>
+          <xs:element minOccurs="0" name="ParentCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="OrgName" type="xs:string"/>
+          <xs:element minOccurs="0" name="AliasName" type="xs:string"/>
+          <xs:element name="OrgCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="OrgType" type="xs:string"/>
+          <xs:element minOccurs="0" name="IsEnable" type="xs:string"/>
+          <xs:element minOccurs="0" name="Address" type="xs:string"/>
+          <xs:element minOccurs="0" name="Phone" type="xs:string"/>
+          <xs:element minOccurs="0" name="PyCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="WbCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="Supervisor" type="xs:string"/>
+          <xs:element minOccurs="0" name="SortNo" type="xs:long"/>
+          <xs:element minOccurs="0" name="AreaCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="MedicalTypeCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="CicDetailType" type="xs:string"/>
+          <xs:element minOccurs="0" name="AccountUnitCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="AccountUnitName" type="xs:string"/>
+          <xs:element minOccurs="0" name="IsEmergency" type="xs:string"/>
+          <xs:element minOccurs="0" name="IsPaed" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="codeTableResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="StandardList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="Standard" type="tns:codeTable"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="codeTable">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="TypeId" type="xs:long"/>
+          <xs:element minOccurs="0" name="StandardCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="TypeName" type="xs:string"/>
+          <xs:element minOccurs="0" name="ItemList">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="Item" type="tns:codeTableItem"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="codeTableItem">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="ItemId" type="xs:long"/>
+          <xs:element minOccurs="0" name="ItemName" type="xs:string"/>
+          <xs:element minOccurs="0" name="ItemValue" type="xs:string"/>
+          <xs:element minOccurs="0" name="PyCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="WbCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="frequencyResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="FrequencyDictList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="FrequencyDict" type="tns:frequencyEntity"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="frequencyEntity">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="FrequencyId" type="xs:string"/>
+          <xs:element minOccurs="0" name="MedInstCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="FrequencyCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="FrequencyName" type="xs:string"/>
+          <xs:element minOccurs="0" name="LatinName" type="xs:string"/>
+          <xs:element minOccurs="0" name="Cycle" type="xs:string"/>
+          <xs:element minOccurs="0" name="CycleUnit" type="xs:string"/>
+          <xs:element minOccurs="0" name="CycleUnitName" type="xs:string"/>
+          <xs:element minOccurs="0" name="Times" type="xs:string"/>
+          <xs:element minOccurs="0" name="RecordTime" type="xs:string"/>
+          <xs:element minOccurs="0" name="UseScope" type="xs:string"/>
+          <xs:element minOccurs="0" name="UseScopeName" type="xs:string"/>
+          <xs:element minOccurs="0" name="PyCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="WbCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="outpDoctorInfoResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="DoctorInfoList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="DoctorInfo" type="tns:outDoctorInfoVO"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="outDoctorInfoVO">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="AreaCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="MedInstCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="SpcecialClinicCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="SpcecialClinicName" type="xs:string"/>
+          <xs:element minOccurs="0" name="TitleCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="TitleName" type="xs:string"/>
+          <xs:element minOccurs="0" name="DoctorCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="DoctorName" type="xs:string"/>
+          <xs:element minOccurs="0" name="DoctorSpecial" type="xs:string"/>
+          <xs:element minOccurs="0" name="DoctorSummary" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpTypeCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpTypeName" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpDurationCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpDurationName" type="xs:string"/>
+          <xs:element minOccurs="0" name="DoctorPhoto" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpClinicFee" type="xs:string"/>
+          <xs:element minOccurs="0" name="IsEnable" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="usageDictResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="UsageDictList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="UsageDict" type="tns:usageDict"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="usageDict">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="UsageId" type="xs:string"/>
+          <xs:element minOccurs="0" name="MedInstCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="UsageCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="UsageName" type="xs:string"/>
+          <xs:element minOccurs="0" name="LatinName" type="xs:string"/>
+          <xs:element minOccurs="0" name="PyCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="WbCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="UsageTypeCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="UsageTypeName" type="xs:string"/>
+          <xs:element minOccurs="0" name="IsEnable" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="queryCategoryDetailDefinitionResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="CategoryDetailDefinitionList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="CategoryDetailDefinition" type="tns:categoryDetailDefinition"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="categoryDetailDefinition">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="DefinitionId" type="xs:long"/>
+          <xs:element minOccurs="0" name="ItemType" type="xs:string"/>
+          <xs:element minOccurs="0" name="DetailCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="SubjClass" type="xs:string"/>
+          <xs:element minOccurs="0" name="ReckoningClass" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpRcptCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="InpRcptCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="MrClass" type="xs:string"/>
+          <xs:element minOccurs="0" name="HqmsClass" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpEInvoiceType" type="xs:string"/>
+          <xs:element minOccurs="0" name="InpEInvoiceType" type="xs:string"/>
+          <xs:element minOccurs="0" name="AreaCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="diagnosisDictResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="DiagnosisList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="Diagnosis" type="tns:diagnosisDict"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="diagnosisDict">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="DiagnosisId" type="xs:long"/>
+          <xs:element minOccurs="0" name="MedInstCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="DiagnosisCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="DiagnosisName" type="xs:string"/>
+          <xs:element minOccurs="0" name="DiagnosisTypeCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="DiagnosisTypeName" type="xs:string"/>
+          <xs:element minOccurs="0" name="IcdVersion" type="xs:string"/>
+          <xs:element minOccurs="0" name="IcdVersionName" type="xs:string"/>
+          <xs:element minOccurs="0" name="PyCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="WbCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="IsEnable" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="patientAgeResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="AgeInfo" type="tns:patientAgeEntity"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="patientAgeEntity">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="AgeString" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="pdfReportResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="ReportList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="ReportInfo" type="tns:pdfReport"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="pdfReport">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="PatientId" type="xs:string"/>
+          <xs:element minOccurs="0" name="VisitId" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientType" type="xs:string"/>
+          <xs:element minOccurs="0" name="MedInstCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="AreaCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientName" type="xs:string"/>
+          <xs:element minOccurs="0" name="ReportNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="ReportBelongType" type="xs:string"/>
+          <xs:element minOccurs="0" name="ReportType" type="xs:string"/>
+          <xs:element minOccurs="0" name="ReportName" type="xs:string"/>
+          <xs:element minOccurs="0" name="PublishDate" type="xs:string"/>
+          <xs:element minOccurs="0" name="EffectiveTime" type="xs:string"/>
+          <xs:element minOccurs="0" name="PageOrention" type="xs:string"/>
+          <xs:element minOccurs="0" name="PageSize" type="xs:string"/>
+          <xs:element minOccurs="0" name="PageCount" type="xs:long"/>
+          <xs:element minOccurs="0" name="PublishSystem" type="xs:string"/>
+          <xs:element minOccurs="0" name="PublishOrg" type="xs:string"/>
+          <xs:element minOccurs="0" name="ApplyNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="Descn" type="xs:string"/>
+          <xs:element minOccurs="0" name="PrintAddr" type="xs:string"/>
+          <xs:element minOccurs="0" name="Flag" type="xs:string"/>
+          <xs:element minOccurs="0" name="ReportUrl" type="xs:string"/>
+          <xs:element minOccurs="0" name="ImageNo" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="clinicItemResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="ClinicItemDictList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="ClinicItemDict" type="tns:clinicItemEntity"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="clinicItemEntity">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="ClinicId" type="xs:string"/>
+          <xs:element minOccurs="0" name="ItemCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="ItemName" type="xs:string"/>
+          <xs:element minOccurs="0" name="ItemClass" type="xs:string"/>
+          <xs:element minOccurs="0" name="ItemClassName" type="xs:string"/>
+          <xs:element minOccurs="0" name="PriceStdCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="AreaCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="NationStdCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="ProvinceStdCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="MedInstCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="IsEnable" type="xs:string"/>
+          <xs:element minOccurs="0" name="PropertyClass" type="xs:string"/>
+          <xs:element minOccurs="0" name="PropertyClassName" type="xs:string"/>
+          <xs:element minOccurs="0" name="Descn" type="xs:string"/>
+          <xs:element minOccurs="0" name="PyCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="WbCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="ItemUnit" type="xs:string"/>
+          <xs:element minOccurs="0" name="ExecOrgCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="DefaultQuantity" type="xs:string"/>
+          <xs:element minOccurs="0" name="SalesPrice" type="xs:string"/>
+          <xs:element minOccurs="0" name="Charges" type="xs:string"/>
+          <xs:element minOccurs="0" name="Spec" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="specialClinicResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="SpecialClinicInfoList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="SpecialClinicInfo" type="tns:specialClinic"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="specialClinic">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="ResideDeptCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="ResideDeptName" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpSpecialID" type="xs:string"/>
+          <xs:element minOccurs="0" name="Location" type="xs:string"/>
+          <xs:element minOccurs="0" name="BillFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="SortNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="BelongDeptCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="BelongDeptName" type="xs:string"/>
+          <xs:element minOccurs="0" name="SpecialClinicCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="SpecialClinicName" type="xs:string"/>
+          <xs:element minOccurs="0" name="SelfRegisterFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="AreaCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="WebFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="SpecialFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="RealNameFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="StopRegAM" type="xs:string"/>
+          <xs:element minOccurs="0" name="StopRegPM" type="xs:string"/>
+          <xs:element minOccurs="0" name="SpecialInfo" type="xs:string"/>
+          <xs:element minOccurs="0" name="DoctorSummary" type="xs:string"/>
+          <xs:element minOccurs="0" name="DoctorPhoto" type="xs:string"/>
+          <xs:element minOccurs="0" name="SocietyPost" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="operationResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="OperationDictList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="OperationDict" type="tns:operationEntity"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="operationEntity">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="OperationId" type="xs:string"/>
+          <xs:element minOccurs="0" name="MedInstCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="OperationCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="OperationName" type="xs:string"/>
+          <xs:element minOccurs="0" name="OperationGradeCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="OperationGradeName" type="xs:string"/>
+          <xs:element minOccurs="0" name="OperationClassCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="OperationClassName" type="xs:string"/>
+          <xs:element minOccurs="0" name="OperationType" type="xs:string"/>
+          <xs:element minOccurs="0" name="OperationTypeName" type="xs:string"/>
+          <xs:element minOccurs="0" name="IcdVersion" type="xs:string"/>
+          <xs:element minOccurs="0" name="MiniFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="PyCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="WbCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="IsEnable" type="xs:string"/>
+          <xs:element minOccurs="0" name="Descn" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="accountRecordResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="BalanceDetailList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="BalanceDetail" type="tns:balanceDetail"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="balanceDetail">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="OperateTime" type="xs:string"/>
+          <xs:element minOccurs="0" name="PayAmount" type="xs:string"/>
+          <xs:element minOccurs="0" name="TransactType" type="xs:string"/>
+          <xs:element minOccurs="0" name="BeginBalance" type="xs:string"/>
+          <xs:element minOccurs="0" name="AccountBalance" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="applyCardResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="PatientInfo" type="tns:applyCardPatientInfoVO"/>
+              <xs:element minOccurs="0" name="AccountInfo" type="tns:createArchiveAccountInfoVO"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="applyCardPatientInfoVO">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="PatientId" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientName" type="xs:string"/>
+          <xs:element minOccurs="0" name="PyCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientSex" type="xs:string"/>
+          <xs:element minOccurs="0" name="BirthDate" type="xs:string"/>
+          <xs:element minOccurs="0" name="PhoneNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="IdCard" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="createArchiveAccountInfoVO">
+        <xs:sequence>
+          <xs:element name="OutpBalance" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="prepayBalanceResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="AccountBalance" type="xs:string"/>
+              <xs:element minOccurs="0" name="RechargeAmount" type="xs:string"/>
+              <xs:element minOccurs="0" name="TotalExpenses" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="editPatientResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="regLockResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="LockInfo" type="tns:regLockInfo"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="regLockInfo">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="LockId" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientId" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientName" type="xs:string"/>
+          <xs:element minOccurs="0" name="RegFee" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="phamItemResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="PhamItemList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="PhamItem" type="tns:phamItem"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="phamItem">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="DrugFactCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="DrugTypeCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="DrugTypeName" type="xs:string"/>
+          <xs:element minOccurs="0" name="DrugNationCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="DrugName" type="xs:string"/>
+          <xs:element minOccurs="0" name="DrugAliasName" type="xs:string"/>
+          <xs:element minOccurs="0" name="DrugGeneraName" type="xs:string"/>
+          <xs:element minOccurs="0" name="PyCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="WbCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="DrugSpec" type="xs:string"/>
+          <xs:element minOccurs="0" name="DrugUnit" type="xs:string"/>
+          <xs:element minOccurs="0" name="PhamUnitDesp" type="xs:string"/>
+          <xs:element minOccurs="0" name="DoseUnit" type="xs:string"/>
+          <xs:element minOccurs="0" name="DoseUnitDesp" type="xs:string"/>
+          <xs:element minOccurs="0" name="DosePerUnit" type="xs:string"/>
+          <xs:element minOccurs="0" name="PackageUnit" type="xs:string"/>
+          <xs:element minOccurs="0" name="PackageUnitDesp" type="xs:string"/>
+          <xs:element minOccurs="0" name="PackageFactor" type="xs:string"/>
+          <xs:element minOccurs="0" name="RetailPrice" type="xs:string"/>
+          <xs:element minOccurs="0" name="TradePrice" type="xs:string"/>
+          <xs:element minOccurs="0" name="PurchasePrice" type="xs:string"/>
+          <xs:element minOccurs="0" name="PhamPrice" type="xs:string"/>
+          <xs:element minOccurs="0" name="PharmacyFactoryCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="PharmacyFactoryName" type="xs:string"/>
+          <xs:element minOccurs="0" name="DrugValua" type="xs:string"/>
+          <xs:element minOccurs="0" name="ToxicologyProperty" type="xs:string"/>
+          <xs:element minOccurs="0" name="ToxicologyPropertyDesc" type="xs:string"/>
+          <xs:element minOccurs="0" name="DrugCodeYl" type="xs:string"/>
+          <xs:element minOccurs="0" name="DrugCodeYlName" type="xs:string"/>
+          <xs:element minOccurs="0" name="DrugDosageFrom" type="xs:string"/>
+          <xs:element minOccurs="0" name="DrugDosageFromDesc" type="xs:string"/>
+          <xs:element minOccurs="0" name="DefUsageCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="DefFreqCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="DefPerDose" type="xs:string"/>
+          <xs:element minOccurs="0" name="DefPerQuan" type="xs:string"/>
+          <xs:element minOccurs="0" name="DefCourse" type="xs:string"/>
+          <xs:element minOccurs="0" name="ManageLevel" type="xs:string"/>
+          <xs:element minOccurs="0" name="HighRiskLevel" type="xs:string"/>
+          <xs:element minOccurs="0" name="PhamSimilar" type="xs:string"/>
+          <xs:element minOccurs="0" name="DrugAntimiType" type="xs:string"/>
+          <xs:element minOccurs="0" name="IsOral" type="xs:string"/>
+          <xs:element minOccurs="0" name="PivasFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="AntiTumour" type="xs:string"/>
+          <xs:element minOccurs="0" name="LargeVolumeLiquidFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="LargePackSmallDoseFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="SpecialSeparableFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="GmpFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="InjectionDrugFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="BasicPham" type="xs:string"/>
+          <xs:element minOccurs="0" name="SkinTestFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="IsEnable" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutProportion" type="xs:string"/>
+          <xs:element minOccurs="0" name="InpProportion" type="xs:string"/>
+          <xs:element minOccurs="0" name="InsurLevelCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="DrugOiSign" type="xs:string"/>
+          <xs:element minOccurs="0" name="MedInstCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="AreaCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="createArchiveResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="PatientInfo" type="tns:createArchivePatientInfoVO"/>
+              <xs:element minOccurs="0" name="AccountInfo" type="tns:createArchiveAccountInfoVO"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="createArchivePatientInfoVO">
+        <xs:sequence>
+          <xs:element name="PatientId" type="xs:string"/>
+          <xs:element name="PatientName" type="xs:string"/>
+          <xs:element name="PyCode" type="xs:string"/>
+          <xs:element name="PatientSex" type="xs:string"/>
+          <xs:element name="BirthDate" type="xs:string"/>
+          <xs:element name="PhoneNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="Occupation" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="prescritionQueryResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="PrescriptionList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="Prescription" type="tns:prescriptionPO"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="prescriptionPO">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="OrderCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="AuditStatus" type="xs:string"/>
+          <xs:element minOccurs="0" name="SkinTestResult" type="xs:string"/>
+          <xs:element minOccurs="0" name="StockNum" type="xs:string"/>
+          <xs:element minOccurs="0" name="StockInstruction" type="xs:string"/>
+          <xs:element minOccurs="0" name="execOrgCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="drugFactCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="factor" type="xs:string"/>
+          <xs:element minOccurs="0" name="totalNum" type="xs:string"/>
+          <xs:element minOccurs="0" name="orderId" type="xs:string"/>
+          <xs:element minOccurs="0" name="drugFactName" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="verifyCardResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="PatientInfo" type="tns:verifyCardPatientInfoVO"/>
+              <xs:element minOccurs="0" name="AccountInfo" type="tns:verifyCardAccountInfoVO"/>
+              <xs:element minOccurs="0" name="VerifyCardInfoVO" type="tns:verifyCardInfoVO"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="verifyCardPatientInfoVO">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="PatientId" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientName" type="xs:string"/>
+          <xs:element minOccurs="0" name="PyCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientSex" type="xs:string"/>
+          <xs:element minOccurs="0" name="BirthDate" type="xs:string"/>
+          <xs:element minOccurs="0" name="PhoneNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="IdCard" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="verifyCardAccountInfoVO">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="OutpBalance" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="verifyCardInfoVO">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="BindingCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="BindingPatientId" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="regVisitResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="MasterInfo" type="tns:regVisitVO"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="regVisitVO">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="PatientId" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientName" type="xs:string"/>
+          <xs:element minOccurs="0" name="RegNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="RegSortNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="VisitId" type="xs:string"/>
+          <xs:element minOccurs="0" name="RekId" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="bdMedInsResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="MedInsList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="MedIns" type="tns:bdMedInsQueryVO"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="bdMedInsQueryVO">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="MedInstId" type="xs:string"/>
+          <xs:element minOccurs="0" name="MedInstCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="MedInstName" type="xs:string"/>
+          <xs:element minOccurs="0" name="MedInstAdd" type="xs:string"/>
+          <xs:element minOccurs="0" name="MedInstPost" type="xs:string"/>
+          <xs:element minOccurs="0" name="MedInstCont" type="xs:string"/>
+          <xs:element minOccurs="0" name="MedInstContPh" type="xs:string"/>
+          <xs:element minOccurs="0" name="MedInstLevel" type="xs:string"/>
+          <xs:element minOccurs="0" name="MedInstType" type="xs:string"/>
+          <xs:element minOccurs="0" name="MedInstProp" type="xs:string"/>
+          <xs:element minOccurs="0" name="MedInstDescn" type="xs:string"/>
+          <xs:element minOccurs="0" name="MedInstStatus" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="opcPaymentResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="SettleInfo" type="tns:settleInfoEntity"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="settleInfoEntity">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="RekNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="RekId" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="searchArchiveResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="PatientInfo" type="tns:searchArchivePatientInfoVO"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="searchArchivePatientInfoVO">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="PatientId" type="xs:string"/>
+          <xs:element minOccurs="0" name="IsArchive" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="orderReserveResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="ReserveList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="Reserve" type="tns:reserveInfo"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="reserveInfo">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="ReserveId" type="xs:string"/>
+          <xs:element minOccurs="0" name="MasterId" type="xs:string"/>
+          <xs:element minOccurs="0" name="AtimeFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="TimeQuantum" type="xs:string"/>
+          <xs:element minOccurs="0" name="MasterDetailId" type="xs:string"/>
+          <xs:element minOccurs="0" name="MasterAtimeId" type="xs:string"/>
+          <xs:element minOccurs="0" name="RegPoolId" type="xs:string"/>
+          <xs:element minOccurs="0" name="SortNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="BusinessType" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientId" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientName" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpTypeCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpTypeName" type="xs:string"/>
+          <xs:element minOccurs="0" name="ResideDeptCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="ResideDeptName" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpSpecialId" type="xs:string"/>
+          <xs:element minOccurs="0" name="SpecialClinicName" type="xs:string"/>
+          <xs:element minOccurs="0" name="SpecialInfo" type="xs:string"/>
+          <xs:element minOccurs="0" name="DoctorSummary" type="xs:string"/>
+          <xs:element minOccurs="0" name="DoctorPhoto" type="xs:string"/>
+          <xs:element minOccurs="0" name="SocietyPost" type="xs:string"/>
+          <xs:element minOccurs="0" name="DoctorSpecial" type="xs:string"/>
+          <xs:element minOccurs="0" name="RegFee" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpDurationCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpDurationName" type="xs:string"/>
+          <xs:element minOccurs="0" name="DoctorCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="DoctorName" type="xs:string"/>
+          <xs:element minOccurs="0" name="TitleCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="TitleName" type="xs:string"/>
+          <xs:element minOccurs="0" name="CredentialsType" type="xs:string"/>
+          <xs:element minOccurs="0" name="CredentialsNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="PhoneNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="PlatformNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="PlatformCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="ReserveStatus" type="xs:string"/>
+          <xs:element minOccurs="0" name="RegResource" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpTime" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="regMasterResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="RegMasterList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="RegMaster" type="tns:regMaster"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="regMaster">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="MasterId" type="xs:string"/>
+          <xs:element minOccurs="0" name="AreaCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpDate" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpSpecialId" type="xs:string"/>
+          <xs:element minOccurs="0" name="TitleCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="TitleName" type="xs:string"/>
+          <xs:element minOccurs="0" name="DoctorCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="DoctorName" type="xs:string"/>
+          <xs:element minOccurs="0" name="DoctorSpecial" type="xs:string"/>
+          <xs:element minOccurs="0" name="DoctorPhoto" type="xs:string"/>
+          <xs:element minOccurs="0" name="DoctorSummary" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpTypeCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpTypeName" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpDurationCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpDurationName" type="xs:string"/>
+          <xs:element minOccurs="0" name="RegistrationLimit" type="xs:string"/>
+          <xs:element minOccurs="0" name="CurrentLimit" type="xs:string"/>
+          <xs:element minOccurs="0" name="AppointmentLimits" type="xs:string"/>
+          <xs:element minOccurs="0" name="AppointmentCurrentLimits" type="xs:string"/>
+          <xs:element minOccurs="0" name="RegFeeName" type="xs:string"/>
+          <xs:element minOccurs="0" name="RegFee" type="xs:string"/>
+          <xs:element minOccurs="0" name="ClinicFee" type="xs:string"/>
+          <xs:element minOccurs="0" name="ClinicSpec" type="xs:string"/>
+          <xs:element minOccurs="0" name="AtimeFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="MasterStatus" type="xs:string"/>
+          <xs:element minOccurs="0" name="CurrentNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="SortNo" type="xs:string"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="RegMasterAtimeList" type="tns:regMasterAtime"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="regMasterAtime">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="MasterAtimeId" type="xs:string"/>
+          <xs:element minOccurs="0" name="MasterId" type="xs:string"/>
+          <xs:element minOccurs="0" name="SortNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="TimeQuantumValue" type="xs:string"/>
+          <xs:element minOccurs="0" name="TimeLimits" type="xs:string"/>
+          <xs:element minOccurs="0" name="AppointmentLimits" type="xs:string"/>
+          <xs:element minOccurs="0" name="CurrentTimeLimits" type="xs:string"/>
+          <xs:element minOccurs="0" name="CurrentAppointmentLimits" type="xs:string"/>
+          <xs:element minOccurs="0" name="ReserveLimits" type="xs:string"/>
+          <xs:element minOccurs="0" name="CurrentReserveLimits" type="xs:string"/>
+          <xs:element minOccurs="0" name="TimeStatus" type="xs:string"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="RegMasterDetailList" type="tns:regMasterDetail"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="regMasterDetail">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="MasterDetailId" type="xs:string"/>
+          <xs:element minOccurs="0" name="MasterAtimeId" type="xs:string"/>
+          <xs:element minOccurs="0" name="Sortno" type="xs:string"/>
+          <xs:element minOccurs="0" name="RegFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="AppointmentFlag" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="cancelRegResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="RefundInfo" type="tns:payInfo"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="payInfo">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Amount" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="PayMode" type="xs:string"/>
+          <xs:element minOccurs="0" name="ReqTime" type="xs:string"/>
+          <xs:element minOccurs="0" name="TransNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="CardNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="BankName" type="xs:string"/>
+          <xs:element minOccurs="0" name="Merchant" type="xs:string"/>
+          <xs:element minOccurs="0" name="RefNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="RespEng" type="xs:string"/>
+          <xs:element minOccurs="0" name="BatchNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="PayModeNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="Descn" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="payDetailQueryResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="PatientInfo" type="tns:notpayDetailQueryPatientInfoVO"/>
+              <xs:element minOccurs="0" name="ChargeItemList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="ChargeItem" type="tns:payDetailQuery"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="notpayDetailQueryPatientInfoVO">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="MedInstCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="AreaCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientId" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientName" type="xs:string"/>
+          <xs:element minOccurs="0" name="VisitId" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientType" type="xs:string"/>
+          <xs:element minOccurs="0" name="AccountBalance" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="payDetailQuery">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="OrderId" type="xs:string"/>
+          <xs:element minOccurs="0" name="BillId" type="xs:string"/>
+          <xs:element minOccurs="0" name="ClinicType" type="xs:string"/>
+          <xs:element minOccurs="0" name="FeeItemClass" type="xs:string"/>
+          <xs:element minOccurs="0" name="ClinicItemId" type="xs:string"/>
+          <xs:element minOccurs="0" name="ClinicItemName" type="xs:string"/>
+          <xs:element minOccurs="0" name="ItemType" type="xs:string"/>
+          <xs:element minOccurs="0" name="FeeItemId" type="xs:string"/>
+          <xs:element minOccurs="0" name="FeeItemName" type="xs:string"/>
+          <xs:element minOccurs="0" name="DrugSpec" type="xs:string"/>
+          <xs:element minOccurs="0" name="PharmacyFactoryName" type="xs:string"/>
+          <xs:element minOccurs="0" name="Num" type="xs:string"/>
+          <xs:element minOccurs="0" name="Unit" type="xs:string"/>
+          <xs:element minOccurs="0" name="UnitPrice" type="xs:string"/>
+          <xs:element minOccurs="0" name="UnitCoeff" type="xs:string"/>
+          <xs:element minOccurs="0" name="TotalPrice" type="xs:string"/>
+          <xs:element minOccurs="0" name="Charges" type="xs:string"/>
+          <xs:element minOccurs="0" name="ClassOnRcpt" type="xs:string"/>
+          <xs:element minOccurs="0" name="ClinicPropertyClass" type="xs:string"/>
+          <xs:element minOccurs="0" name="ApplyDoctorCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="ApplyDoctorName" type="xs:string"/>
+          <xs:element minOccurs="0" name="ApplyOrgCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="ApplyOrgName" type="xs:string"/>
+          <xs:element minOccurs="0" name="CurrentOrgCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="CurrentOrgName" type="xs:string"/>
+          <xs:element minOccurs="0" name="CurrentWardCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="CurrentWardName" type="xs:string"/>
+          <xs:element minOccurs="0" name="ExecOrgCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="Occupation" type="xs:string"/>
+          <xs:element minOccurs="0" name="RefundFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="RelRefundId" type="xs:string"/>
+          <xs:element minOccurs="0" name="ChargeDate" type="xs:string"/>
+          <xs:element minOccurs="0" name="EnterDate" type="xs:string"/>
+          <xs:element minOccurs="0" name="InvoicePrintFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="OrderType" type="xs:string"/>
+          <xs:element minOccurs="0" name="AddFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="InsurLevelCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="ExzamFlag" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="prescAdjustStatusResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="orderReserveMasterResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="RegReserve" type="tns:orderReserveMaster"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="orderReserveMaster">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="ReserveId" type="xs:string"/>
+          <xs:element minOccurs="0" name="MasterId" type="xs:string"/>
+          <xs:element minOccurs="0" name="AtimeFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="TimeQuantum" type="xs:string"/>
+          <xs:element minOccurs="0" name="MasterDetailId" type="xs:string"/>
+          <xs:element minOccurs="0" name="MasterAtimeId" type="xs:string"/>
+          <xs:element minOccurs="0" name="RegPoolId" type="xs:string"/>
+          <xs:element minOccurs="0" name="SortNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="BusinessType" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientId" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientName" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpTime" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpTypeCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpTypeName" type="xs:string"/>
+          <xs:element minOccurs="0" name="ResideDeptCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="ResideDeptName" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpSpecialId" type="xs:string"/>
+          <xs:element minOccurs="0" name="SpecialClinicName" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpDurationCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpDurationName" type="xs:string"/>
+          <xs:element minOccurs="0" name="DoctorCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="DoctorName" type="xs:string"/>
+          <xs:element minOccurs="0" name="TitleCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="TitleName" type="xs:string"/>
+          <xs:element minOccurs="0" name="CredentialsType" type="xs:string"/>
+          <xs:element minOccurs="0" name="CredentialsNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="PhoneNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="RefPrice" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="cancelOrderReserveResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="materialClassResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="MaterialList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="Material" type="tns:materialClassPO"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="materialClassPO">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="MaterialClassId" type="xs:string"/>
+          <xs:element minOccurs="0" name="MaterialClassCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="MaterialClassName" type="xs:string"/>
+          <xs:element minOccurs="0" name="PyCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="MedInstId" type="xs:string"/>
+          <xs:element minOccurs="0" name="IsEnable" type="xs:string"/>
+          <xs:element minOccurs="0" name="DeleteFlag" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="ouptPatientSignInResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="accountInvestResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="RechargeInfo" type="tns:accountInvestRechargeInfo"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="accountInvestRechargeInfo">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="RechargeAmount" type="xs:string"/>
+          <xs:element minOccurs="0" name="OperateTime" type="xs:string"/>
+          <xs:element minOccurs="0" name="AccountBalance" type="xs:string"/>
+          <xs:element minOccurs="0" name="AdvanceRecordId" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="queryPatientVisitInfoResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="RegVisitList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="RegVisit" type="tns:queryPatientVisitEntity"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="queryPatientVisitEntity">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="PatientVisitId" type="xs:long"/>
+          <xs:element minOccurs="0" name="RekINo" type="xs:long"/>
+          <xs:element minOccurs="0" name="RekId" type="xs:long"/>
+          <xs:element minOccurs="0" name="RegSortNo" type="xs:long"/>
+          <xs:element minOccurs="0" name="VisitId" type="xs:long"/>
+          <xs:element minOccurs="0" name="PatientId" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientName" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpDate" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpSpecialId" type="xs:long"/>
+          <xs:element minOccurs="0" name="OutpSpecialName" type="xs:string"/>
+          <xs:element minOccurs="0" name="ResideDeptCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="ResideDeptName" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpDurationCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="DoctorName" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpTypeName" type="xs:string"/>
+          <xs:element minOccurs="0" name="RegFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="RegDate" type="xs:string"/>
+          <xs:element minOccurs="0" name="AdmiDoctorCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="AdmiDoctorName" type="xs:string"/>
+          <xs:element minOccurs="0" name="RegResource" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="queryBdClinicpriceListRrsponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="ClinicPriceList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="ClinicPrice" type="tns:bdClinicpriceQueryVO"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="bdClinicpriceQueryVO">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="PriceId" type="xs:int"/>
+          <xs:element minOccurs="0" name="ItemClass" type="xs:string"/>
+          <xs:element minOccurs="0" name="ItemClassName" type="xs:string"/>
+          <xs:element minOccurs="0" name="ItemCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="ItemName" type="xs:string"/>
+          <xs:element minOccurs="0" name="ItemUnit" type="xs:string"/>
+          <xs:element minOccurs="0" name="PriceMoney" type="xs:string"/>
+          <xs:element minOccurs="0" name="LatestEnableTime" type="xs:string"/>
+          <xs:element minOccurs="0" name="IsEnable" type="xs:string"/>
+          <xs:element minOccurs="0" name="PyCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="WbCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="StandardCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="StandardName" type="xs:string"/>
+          <xs:element minOccurs="0" name="OperationLevel" type="xs:string"/>
+          <xs:element minOccurs="0" name="RegulatoryCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="TreatmentClass" type="xs:string"/>
+          <xs:element minOccurs="0" name="NationStdCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="ProvinceStdCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="AreaCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="MedInstCode" type="xs:int"/>
+          <xs:element minOccurs="0" name="Descn" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="diagnosticsQueryInfoResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="PatientVisitList" type="tns:diagnosticsQueryPatientInfoVO"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="diagnosticsQueryPatientInfoVO">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="AreaCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientType" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientId" type="xs:string"/>
+          <xs:element minOccurs="0" name="VisitId" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientName" type="xs:string"/>
+          <xs:element minOccurs="0" name="BirthDate" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientSex" type="xs:string"/>
+          <xs:element minOccurs="0" name="OrgInputCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="OrgInputName" type="xs:string"/>
+          <xs:element minOccurs="0" name="AdmTime" type="xs:string"/>
+          <xs:element minOccurs="0" name="DiagList">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="DiagInfo" type="tns:diagnosticsQueryEntity"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="diagnosticsQueryEntity">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="SortNo" type="xs:long"/>
+          <xs:element minOccurs="0" name="DiagIcd" type="xs:string"/>
+          <xs:element minOccurs="0" name="DiagName" type="xs:string"/>
+          <xs:element minOccurs="0" name="DiagTypeCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="DiagDate" type="xs:string"/>
+          <xs:element minOccurs="0" name="DiagEmpCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="DiagEmpName" type="xs:string"/>
+          <xs:element minOccurs="0" name="OrgIdInput" type="xs:string"/>
+          <xs:element minOccurs="0" name="OrgNameInput" type="xs:string"/>
+          <xs:element minOccurs="0" name="DiagAttri" type="xs:string"/>
+          <xs:element minOccurs="0" name="MainDiag" type="xs:string"/>
+          <xs:element minOccurs="0" name="TcmSyndromeTypeName" type="xs:string"/>
+          <xs:element minOccurs="0" name="TcmSyndromeTypeCode" type="xs:long"/>
+          <xs:element minOccurs="0" name="AdmissionCond" type="xs:string"/>
+          <xs:element minOccurs="0" name="DischargeStatus" type="xs:string"/>
+          <xs:element minOccurs="0" name="DiagClassTypeCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="MorbidityDate" type="xs:string"/>
+          <xs:element minOccurs="0" name="ReturnVisit" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="bdAreaQueryResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="AreaList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="Area" type="tns:bdAreaQueryVO"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="bdAreaQueryVO">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="AreaId" type="xs:string"/>
+          <xs:element minOccurs="0" name="AreaCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="AreaName" type="xs:string"/>
+          <xs:element minOccurs="0" name="MedInstId" type="xs:string"/>
+          <xs:element minOccurs="0" name="MedInstCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="MedInstName" type="xs:string"/>
+          <xs:element minOccurs="0" name="AreaAdd" type="xs:string"/>
+          <xs:element minOccurs="0" name="AreaPost" type="xs:string"/>
+          <xs:element minOccurs="0" name="AreaCont" type="xs:string"/>
+          <xs:element minOccurs="0" name="AreaContPh" type="xs:string"/>
+          <xs:element minOccurs="0" name="AreaDescn" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="bedDictResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="BedInfoList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="BedInfo" type="tns:bedDictVO"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="bedDictVO">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="BedId" type="xs:string"/>
+          <xs:element minOccurs="0" name="BedCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="BedName" type="xs:string"/>
+          <xs:element minOccurs="0" name="BedTypeCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="SortNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="AreaCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="MedInstCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="WardCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="AuthorizedCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="AuthorizedName" type="xs:string"/>
+          <xs:element minOccurs="0" name="RoomCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="sexFlagCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="SexFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="RoomTypeCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="IsEnable" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="phamLocationResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="PhamInfoList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="PhamInfo" type="tns:phamLocationPO"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="phamLocationPO">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="MedInstId" type="xs:string"/>
+          <xs:element minOccurs="0" name="DispensaryOrgCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="DrugChickState" type="xs:string"/>
+          <xs:element minOccurs="0" name="GoodsNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="Unit" type="xs:string"/>
+          <xs:element minOccurs="0" name="Factor" type="xs:string"/>
+          <xs:element minOccurs="0" name="DrugSpecCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="DrugSpecName" type="xs:string"/>
+          <xs:element minOccurs="0" name="PharmacyFactoryCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="PharmacyFactoryName" type="xs:string"/>
+          <xs:element minOccurs="0" name="StockNum" type="xs:string"/>
+          <xs:element minOccurs="0" name="PackageFactor" type="xs:string"/>
+          <xs:element minOccurs="0" name="DrugBatch" type="xs:string"/>
+          <xs:element minOccurs="0" name="DrugBatchNum" type="xs:string"/>
+          <xs:element minOccurs="0" name="DrugVaildity" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="herbOrderResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="MsgLog" type="tns:baseMsgLog"/>
+              <xs:element minOccurs="0" name="PatientInfo" type="tns:outpOrderPatientInfo"/>
+              <xs:element minOccurs="0" name="OutpOrderList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="OutpOrder" type="tns:outpOrderInfo"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="baseMsgLog">
+        <xs:sequence>
+          <xs:element name="TerminalNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="UserId" type="xs:string"/>
+          <xs:element minOccurs="0" name="PlatformCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="IpAddr" type="xs:string"/>
+          <xs:element name="RequestWay" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="msgLog">
+        <xs:sequence>
+          <xs:element name="TerminalNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="UserId" type="xs:string"/>
+          <xs:element minOccurs="0" name="PlatformCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="IpAddr" type="xs:string"/>
+          <xs:element name="RequestWay" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="outpOrderPatientInfo">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="PatientId" type="xs:string"/>
+          <xs:element minOccurs="0" name="CredentialsNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="CredentialsType" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientName" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientSex" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientAge" type="xs:string"/>
+          <xs:element minOccurs="0" name="VisitId" type="xs:long"/>
+          <xs:element minOccurs="0" name="PatientVisitId" type="xs:string"/>
+          <xs:element minOccurs="0" name="PhoneNo" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="outpOrderInfo">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="OrderId" type="xs:string"/>
+          <xs:element minOccurs="0" name="OrderCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="SortNo" type="xs:long"/>
+          <xs:element minOccurs="0" name="ApplyTime" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="OrderName" type="xs:string"/>
+          <xs:element minOccurs="0" name="ExecOrgCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="ExecOrgName" type="xs:string"/>
+          <xs:element minOccurs="0" name="DispenseWinId" type="xs:string"/>
+          <xs:element minOccurs="0" name="WindowName" type="xs:string"/>
+          <xs:element minOccurs="0" name="IsUrgent" type="xs:string"/>
+          <xs:element minOccurs="0" name="ApplyDoctorCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="ApplyDoctorName" type="xs:string"/>
+          <xs:element minOccurs="0" name="ApplyOrgCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="ApplyOrgName" type="xs:string"/>
+          <xs:element minOccurs="0" name="CancelDoctorCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="CancelDoctorName" type="xs:string"/>
+          <xs:element minOccurs="0" name="CancelTime" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="DeleteFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="RefPrice" type="xs:long"/>
+          <xs:element minOccurs="0" name="OrderType" type="xs:string"/>
+          <xs:element minOccurs="0" name="PrescrType" type="xs:string"/>
+          <xs:element minOccurs="0" name="TemplateType" type="xs:string"/>
+          <xs:element minOccurs="0" name="ChargeFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="DebtFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="TisaType" type="xs:string"/>
+          <xs:element minOccurs="0" name="Agents" type="xs:long"/>
+          <xs:element minOccurs="0" name="TemplateForm" type="xs:string"/>
+          <xs:element minOccurs="0" name="MedicMethod" type="xs:string"/>
+          <xs:element minOccurs="0" name="CreateTime" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="DayAgents" type="xs:long"/>
+          <xs:element minOccurs="0" name="FormAmount" type="xs:string"/>
+          <xs:element minOccurs="0" name="FormUnit" type="xs:string"/>
+          <xs:element minOccurs="0" name="TisaMethod" type="xs:string"/>
+          <xs:element minOccurs="0" name="OutpOrderItemList">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="OutpOrderItem" type="tns:outpOrderItem"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="outpOrderItem">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="OrderItemId" type="xs:string"/>
+          <xs:element minOccurs="0" name="OrderId" type="xs:string"/>
+          <xs:element minOccurs="0" name="GroupNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="IsGroup" type="xs:string"/>
+          <xs:element minOccurs="0" name="SortNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="ItemId" type="xs:string"/>
+          <xs:element minOccurs="0" name="ItemName" type="xs:string"/>
+          <xs:element minOccurs="0" name="DrugSpec" type="xs:string"/>
+          <xs:element minOccurs="0" name="PrescrType" type="xs:string"/>
+          <xs:element minOccurs="0" name="ItemType" type="xs:string"/>
+          <xs:element minOccurs="0" name="ClinicType" type="xs:string"/>
+          <xs:element minOccurs="0" name="PharmacyFactoryCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="SkinFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="SkinOrderId" type="xs:string"/>
+          <xs:element minOccurs="0" name="SkinTestResult" type="xs:string"/>
+          <xs:element minOccurs="0" name="SkinTime" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="FreqCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="FreqNum" type="xs:string"/>
+          <xs:element minOccurs="0" name="FreqTimeDescn" type="xs:string"/>
+          <xs:element minOccurs="0" name="UsePharmactDays" type="xs:string"/>
+          <xs:element minOccurs="0" name="UsageCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="SignDoseNum" type="xs:string"/>
+          <xs:element minOccurs="0" name="SignDoseUnit" type="xs:string"/>
+          <xs:element minOccurs="0" name="DosePerUnit" type="xs:string"/>
+          <xs:element minOccurs="0" name="DrugUnit" type="xs:string"/>
+          <xs:element minOccurs="0" name="DrugUnitNum" type="xs:long"/>
+          <xs:element minOccurs="0" name="TotalNum" type="xs:string"/>
+          <xs:element minOccurs="0" name="TotalUnit" type="xs:string"/>
+          <xs:element minOccurs="0" name="TotalUnitPrice" type="xs:string"/>
+          <xs:element minOccurs="0" name="TotalUnitCoeff" type="xs:string"/>
+          <xs:element minOccurs="0" name="RetailCoeff" type="xs:string"/>
+          <xs:element minOccurs="0" name="RefPrice" type="xs:string"/>
+          <xs:element minOccurs="0" name="Dirps" type="xs:string"/>
+          <xs:element minOccurs="0" name="DrugPurpose" type="xs:string"/>
+          <xs:element minOccurs="0" name="ClinicPropertyClass" type="xs:string"/>
+          <xs:element minOccurs="0" name="TisaMethod" type="xs:string"/>
+          <xs:element minOccurs="0" name="Descn" type="xs:string"/>
+          <xs:element minOccurs="0" name="CreateTime" type="xs:dateTime"/>
+          <xs:element minOccurs="0" name="IsOwn" type="xs:string"/>
+          <xs:element minOccurs="0" name="IsTake" type="xs:string"/>
+          <xs:element minOccurs="0" name="IsSkinTestSolu" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="materialQueryResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="MaterialList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="Material" type="tns:materialQueryVO"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="materialQueryVO">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="MaterialInfoId" type="xs:string"/>
+          <xs:element minOccurs="0" name="MaterialClassName" type="xs:string"/>
+          <xs:element minOccurs="0" name="MaterialClassCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="MaterialCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="MaterialName" type="xs:string"/>
+          <xs:element minOccurs="0" name="PyCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="MaterialAlias" type="xs:string"/>
+          <xs:element minOccurs="0" name="SpecificationValue" type="xs:string"/>
+          <xs:element minOccurs="0" name="ModelValue" type="xs:string"/>
+          <xs:element minOccurs="0" name="MeasureUnit" type="xs:string"/>
+          <xs:element minOccurs="0" name="ManufacturersCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="SupplyName" type="xs:string"/>
+          <xs:element minOccurs="0" name="Manufacturers" type="xs:string"/>
+          <xs:element minOccurs="0" name="PlaceOrigin" type="xs:string"/>
+          <xs:element minOccurs="0" name="CostPrice" type="xs:string"/>
+          <xs:element minOccurs="0" name="SellPrice" type="xs:string"/>
+          <xs:element minOccurs="0" name="TenderPrice" type="xs:string"/>
+          <xs:element minOccurs="0" name="SupplyUnit" type="xs:string"/>
+          <xs:element minOccurs="0" name="IsDurable" type="xs:string"/>
+          <xs:element minOccurs="0" name="MaterialTexture" type="xs:string"/>
+          <xs:element minOccurs="0" name="PackagesName" type="xs:string"/>
+          <xs:element minOccurs="0" name="MaterialSite" type="xs:string"/>
+          <xs:element minOccurs="0" name="GoodsName" type="xs:string"/>
+          <xs:element minOccurs="0" name="CertificateEnDate" type="xs:string"/>
+          <xs:element minOccurs="0" name="CertificateUnit" type="xs:string"/>
+          <xs:element minOccurs="0" name="AbcType" type="xs:string"/>
+          <xs:element minOccurs="0" name="IsCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="BarcodeType" type="xs:string"/>
+          <xs:element minOccurs="0" name="CertificateNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="BrandName" type="xs:string"/>
+          <xs:element minOccurs="0" name="GoodsCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="IsCharge" type="xs:string"/>
+          <xs:element minOccurs="0" name="IsHighValue" type="xs:string"/>
+          <xs:element minOccurs="0" name="ImportSign" type="xs:string"/>
+          <xs:element minOccurs="0" name="IsSterilization" type="xs:string"/>
+          <xs:element minOccurs="0" name="IsDisposable" type="xs:string"/>
+          <xs:element minOccurs="0" name="IsImplantation" type="xs:string"/>
+          <xs:element minOccurs="0" name="UseScope" type="xs:string"/>
+          <xs:element minOccurs="0" name="Creator" type="xs:string"/>
+          <xs:element minOccurs="0" name="CreatorName" type="xs:string"/>
+          <xs:element minOccurs="0" name="CreateTime" type="xs:string"/>
+          <xs:element minOccurs="0" name="ModifierTime" type="xs:string"/>
+          <xs:element minOccurs="0" name="Modifier" type="xs:string"/>
+          <xs:element minOccurs="0" name="ModifierName" type="xs:string"/>
+          <xs:element minOccurs="0" name="IsEnable" type="xs:string"/>
+          <xs:element minOccurs="0" name="StopUseDate" type="xs:string"/>
+          <xs:element minOccurs="0" name="DeleteFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="Descn" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="detailBillingResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="TotalPrice" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="detailReturnResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="eleheCardGetPaientInfoResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="credentialsType" type="xs:string"/>
+              <xs:element minOccurs="0" name="credentialsNo" type="xs:string"/>
+              <xs:element minOccurs="0" name="patientName" type="xs:string"/>
+              <xs:element minOccurs="0" name="patientSex" type="xs:string"/>
+              <xs:element minOccurs="0" name="birthDate" type="xs:string"/>
+              <xs:element minOccurs="0" name="phoneNo" type="xs:string"/>
+              <xs:element minOccurs="0" name="address" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="soapEmptyResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="leavePatientQueryResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="PatientInfoList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="PatientInfo" type="tns:leavePatientInfo"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="leavePatientInfo">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="PatientId" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientType" type="xs:string"/>
+          <xs:element minOccurs="0" name="VisitId" type="xs:string"/>
+          <xs:element minOccurs="0" name="MedRecordNum" type="xs:string"/>
+          <xs:element minOccurs="0" name="CredentialsType" type="xs:string"/>
+          <xs:element minOccurs="0" name="CredentialsNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientName" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientSex" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientAge" type="xs:string"/>
+          <xs:element minOccurs="0" name="BirthDate" type="xs:string"/>
+          <xs:element minOccurs="0" name="MaritalCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="CitizenshipCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="NationCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="HomeAddrProvinceCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="HomeAddrCityCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="HomeAddrCountyCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="HomeAddrStreetCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="HomeAddrVillageCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="HomeAddrDetailed" type="xs:string"/>
+          <xs:element minOccurs="0" name="HomeAddrZipCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="RelationshipCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="ContactsName" type="xs:string"/>
+          <xs:element minOccurs="0" name="ContactsCredentialsType" type="xs:string"/>
+          <xs:element minOccurs="0" name="ContactsIdNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="ContactsPhone" type="xs:string"/>
+          <xs:element minOccurs="0" name="ContactsZip" type="xs:string"/>
+          <xs:element minOccurs="0" name="ContactsOfficeName" type="xs:string"/>
+          <xs:element minOccurs="0" name="AdmOrgCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="AdmWardCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="AdmTime" type="xs:string"/>
+          <xs:element minOccurs="0" name="AdmPurpose" type="xs:string"/>
+          <xs:element minOccurs="0" name="AdmRoute" type="xs:string"/>
+          <xs:element minOccurs="0" name="AdmCase" type="xs:string"/>
+          <xs:element minOccurs="0" name="CurrentOrgCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="CurrentWardCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="CurrentAreaCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="DischargeTime" type="xs:string"/>
+          <xs:element minOccurs="0" name="Archiving" type="xs:string"/>
+          <xs:element minOccurs="0" name="ArchivingName" type="xs:string"/>
+          <xs:element minOccurs="0" name="TeamId" type="xs:string"/>
+          <xs:element minOccurs="0" name="TeamName" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="notPayDetailQueryResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="PatientInfo" type="tns:notpayDetailQueryPatientInfoVO"/>
+              <xs:element minOccurs="0" name="ChargeItemList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="ChargeItem" type="tns:notPayDetailQuery"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="notPayDetailQuery">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="OutpItemId" type="xs:string"/>
+          <xs:element minOccurs="0" name="OrderId" type="xs:string"/>
+          <xs:element minOccurs="0" name="OrderItemId" type="xs:string"/>
+          <xs:element minOccurs="0" name="TreatmentNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="OrderType" type="xs:string"/>
+          <xs:element minOccurs="0" name="PrescrType" type="xs:string"/>
+          <xs:element minOccurs="0" name="FeeItemClass" type="xs:string"/>
+          <xs:element minOccurs="0" name="ClinicItemId" type="xs:string"/>
+          <xs:element minOccurs="0" name="ClinicItemName" type="xs:string"/>
+          <xs:element minOccurs="0" name="ClinicType" type="xs:string"/>
+          <xs:element minOccurs="0" name="FeeItemId" type="xs:string"/>
+          <xs:element minOccurs="0" name="FeeItemName" type="xs:string"/>
+          <xs:element minOccurs="0" name="DrugSpec" type="xs:string"/>
+          <xs:element minOccurs="0" name="PharmacyFactoryName" type="xs:string"/>
+          <xs:element minOccurs="0" name="Num" type="xs:string"/>
+          <xs:element minOccurs="0" name="Unit" type="xs:string"/>
+          <xs:element minOccurs="0" name="UnitPrice" type="xs:string"/>
+          <xs:element minOccurs="0" name="UnitCoeff" type="xs:string"/>
+          <xs:element minOccurs="0" name="TotalPrice" type="xs:string"/>
+          <xs:element minOccurs="0" name="Descn" type="xs:string"/>
+          <xs:element minOccurs="0" name="SettId" type="xs:string"/>
+          <xs:element minOccurs="0" name="AccurOperator" type="xs:string"/>
+          <xs:element minOccurs="0" name="AccurOperatorName" type="xs:string"/>
+          <xs:element minOccurs="0" name="AccurTime" type="xs:string"/>
+          <xs:element minOccurs="0" name="OldOutpItemId" type="xs:string"/>
+          <xs:element minOccurs="0" name="OrderSource" type="xs:string"/>
+          <xs:element minOccurs="0" name="ChargeFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="ExecFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="AddFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="ItemType" type="xs:string"/>
+          <xs:element minOccurs="0" name="ExzamFlag" type="xs:string"/>
+          <xs:element minOccurs="0" name="patientId" type="xs:string"/>
+          <xs:element minOccurs="0" name="visitId" type="xs:string"/>
+          <xs:element minOccurs="0" name="areaCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="startDate" type="xs:string"/>
+          <xs:element minOccurs="0" name="endDate" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="dialysisSchedulingQueryResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="DialysisSchedulingList" type="tns:queryDialysisScheduling"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="queryDialysisScheduling">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="PatientInfo" type="tns:dialysisPatientInfo"/>
+          <xs:element minOccurs="0" name="Schedulings">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="Scheduling" type="tns:queryScheduling"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="dialysisPatientInfo">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="PatientId" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientName" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientType" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientSex" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientAge" type="xs:string"/>
+          <xs:element minOccurs="0" name="VisitId" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="queryScheduling">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="ApplyNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="AppointmentDate" type="xs:string"/>
+          <xs:element minOccurs="0" name="AppointmentAmount" type="xs:string"/>
+          <xs:element minOccurs="0" name="DialysisArea" type="xs:string"/>
+          <xs:element minOccurs="0" name="BedCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="SchedulingType" type="xs:string"/>
+          <xs:element minOccurs="0" name="SchedulingId" type="xs:string"/>
+          <xs:element minOccurs="0" name="DialysisId" type="xs:string"/>
+          <xs:element minOccurs="0" name="TreatmentDate" type="xs:string"/>
+          <xs:element minOccurs="0" name="TreatmentClass" type="xs:string"/>
+          <xs:element minOccurs="0" name="TreatmentWeek" type="xs:string"/>
+          <xs:element minOccurs="0" name="DialysisScheme" type="xs:string"/>
+          <xs:element minOccurs="0" name="DialyzerMode" type="xs:string"/>
+          <xs:element minOccurs="0" name="PurifierMode" type="xs:string"/>
+          <xs:element minOccurs="0" name="PlannedDuration" type="xs:string"/>
+          <xs:element minOccurs="0" name="CoagulationDrugs" type="xs:string"/>
+          <xs:element minOccurs="0" name="DoctorCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="DoctorName" type="xs:string"/>
+          <xs:element minOccurs="0" name="SchedulingDate" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="eleheCardGetstAticsCodeResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="ReturnInfo" type="tns:eleheCardGetstAticsCodeEntity"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="eleheCardGetstAticsCodeEntity">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Barcode" type="xs:string"/>
+          <xs:element minOccurs="0" name="EId" type="xs:string"/>
+          <xs:element minOccurs="0" name="eleId" type="xs:string"/>
+          <xs:element minOccurs="0" name="SmsCheckCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="eleheCardGetqrInfoResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" minOccurs="0" name="PatientQrInfo" type="tns:eleheCardGetqrInfoEntity"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="patientInfo">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="MedInstCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="AreaCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="IdCard" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientName" type="xs:string"/>
+          <xs:element minOccurs="0" name="PatientId" type="xs:string"/>
+          <xs:element minOccurs="0" name="IsArchive" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="eleheCardGetqrInfoEntity">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Barcode" type="xs:string"/>
+          <xs:element minOccurs="0" name="EId" type="xs:string"/>
+          <xs:element minOccurs="0" name="eleId" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="getTicketInfoResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="TicketInfoList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="TicketInfo" type="tns:getTicketInfo"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="getTicketInfo">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="InvNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="InvCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="InvCheckCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="invDate" type="xs:string"/>
+          <xs:element minOccurs="0" name="InvQRCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="pdfUrl" type="xs:string"/>
+          <xs:element minOccurs="0" name="PdfPreviewUrl" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="inspectBackResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="OrdersList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="Orders" type="tns:orders"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="orders">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="ApplyNo" type="xs:string"/>
+              <xs:element minOccurs="0" name="OrderId" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="examineBackResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="OrdersList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="Orders" type="tns:orders"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="medNumGrnResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="MedInfo" type="tns:medInfo"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="medInfo">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="MedRecordNum" type="xs:string"/>
+              <xs:element minOccurs="0" name="MedRecordNumTime" type="xs:string"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="pharmQrResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="PdaItem" type="tns:pdaItem"/>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="pdaItem">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="PouchCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="InOrderExecId" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="operAccountResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="AccountInfoList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="AccountInfo" type="tns:accountInfo"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="accountInfo">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="TotalChargeAmount" type="xs:string"/>
+          <xs:element minOccurs="0" name="TotalRefundAmount" type="xs:string"/>
+          <xs:element minOccurs="0" name="RoundingAmount" type="xs:string"/>
+          <xs:element minOccurs="0" name="TotalAmount" type="xs:string"/>
+          <xs:element minOccurs="0" name="PayableCash" type="xs:string"/>
+          <xs:element minOccurs="0" name="BeginInvNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="EndInvNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="TotalInvNum" type="xs:string"/>
+          <xs:element minOccurs="0" name="TotalOperNum" type="xs:string"/>
+          <xs:element minOccurs="0" name="AccountDate" type="xs:string"/>
+          <xs:element minOccurs="0" name="OperSettleId" type="xs:string"/>
+          <xs:element minOccurs="0" name="TerminalNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="InOutFlag" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="unpaidAccountQueryResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="AccountInfoList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="AccountInfo" type="tns:unpaidAccountInfo"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="unpaidAccountInfo">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="TerminalNo" type="xs:string"/>
+          <xs:element minOccurs="0" name="LastAccountDate" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="distributionResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence/>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="consultingRoomResponse">
+        <xs:complexContent>
+          <xs:extension base="tns:soapBaseResponse">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="ConsultingRoomList">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="ConsultingRoom" type="tns:consultingRoomEntity"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+
+      <xs:complexType name="consultingRoomEntity">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="ResideDeptCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="ResideDeptName" type="xs:string"/>
+          <xs:element minOccurs="0" name="BelongDeptCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="BelongDeptName" type="xs:string"/>
+          <xs:element minOccurs="0" name="SpecialClinicCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="SpecialClinicName" type="xs:string"/>
+          <xs:element minOccurs="0" name="Location" type="xs:string"/>
+          <xs:element minOccurs="0" name="DoctorCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="DoctorName" type="xs:string"/>
+          <xs:element minOccurs="0" name="ConsultingRoom" type="xs:string"/>
+          <xs:element minOccurs="0" name="Floor" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="message">
+    <wsdl:part element="tns:message" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="messageResponse">
+    <wsdl:part element="tns:messageResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="hipWebServices">
+    <wsdl:operation name="message">
+      <wsdl:input message="tns:message" name="message">
+      </wsdl:input>
+      <wsdl:output message="tns:messageResponse" name="messageResponse">
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="HipWebServicesServiceSoapBinding" type="tns:hipWebServices">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="message">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="message">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="messageResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="HipWebServicesService">
+    <wsdl:port binding="tns:HipWebServicesServiceSoapBinding" name="hipWebServicesPort">
+      <soap:address location="http://192.168.10.129:52773/hip/EnsLib.SOAP.GenericService/isc/services"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
